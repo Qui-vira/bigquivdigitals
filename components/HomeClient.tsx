@@ -1,24 +1,10 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { Handshake, GraduationCap, Cpu, ArrowRight } from "lucide-react";
-import { KeywordRotator } from "@/components/KeywordRotator";
-import { TextReveal } from "@/components/TextReveal";
-import { CountUp } from "@/components/CountUp";
 import { MagneticButton } from "@/components/MagneticButton";
-import { Marquee } from "@/components/Marquee";
-import { StaggerGrid } from "@/components/StaggerGrid";
-import { GlassCard3D } from "@/components/GlassCard3D";
 import { TestimonialCard } from "@/components/TestimonialCard";
-import { CTABanner } from "@/components/CTABanner";
 import { SectionWrapper } from "@/components/SectionWrapper";
-import { GlobeHero } from "@/components/GlobeHero";
-
-interface Stat {
-  label: string;
-  value: number;
-  suffix: string | null;
-}
+import { CaseStudyCard } from "@/components/CaseStudyCard";
+import { ProofStrip, type ProofStatData } from "@/components/ProofStat";
 
 interface Testimonial {
   quote: string;
@@ -30,220 +16,255 @@ interface Testimonial {
 
 interface HomeClientProps {
   calendlyUrl: string;
-  heroTagline: string;
-  heroSubtitle: string;
-  trustStats: Stat[];
-  resultStats: Stat[];
+  proofStats: ProofStatData[];
   testimonials: Testimonial[];
-  marqueeItems: string[];
-  cta: { headline: string; subtext: string; buttonText: string; buttonHref: string } | null;
 }
 
-const stagger = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.15 } },
-};
+/**
+ * Structure follows the Trust & Authority + Conversion pattern:
+ * who -> proof -> cost -> offer -> process -> hire me.
+ *
+ * Three CTA placements is deliberate. A visitor already sold stops at the
+ * hero, one who needs proof converts after the case studies, one who needs
+ * process converts after section 6.
+ */
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 24, filter: "blur(4px)" },
-  show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } },
-};
+const CASE_STUDIES = [
+  {
+    href: "/work/peaceway",
+    tag: "Health",
+    claim:
+      "A Lagos pharmacy with no digital presence now takes orders inside Telegram, end to end.",
+    support:
+      "Live at peacewayonline.com. Customer, staff and supplier portals. A bot that carries a real order from search to confirmation.",
+    image: "/proof/peaceway/00-homepage-hero.webp",
+    imageAlt:
+      "Peaceway Online homepage. Headline reads YOUR LAGOS PHARMACY IS NOW ONLINE, with buttons to order on Telegram or check product availability.",
+  },
+  {
+    href: "/work/alpha-plays",
+    tag: "Community and markets",
+    claim: "8,874 people get my market calls. Individual posts pull 1.2K to 2.6K views each.",
+    support:
+      "Every result posted next to the original call that produced it. Entry, stop loss, target, outcome.",
+    image: "/proof/quivira/result-eth-setup-85pct.webp",
+    imageAlt:
+      "Telegram channel showing an ETH buy call with entry, stop loss and take profit, next to the resulting position card.",
+  },
+  {
+    href: "/work/content-engine",
+    tag: "Technical",
+    claim: "One video pulled 128,000 views and 1,700 comments.",
+    support:
+      "Every comment was a lead I answered by hand. Plus the pipeline behind it: 13 deployed systems, a lead engine that scored 200 prospects, 25 published articles.",
+    image: "/proof/technical/admin-leads-blurred.webp",
+    imageAlt:
+      "Admin lead pipeline showing 200 of 200 leads scored, with target, score, matched keywords and match reason columns. Identities blurred.",
+  },
+];
 
-export function HomeClient({
-  calendlyUrl,
-  heroTagline,
-  heroSubtitle,
-  trustStats,
-  resultStats,
-  testimonials,
-  marqueeItems,
-  cta,
-}: HomeClientProps) {
+export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClientProps) {
   return (
     <main>
-      {/* ───────── HERO ───────── */}
-      <GlobeHero>
-        <div className="mx-auto max-w-[1200px] px-6 text-center pt-16">
-          <motion.div variants={stagger} initial="hidden" animate="show" className="flex flex-col items-center gap-6">
-            <motion.div variants={fadeUp} className="text-lg font-medium tracking-wide text-accent md:text-xl">
-              <TextReveal as="p" mode="words">
-                {heroTagline}
-              </TextReveal>
-            </motion.div>
+      {/* ───────── 1. HERO ───────── */}
+      <section className="px-6 pt-28 pb-16 md:pt-36 md:pb-24">
+        <div className="mx-auto max-w-[900px] text-center">
+          <p className="text-sm font-medium uppercase tracking-widest text-accent">
+            BigQuiv Digitals
+          </p>
 
-            <motion.div variants={fadeUp}>
-              <h1 className="text-4xl font-extrabold leading-[1.08] tracking-tight text-text-primary sm:text-5xl md:text-7xl">
-                Build. <KeywordRotator />. Dominate.
-              </h1>
-            </motion.div>
+          <h1 className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-text-primary sm:text-5xl md:text-6xl">
+            Your brand is not invisible. It is scattered.
+          </h1>
 
-            <motion.div variants={fadeUp} className="max-w-xl text-lg leading-relaxed text-text-secondary whitespace-pre-line">
-              {heroSubtitle}
-            </motion.div>
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-text-secondary">
+            A site nobody reads, content nobody saves, and a community nobody owns. I build
+            all three as one system, so the attention you already have turns into revenue you
+            can count.
+          </p>
 
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
-              <MagneticButton href="/services">Explore Services</MagneticButton>
-              <MagneticButton href={calendlyUrl} variant="secondary">
-                Book a Call
-              </MagneticButton>
-            </motion.div>
-          </motion.div>
+          <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <MagneticButton href={calendlyUrl}>Book a call</MagneticButton>
+            <MagneticButton href="#work" variant="secondary">
+              See the work
+            </MagneticButton>
+          </div>
         </div>
-      </GlobeHero>
+      </section>
 
-      {/* ───────── TRUST BAR ───────── */}
+      {/* ───────── 2. PROOF STRIP ─────────
+          Renders only stats carrying an evidenceRef. */}
+      <ProofStrip stats={proofStats} />
+
+      {/* ───────── 3. CASE STUDIES ───────── */}
+      <SectionWrapper className="py-16 md:py-24" id="work">
+        <div className="mx-auto max-w-[1200px] px-6">
+          <h2 className="text-center text-3xl font-bold tracking-tight text-text-primary md:text-5xl md:leading-tight">
+            Three builds. All live. Go and check.
+          </h2>
+
+          <div className="mt-14 grid gap-8 md:grid-cols-3">
+            {CASE_STUDIES.map((cs) => (
+              <CaseStudyCard key={cs.href} {...cs} />
+            ))}
+          </div>
+        </div>
+      </SectionWrapper>
+
+      {/* ───────── 4. THE PROBLEM ───────── */}
       <SectionWrapper className="py-16 md:py-24">
-        <div className="mx-auto grid max-w-[1200px] grid-cols-2 gap-6 px-6 md:grid-cols-4">
-          {trustStats.map((stat) => (
-            <div key={stat.label} className="rounded-xl bg-bg-secondary p-6 text-center">
-              <div className="text-4xl font-extrabold text-text-primary md:text-[56px] md:leading-none" style={{ textShadow: "0 0 20px rgba(230, 57, 70, 0.2)" }}>
-                <CountUp target={stat.value} suffix={stat.suffix || ""} />
-              </div>
-              <div className="mt-2 text-sm font-medium tracking-widest text-text-secondary uppercase">{stat.label}</div>
+        <div className="mx-auto max-w-[760px] px-6">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+            You do not need five freelancers.
+          </h2>
+
+          <p className="mt-6 text-lg leading-relaxed text-text-secondary">
+            You have a designer who does not talk to the writer. A developer who has never
+            seen the content plan. Five invoices, five timelines, and nobody who owns whether
+            any of it made money.
+          </p>
+
+          <p className="mt-4 text-lg leading-relaxed text-text-secondary">
+            That is not a talent problem. That is a systems problem, and it is the reason good
+            brands stay invisible.
+          </p>
+        </div>
+      </SectionWrapper>
+
+      {/* ───────── 5. THE OFFER ───────── */}
+      <SectionWrapper className="py-16 md:py-24">
+        <div className="mx-auto max-w-[820px] px-6">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-5xl">
+            The Growth Operating System
+          </h2>
+
+          <p className="mt-4 text-lg text-text-secondary">
+            One system that covers the whole path from attention to revenue.
+          </p>
+
+          <ul className="mt-10 space-y-6">
+            {[
+              "A site that answers a buyer's four questions in five minutes, so you stop losing people who had already decided to hire you.",
+              "Video and content produced on a system, so your output survives the months you are too busy to feel creative.",
+              "Telegram and WhatsApp infrastructure, because that is where Nigerian buyers actually transact. The Peaceway bot takes real orders end to end, and I can show you it running.",
+              "Strategy built on who is already buying in your market, not on a persona document nobody opens twice.",
+              "A report every sprint, so you can fire me the week the numbers stop moving instead of finding out in month six.",
+            ].map((line) => (
+              <li
+                key={line}
+                className="border-l-2 border-accent pl-5 text-base leading-relaxed text-text-secondary md:text-lg"
+              >
+                {line}
+              </li>
+            ))}
+          </ul>
+
+          <p className="mt-10 text-base leading-relaxed text-text-primary">
+            Priced by scope, not from a menu. Tell me what you are trying to move and I will
+            tell you what it takes. If the honest answer is that you do not need me yet, you
+            will get that answer on the call.
+          </p>
+
+          <div className="mt-8">
+            <MagneticButton href={calendlyUrl}>Book a call</MagneticButton>
+            <p className="mt-4 text-sm text-text-muted">
+              Thirty minutes. No deck, no pitch. You leave with the plan whether you hire me
+              or not.
+            </p>
+          </div>
+        </div>
+      </SectionWrapper>
+
+      {/* ───────── 6. HOW THE WORK RUNS ───────── */}
+      <SectionWrapper className="py-16 md:py-24">
+        <div className="mx-auto max-w-[1000px] px-6">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+            You see progress in seven days, not seven weeks.
+          </h2>
+
+          <ol className="mt-12 grid gap-8 md:grid-cols-2">
+            {[
+              {
+                n: "01",
+                t: "Scope call",
+                d: "Thirty minutes. What you sell, who buys it, where the drop-off is. You leave with the plan whether or not you hire me.",
+              },
+              {
+                n: "02",
+                t: "Written scope",
+                d: "Deliverables, timeline, and what you should expect in the first sprint. No surprises later.",
+              },
+              {
+                n: "03",
+                t: "Seven-day sprint",
+                d: "Payment starts the work. At the end of it you get a progress report with what shipped and what it moved.",
+              },
+              {
+                n: "04",
+                t: "Build out",
+                d: "We keep going in sprints, each one reported, until the system runs without me standing over it.",
+              },
+            ].map((step) => (
+              <li key={step.n} className="rounded-xl border border-border bg-bg-secondary p-6">
+                <span className="text-sm font-bold tabular-nums text-accent">{step.n}</span>
+                <h3 className="mt-3 text-lg font-bold text-text-primary">{step.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-text-secondary">{step.d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </SectionWrapper>
+
+      {/* ───────── TESTIMONIALS ─────────
+          Below the case studies on purpose. Real, but role-attributed, so they
+          support the proof rather than carry it. */}
+      {testimonials.length > 0 && (
+        <SectionWrapper className="py-16 md:py-24">
+          <div className="mx-auto max-w-[1200px] px-6">
+            <h2 className="text-center text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+              What people say
+            </h2>
+            <div className="mt-14 grid gap-8 md:grid-cols-3">
+              {testimonials.map((t, i) => (
+                // Pass images explicitly. Spreading the row would send the raw
+                // `images` column (a JSON string or null) and null defeats the
+                // component's `images = []` default.
+                <TestimonialCard
+                  key={i}
+                  quote={t.quote}
+                  attribution={t.attribution}
+                  images={t.allImages}
+                  rating={t.rating}
+                  avatar={t.avatar}
+                />
+              ))}
             </div>
-          ))}
-        </div>
-      </SectionWrapper>
-
-      {/* ───────── WHAT I DO ───────── */}
-      <SectionWrapper className="py-16 md:py-24">
-        <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-text-primary md:text-5xl md:leading-tight">
-            Three Pillars. One System.
-          </h2>
-
-          <StaggerGrid className="mt-14 grid gap-8 md:grid-cols-3" direction="up" staggerDelay={0.15}>
-            <GlassCard3D>
-              <Handshake className="mb-4 h-8 w-8 text-accent" />
-              <h3 className="text-xl font-bold text-text-primary">Consulting &amp; Advisory</h3>
-              <p className="mt-3 text-text-secondary leading-relaxed">
-                Brand strategy, KOL networking, community management, and launch
-                campaigns tailored to Web3 projects and personal brands.
-              </p>
-              <a href="/services" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-hover transition-colors">
-                Learn more <ArrowRight className="h-4 w-4" />
-              </a>
-            </GlassCard3D>
-
-            <GlassCard3D>
-              <GraduationCap className="mb-4 h-8 w-8 text-accent" />
-              <h3 className="text-xl font-bold text-text-primary">Education</h3>
-              <p className="mt-3 text-text-secondary leading-relaxed">
-                Structured courses on trading, airdrop farming, KOL growth, and
-                crypto development. Real education that produces builders.
-              </p>
-              <a href="/services#education" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-hover transition-colors">
-                See courses <ArrowRight className="h-4 w-4" />
-              </a>
-            </GlassCard3D>
-
-            <GlassCard3D>
-              <Cpu className="mb-4 h-8 w-8 text-accent" />
-              <h3 className="text-xl font-bold text-text-primary">AI Products</h3>
-              <p className="mt-3 text-text-secondary leading-relaxed">
-                SignalOS for automated trading signals. ContentBrain for AI-powered
-                content intelligence. Systems that work while you sleep.
-              </p>
-              <a href="/services#ai-products" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-hover transition-colors">
-                Explore products <ArrowRight className="h-4 w-4" />
-              </a>
-            </GlassCard3D>
-          </StaggerGrid>
-        </div>
-      </SectionWrapper>
-
-      {/* ───────── MARQUEE BAND ───────── */}
-      <Marquee
-        items={marqueeItems}
-        speed={25}
-        className="py-8 text-2xl font-bold tracking-widest text-text-muted/30 md:text-4xl"
-      />
-
-      {/* ───────── FEATURED PRODUCTS ───────── */}
-      <SectionWrapper className="py-16 md:py-24">
-        <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-text-primary md:text-5xl md:leading-tight">
-            Products That Work While You Sleep
-          </h2>
-
-          <StaggerGrid className="mt-14 grid gap-8 md:grid-cols-3" direction="scale" staggerDelay={0.12}>
-            <GlassCard3D>
-              <h3 className="text-xl font-bold text-text-primary">SignalOS</h3>
-              <p className="mt-3 text-text-secondary leading-relaxed">
-                Automated crypto and forex signals with technical analysis, risk
-                management levels, and real-time Telegram delivery.
-              </p>
-              <p className="mt-4 text-2xl font-extrabold text-accent">$97/mo</p>
-              <a href="/services#ai-products" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-hover transition-colors">
-                Get started <ArrowRight className="h-4 w-4" />
-              </a>
-            </GlassCard3D>
-
-            <GlassCard3D>
-              <h3 className="text-xl font-bold text-text-primary">ContentBrain</h3>
-              <p className="mt-3 text-text-secondary leading-relaxed">
-                AI content intelligence. Competitor analysis, trend scouting, hook
-                generation, and full content calendars on autopilot.
-              </p>
-              <p className="mt-4 text-2xl font-extrabold text-accent">$47/mo</p>
-              <a href="/services#ai-products" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-hover transition-colors">
-                Get started <ArrowRight className="h-4 w-4" />
-              </a>
-            </GlassCard3D>
-
-            <GlassCard3D>
-              <h3 className="text-xl font-bold text-text-primary">Quivira OS Bundle</h3>
-              <p className="mt-3 text-text-secondary leading-relaxed">
-                SignalOS + ContentBrain + priority support. The full operating
-                system for builders who want everything in one layer.
-              </p>
-              <p className="mt-4 text-2xl font-extrabold text-accent">$297/mo</p>
-              <a href="/services#ai-products" className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-accent-hover transition-colors">
-                Get the bundle <ArrowRight className="h-4 w-4" />
-              </a>
-            </GlassCard3D>
-          </StaggerGrid>
-        </div>
-      </SectionWrapper>
-
-      {/* ───────── RESULTS / SOCIAL PROOF ───────── */}
-      <SectionWrapper className="py-16 md:py-24">
-        <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-text-primary md:text-5xl md:leading-tight">
-            Proof. Not Promises.
-          </h2>
-
-          <div className="mt-14 grid grid-cols-2 gap-6 md:grid-cols-4">
-            {resultStats.map((stat) => (
-              <div key={stat.label} className="rounded-xl bg-bg-secondary p-6 text-center">
-                <div className="text-4xl font-extrabold text-text-primary md:text-[56px] md:leading-none" style={{ textShadow: "0 0 20px rgba(230, 57, 70, 0.2)" }}>
-                  <CountUp target={stat.value} suffix={stat.suffix || ""} />
-                </div>
-                <div className="mt-2 text-sm font-medium tracking-widest text-text-secondary uppercase">{stat.label}</div>
-              </div>
-            ))}
           </div>
-
-          <h3 className="mt-16 mb-10 text-center text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
-            What People Say
-          </h3>
-          <div className="grid gap-8 md:grid-cols-3">
-            {testimonials.map((t) => (
-              <TestimonialCard key={t.attribution} quote={t.quote} attribution={t.attribution} images={t.allImages} rating={t.rating} avatar={t.avatar} />
-            ))}
-          </div>
-        </div>
-      </SectionWrapper>
-
-      {/* ───────── CTA BANNER ───────── */}
-      {cta && (
-        <CTABanner
-          headline={cta.headline}
-          subtext={cta.subtext}
-          buttonText={cta.buttonText}
-          buttonHref={cta.buttonHref}
-        />
+        </SectionWrapper>
       )}
+
+      {/* ───────── 7. FINAL CTA ───────── */}
+      <SectionWrapper className="py-20 md:py-28">
+        <div className="mx-auto max-w-[760px] px-6 text-center">
+          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-5xl">
+            Tell me what you are building.
+          </h2>
+
+          <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
+            One call. Thirty minutes. You leave with a plan you can execute yourself if you
+            want to.
+          </p>
+
+          <div className="mt-10">
+            <MagneticButton href={calendlyUrl}>Book a call</MagneticButton>
+          </div>
+
+          <p className="mx-auto mt-6 max-w-xl text-sm text-text-muted">
+            There is no price on this page because there is no standard job. Tell me the scope
+            on the call and you get the number on the call.
+          </p>
+        </div>
+      </SectionWrapper>
     </main>
   );
 }

@@ -31,7 +31,7 @@ export function TextReveal({
         <motion.span
           key={i}
           className="inline-block"
-          initial={{ y: "100%", opacity: 0 }}
+          initial={{ y: "0%", opacity: 1 }}
           animate={isInView ? { y: 0, opacity: 1 } : {}}
           transition={{
             duration: 0.5,

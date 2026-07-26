@@ -16,11 +16,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bigquivdigitals.com"),
-  title: "Quivira | Build. Trade. Dominate.",
-  description: "Automated trading signals. AI content intelligence. Real education that produces builders. One brand. Zero noise.",
+  title: "BigQuiv Digitals | Growth systems that turn attention into revenue",
+  description: "Website, AI content, community infrastructure, strategy and reporting, built as one system. Three live builds you can go and check.",
   openGraph: {
-    title: "Quivira | Build. Trade. Dominate.",
-    description: "Automated trading signals. AI content intelligence. Real education that produces builders.",
+    title: "BigQuiv Digitals | Growth systems that turn attention into revenue",
+    description: "Website, AI content, community infrastructure, strategy and reporting, built as one system. Three live builds you can go and check.",
     type: "website",
     url: "https://bigquivdigitals.com",
     images: [
@@ -28,14 +28,14 @@ export const metadata: Metadata = {
         url: "/og-image.webp",
         width: 1456,
         height: 816,
-        alt: "Quivira - Build. Trade. Dominate.",
+        alt: "BigQuiv Digitals - Growth systems that turn attention into revenue",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Quivira | Build. Trade. Dominate.",
-    description: "Automated trading signals. AI content intelligence. Real education that produces builders.",
+    title: "BigQuiv Digitals | Growth systems that turn attention into revenue",
+    description: "Website, AI content, community infrastructure, strategy and reporting, built as one system. Three live builds you can go and check.",
     images: ["/og-image.webp"],
   },
   icons: {

@@ -29,11 +29,15 @@ body {
   color: white;
 }
 
-/* Hide default cursor on desktop */
-@media (min-width: 769px) {
-  * {
-    cursor: none !important;
-  }
+/* Hide the system cursor ONLY once CustomCursor has actually mounted and is
+   tracking the pointer. Previously this was an unconditional
+   `@media (min-width: 769px) { * { cursor: none !important } }`, which meant a
+   visitor with blocked JS, a hydration error, or a failed mount had no pointer
+   at all and could not tell what was clickable. The class is added by
+   components/CustomCursor.tsx and removed on unmount. */
+html.custom-cursor-active,
+html.custom-cursor-active * {
+  cursor: none !important;
 }
 
 /* Marquee animation */
@@ -62,5 +66,33 @@ html {
   }
   to {
     transform: scaleX(1);
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────────
+   The site runs eleven framer-motion components. Anyone who has asked their OS
+   to reduce motion previously got all of it anyway. This neutralises transitions
+   and animations globally, and framer-motion's own `initial`/`animate` values
+   are handled per component via useReducedMotion().
+
+   `!important` is deliberate here: it must beat inline styles that
+   framer-motion writes onto elements. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Decorative motion that carries no information is removed outright. */
+  .animate-marquee {
+    animation: none !important;
   }
 }

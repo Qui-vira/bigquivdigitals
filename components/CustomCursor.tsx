@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { motion, useSpring } from "framer-motion";
+import { motion, useSpring, useReducedMotion } from "framer-motion";
 
 export function CustomCursor() {
   const [visible, setVisible] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const springConfig = { damping: 25, stiffness: 250 };
   const cursorX = useSpring(0, springConfig);
@@ -18,6 +19,14 @@ export function CustomCursor() {
     // Only on desktop
     if (window.matchMedia("(max-width: 768px)").matches) return;
     if ("ontouchstart" in window) return;
+    // A spring-following cursor is exactly the kind of motion people disable.
+    // Leave the system cursor alone for them.
+    if (reduceMotion) return;
+
+    // Hide the system cursor only now that we know this component is mounted
+    // and about to take over. globals.css scopes `cursor: none` to this class,
+    // so a failed mount leaves the visitor with a normal pointer.
+    document.documentElement.classList.add("custom-cursor-active");
 
     const onMouseMove = (e: MouseEvent) => {
       cursorX.set(e.clientX);
@@ -45,11 +54,12 @@ export function CustomCursor() {
     document.addEventListener("mouseout", onOut, { passive: true });
 
     return () => {
+      document.documentElement.classList.remove("custom-cursor-active");
       window.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseover", onOver);
       document.removeEventListener("mouseout", onOut);
     };
-  }, [cursorX, cursorY, visible]);
+  }, [cursorX, cursorY, visible, reduceMotion]);
 
   if (!visible) return null;
 

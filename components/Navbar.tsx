@@ -9,10 +9,9 @@ import { Button } from "./Button";
 
 const links = [
   { href: "/services", label: "Services" },
-  { href: "/pricing", label: "Pricing" },
   { href: "/articles", label: "Articles" },
   { href: "/about", label: "About" },
-  { href: "/portfolio", label: "Portfolio" },
+  { href: "/#work", label: "Work" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -71,7 +70,7 @@ export function Navbar() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
           >
-            Quivira
+            BigQuiv Digitals
           </motion.span>
         </Link>
 

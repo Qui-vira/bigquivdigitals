@@ -18,8 +18,11 @@ export function SectionWrapper({ children, className = "", delay = 0, id }: Sect
     <motion.div
       ref={ref}
       id={id}
-      initial={{ opacity: 0, y: 24, filter: "blur(4px)" }}
-      animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+      // Never start at opacity 0. If the observer does not fire — blocked JS,
+      // hydration error, a tab that never composites — the content must still
+      // be readable. Motion is a lift, not a gate.
+      initial={{ opacity: 1, y: 12 }}
+      animate={isInView ? { y: 0 } : {}}
       transition={{
         duration: 0.6,
         delay,
