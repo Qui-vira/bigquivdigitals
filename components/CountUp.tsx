@@ -22,49 +22,56 @@ export function CountUp({
   const isInView = useInView(ref, { once: true, margin: "-20% 0px" });
   const reduceMotion = useReducedMotion();
 
-  // Start at the real number, not at zero.
+  // The number is the point of this site. It renders correctly by default and
+  // the count-up is decoration layered on top. Two bugs have already shipped
+  // here, both showing visitors "0+ COMMUNITY MEMBERS", so the invariant is:
   //
-  // This previously initialised to 0 and only reached `target` once
-  // IntersectionObserver fired. Anything that stopped the observer firing left
-  // a real visitor looking at "0+ COMMUNITY MEMBERS": blocked JavaScript, a
-  // hydration error, a tab that never composited, a full-page screenshot. On a
-  // site whose whole argument is that the numbers are real, rendering zero is
-  // the worst available failure mode.
+  //   whatever goes wrong, this component ends up displaying `target`.
   //
-  // Now the correct value is what renders by default. The count-up is
-  // progressive enhancement on top: if the animation never runs, the number is
-  // still right.
+  // Three guards enforce that.
   const [count, setCount] = useState(target);
-  const [hasAnimated, setHasAnimated] = useState(false);
+
+  // 1. A ref, not state, for the has-run flag. State would change the effect's
+  //    dependencies, re-running it and firing the cleanup that cancels the
+  //    animation frame mid-flight. That is the bug that shipped: the value
+  //    dropped to 0, the rAF was cancelled by its own re-render, and nothing
+  //    ever climbed back.
+  const startedRef = useRef(false);
 
   useEffect(() => {
-    if (reduceMotion) return;
-    if (!isInView || hasAnimated) return;
+    if (reduceMotion || !isInView || startedRef.current) return;
+    startedRef.current = true;
 
-    setHasAnimated(true);
     let frame = 0;
     const startTime = performance.now();
 
     const step = (now: number) => {
       const progress = Math.min((now - startTime) / duration, 1);
-      // ease out cubic
-      const eased = 1 - Math.pow(1 - progress, 3);
+      const eased = 1 - Math.pow(1 - progress, 3); // ease out cubic
       setCount(Math.round(eased * target));
-
       if (progress < 1) {
         frame = requestAnimationFrame(step);
       } else {
-        // Never leave a rounding artefact on screen.
         setCount(target);
       }
     };
 
-    // Drop to zero only at the moment we know we can animate back up.
     setCount(0);
     frame = requestAnimationFrame(step);
 
-    return () => cancelAnimationFrame(frame);
-  }, [isInView, target, duration, reduceMotion, hasAnimated]);
+    // 2. A wall-clock backstop. requestAnimationFrame stalls in a background
+    //    tab, and a stalled animation would otherwise leave 0 on screen.
+    const failsafe = setTimeout(() => setCount(target), duration + 400);
+
+    // 3. Cleanup restores the true value rather than abandoning whatever frame
+    //    the animation happened to reach.
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(failsafe);
+      setCount(target);
+    };
+    // startedRef is a ref on purpose: it must not appear here.
+  }, [isInView, target, duration, reduceMotion]);
 
   return (
     <span ref={ref} className={className}>
