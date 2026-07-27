@@ -15,44 +15,44 @@ const INCLUDES = [
   },
   {
     t: "AI content production",
-    d: "Video, hooks, and campaign angles produced on a repeatable system. I run the same engine on my own accounts. One post on it did a million views.",
+    d: "Video, hooks and campaign angles produced on a repeatable system. I run the same engine on my own accounts. One post on it did a million views.",
   },
   {
     t: "Community and bot infrastructure",
-    d: "Telegram and WhatsApp are where Nigerian buyers actually transact. I build the bots that take orders, capture emails, and route questions to a human when the answer matters.",
+    d: "Telegram and WhatsApp are where Nigerian buyers actually transact. I build the bots that take orders, capture emails, and hand a question to a human when the answer matters.",
   },
   {
     t: "Growth strategy and market intelligence",
-    d: "Who to target, what they respond to, and where the demand already exists. I run a lead engine that scraped, scored and match-explained 200 prospects, each with the reason it matched. That is the same machinery pointed at your market.",
+    d: "Who to target and what they respond to. I run a lead engine that scraped, scored and match-explained 200 prospects, each with the reason it matched. That is the same machinery pointed at your market.",
   },
   {
     t: "Reporting",
-    d: "What shipped, what it moved, what happens next. Every sprint, in writing. Which means you are never guessing whether this is working, and you can end it the moment it is not.",
+    d: "What shipped, what it moved, what happens next. Every sprint, in writing. You are never guessing whether this is working, and you can end it the moment it is not.",
   },
 ];
 
 const ENTRY_POINTS = [
   {
     t: "Health brands",
-    d: "Pharmacies, clinics, labs and diagnostic centres. Trust first, then a customer journey that ends in an order.",
+    d: "Pharmacies, clinics, labs and diagnostic centres. Trust first, then a journey that ends in an order.",
     href: "/work/peaceway",
     linkText: "See the Peaceway build",
   },
   {
     t: "Crypto exchanges entering Africa",
-    d: "Acquisition, community activation, local reporting. Not KOL posts.",
+    d: "Acquisition, community activation and local reporting, rather than a KOL posting a banner.",
     href: "/work/alpha-plays",
     linkText: "See the community build",
   },
   {
     t: "AI, fintech and Web3 launches",
-    d: "Video, landing page, and a CTA system that captures the attention your launch generates.",
+    d: "Video, landing page and a CTA system that catches the attention your launch generates.",
     href: "/work/content-engine",
     linkText: "See the content build",
   },
   {
     t: "Founders with scattered growth",
-    d: "A site that sells, content that compounds, and one person accountable for both.",
+    d: "A site that sells, content that compounds, one person accountable for both.",
     href: "/work/content-engine",
     linkText: "See the content build",
   },
@@ -75,8 +75,8 @@ export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
           </p>
 
           <p className="mt-4 text-lg leading-relaxed text-text-secondary">
-            That is the real cost of buying growth in pieces. Not the invoices. The six months
-            you spend before anyone admits the pieces were never going to add up.
+            That is the real cost of buying growth in pieces, and it is not the invoices. It is
+            the six months you spend before anyone admits the pieces were never going to add up.
           </p>
 
           <p className="mt-6 text-lg font-semibold text-text-primary">
@@ -113,8 +113,8 @@ export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
           </h2>
 
           <p className="mt-4 max-w-2xl text-lg text-text-secondary">
-            Not everyone needs the whole system on day one. These are the common entry points,
-            and each one leads back into the same engine.
+            Nobody needs the whole system on day one. These are the common front doors, and
+            each one leads into the same engine.
           </p>
 
           <div className="mt-12 grid gap-6 md:grid-cols-2">
@@ -147,8 +147,7 @@ export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
             <MagneticButton href={calendlyUrl}>Book a call</MagneticButton>
           </div>
           <p className="mx-auto mt-6 max-w-xl text-sm text-text-muted">
-            Priced by scope, not from a menu. If the honest answer is that you do not need me
-            yet, you will get that answer on the call.
+            I quote by scope. If you do not need me yet, you will hear that on the call.
           </p>
         </div>
       </SectionWrapper>

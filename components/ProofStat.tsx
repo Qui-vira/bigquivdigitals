@@ -60,7 +60,7 @@ export function ProofStrip({ stats }: { stats: ProofStatData[] }) {
           id="proof-strip-heading"
           className="text-center text-sm font-medium uppercase tracking-widest text-text-muted"
         >
-          Receipts, not adjectives.
+          Receipts.
         </h2>
 
         <div className="mt-8 grid grid-cols-2 gap-6 md:grid-cols-4">
@@ -70,7 +70,7 @@ export function ProofStrip({ stats }: { stats: ProofStatData[] }) {
         </div>
 
         <p className="mt-8 text-center text-sm text-text-muted">
-          Every number on this site has a screenshot behind it. Ask me for any of them.
+          Every number here has a screenshot behind it. Ask me for any of them.
         </p>
       </div>
     </section>
