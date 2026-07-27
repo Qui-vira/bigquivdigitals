@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, useSpring, useReducedMotion } from "framer-motion";
 
 export function CustomCursor() {
@@ -14,6 +14,7 @@ export function CustomCursor() {
 
   const onEnter = useCallback(() => setHovering(true), []);
   const onLeave = useCallback(() => setHovering(false), []);
+  const placed = useRef(false);
 
   useEffect(() => {
     // Only on desktop
@@ -29,9 +30,21 @@ export function CustomCursor() {
     document.documentElement.classList.add("custom-cursor-active");
 
     const onMouseMove = (e: MouseEvent) => {
+      // Both springs are created at 0, so set() on the first move makes them
+      // ANIMATE from the top-left corner to the pointer. That is the ringed dot
+      // parked at the top-left edge: the cursor visibly flying in from 0,0 on
+      // the first movement, and sitting there in any screenshot taken during
+      // it. jump() places them without animating, so the first paint is already
+      // under the pointer. Subsequent moves spring normally, as intended.
+      if (!placed.current) {
+        placed.current = true;
+        cursorX.jump(e.clientX);
+        cursorY.jump(e.clientY);
+        setVisible(true);
+        return;
+      }
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
-      if (!visible) setVisible(true);
     };
 
     window.addEventListener("mousemove", onMouseMove, { passive: true });
@@ -59,7 +72,10 @@ export function CustomCursor() {
       document.removeEventListener("mouseover", onOver);
       document.removeEventListener("mouseout", onOut);
     };
-  }, [cursorX, cursorY, visible, reduceMotion]);
+    // `visible` is deliberately not a dependency: it was, and flipping it tore
+    // down and re-registered every listener one frame after the first move.
+    // The ref carries that state now.
+  }, [cursorX, cursorY, reduceMotion]);
 
   if (!visible) return null;
 

@@ -78,31 +78,38 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           skill -> proof -> visibility -> monetization) and it is what the
           consulting delivers, so one headline can carry both funnels honestly. */}
       <HeroReveal
-        kicker="BigQuiv Digitals"
         headline="Skill was never your problem. Your proof is."
+        supportingShort="You can do the work. Proof, visibility and a path to the buyer are what's missing."
         supporting="You can do the work. What is missing is proof a stranger can check, visibility with the people who buy, and a path that ends at a decision. I built that system for myself, I run it for clients, and I am teaching it."
       >
-        {/* Primary action stays the course waitlist. "Book a call" now also sits
-            here as a quiet secondary: the headline speaks to a buyer as much as
-            a learner, and previously the hero gave that reader nowhere to go
-            but a scroll. It still leads the offer section and /services. */}
+        {/* Four blocks at narrow widths, down from eight: headline, one
+            supporting line, the form, one link row. The waitlist microcopy
+            folded into helper text under the form, where it reads as part of
+            the control rather than as another paragraph competing with it.
+
+            Primary action stays the course waitlist. "hire me to build it" sits
+            beside "See the work" because the headline speaks to a buyer as much
+            as a learner. It still leads the offer section and /services. */}
         <div className="w-full">
-          <p className="mb-3 text-sm text-text-secondary">
-            The Zero-to-Opportunity System opens soon. Put your name down and you hear first.
-          </p>
           <WaitlistForm source="hero" compact />
-          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
+          <p className="mt-2 text-xs text-text-muted">
+            The Zero-to-Opportunity System opens soon. You hear first.
+          </p>
+          <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-medium">
             <a
               href="#work"
               className="text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
             >
               See the work
             </a>
+            <span aria-hidden="true" className="text-text-muted">
+              &middot;
+            </span>
             <a
               href={calendlyUrl}
               className="text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
             >
-              Or hire me to build it
+              hire me to build it
             </a>
           </div>
         </div>

@@ -18,20 +18,42 @@ import type { Stats } from "./liquid-glass";
  * query string are the numbers to bake into DEFAULT_TUNING.
  */
 
-/** The query string cannot change without a navigation, so nothing to subscribe to. */
-const noSubscribe = () => () => {};
+/**
+ * Module-level store, so the client's FIRST snapshot is always `false` and
+ * matches getServerSnapshot.
+ *
+ * Reading location.search directly from getSnapshot looks equivalent but is
+ * not: on a ?probe=1 load it returns true on the client while the server
+ * returned false, and useSyncExternalStore treats that as a hydration error.
+ * The real value is read after commit and published through the subscription,
+ * which is the mechanism this hook exists for.
+ */
+let probeOn = false;
+let probeRead = false;
+const probeListeners = new Set<() => void>();
+
+function readProbe() {
+  if (probeRead) return;
+  probeRead = true;
+  const next =
+    process.env.NODE_ENV !== "production" &&
+    new URLSearchParams(window.location.search).has("probe");
+  if (next !== probeOn) {
+    probeOn = next;
+    for (const l of probeListeners) l();
+  }
+}
+
+function subscribeProbe(cb: () => void) {
+  probeListeners.add(cb);
+  queueMicrotask(readProbe);
+  return () => {
+    probeListeners.delete(cb);
+  };
+}
 
 export function useProbeEnabled() {
-  // useSyncExternalStore rather than an effect: the server snapshot is false, so
-  // the hydration render matches, and the real value lands without a cascading
-  // setState in an effect body.
-  return useSyncExternalStore(
-    noSubscribe,
-    () =>
-      process.env.NODE_ENV !== "production" &&
-      new URLSearchParams(window.location.search).has("probe"),
-    () => false
-  );
+  return useSyncExternalStore(subscribeProbe, () => probeOn, () => false);
 }
 
 /** Reads k / amp / lens / chroma / band overrides out of the query string. */
