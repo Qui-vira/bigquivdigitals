@@ -1,4 +1,3 @@
-import { CountUp } from "@/components/CountUp";
 
 export interface ProofStatData {
   label: string;
@@ -18,6 +17,13 @@ export interface ProofStatData {
  *
  * If a number belongs on the site, someone has to be able to point at the
  * screenshot. If they cannot, the number does not belong on the site.
+ *
+ * The number renders as static text. There was a count-up animation here; it
+ * shipped "0+ COMMUNITY MEMBERS" to real visitors twice, on a page whose whole
+ * argument is that the numbers are real. A two-second flourish is not worth a
+ * failure mode that attacks the site's central claim, so the animation is gone
+ * rather than fixed a third time. There is now no code path that can render
+ * anything other than the true value.
  */
 export function ProofStat({ label, value, suffix, evidenceRef }: ProofStatData) {
   if (!evidenceRef) return null;
@@ -29,7 +35,8 @@ export function ProofStat({ label, value, suffix, evidenceRef }: ProofStatData) 
         className="text-4xl font-extrabold tabular-nums text-text-primary md:text-[56px] md:leading-none"
         style={{ textShadow: "0 0 20px rgba(230, 57, 70, 0.2)" }}
       >
-        <CountUp target={value} suffix={suffix || ""} />
+        {value.toLocaleString()}
+        {suffix}
       </div>
       <div className="mt-2 text-sm font-medium uppercase tracking-widest text-text-secondary">
         {label}
