@@ -69,28 +69,42 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
   return (
     <main>
       {/* ───────── 1. HERO ─────────
-          Copy is unchanged from the humanizer pass. Only the container changed:
-          the centred text block became a full-viewport portrait reveal, with the
-          headline moved off-centre so it never sits over the subject's face. */}
+          The previous headline ("You are posting and nobody is buying") named a
+          business owner's pain while the primary CTA sold a course to people
+          starting from zero. Two different readers, and only one was addressed.
+
+          This names the pain both share: the distance between what you can do
+          and what you are paid for. That is the course's spine (confusion ->
+          skill -> proof -> visibility -> monetization) and it is what the
+          consulting delivers, so one headline can carry both funnels honestly. */}
       <HeroReveal
         kicker="BigQuiv Digitals"
-        headline="You are posting and nobody is buying."
-        supporting="The content goes out. People watch. Then it stops there, because there is nothing behind the post to catch anyone. I build the part that catches them."
+        headline="Skill was never your problem. Your proof is."
+        supporting="You can do the work. What is missing is proof a stranger can check, visibility with the people who buy, and a path that ends at a decision. I built that system for myself, I run it for clients, and I am teaching it."
       >
-        {/* Primary action is the course waitlist. The consulting funnel is not
-            removed: "Book a call" still sits on the offer section and on
-            /services, so a buyer who wants the Growth OS still has a path. */}
+        {/* Primary action stays the course waitlist. "Book a call" now also sits
+            here as a quiet secondary: the headline speaks to a buyer as much as
+            a learner, and previously the hero gave that reader nowhere to go
+            but a scroll. It still leads the offer section and /services. */}
         <div className="w-full">
           <p className="mb-3 text-sm text-text-secondary">
             The Zero-to-Opportunity System opens soon. Put your name down and you hear first.
           </p>
           <WaitlistForm source="hero" compact />
-          <a
-            href="#work"
-            className="mt-5 inline-block text-sm font-medium text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
-          >
-            See the work
-          </a>
+          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-medium">
+            <a
+              href="#work"
+              className="text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
+            >
+              See the work
+            </a>
+            <a
+              href={calendlyUrl}
+              className="text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
+            >
+              Or hire me to build it
+            </a>
+          </div>
         </div>
       </HeroReveal>
 
