@@ -1,21 +1,26 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { createLiquidGlass, type Handle, type Stats } from "./hero/liquid-glass";
+import { HeroProbe, readTuningOverrides, useProbeEnabled } from "./hero/HeroProbe";
 
 /**
  * The hero. Two pixel-aligned plates of the same portrait: the chrome helmet
- * underneath, the real face on top. The pointer erases the top plate along a
- * liquid trail and the hole heals shut over roughly a second.
+ * underneath, the real face on top. The pointer opens an amoebic liquid-glass
+ * mass in the top plate — organic lobed edges, blobs that merge and separate —
+ * and it heals shut over roughly a second.
  *
- * Done on canvas rather than CSS masking, deliberately:
- *   - `radial-gradient(circle 26% at ...)` is invalid CSS. A circle's explicit
- *     size takes a length, never a percentage, so the whole declaration is
- *     dropped and nothing renders.
- *   - `mask-image` has a discrete animation type, so transitions and keyframes
- *     on it do nothing. The easing has to be driven per frame anyway.
- * Canvas sidesteps both and is the only way to get the trailing tail.
+ * Rendered by a WebGL fragment shader (`hero/liquid-glass.ts`, `hero/glsl.ts`).
+ * It was previously Canvas2D stamp-and-heal, which produced a circular hole.
+ * The reason for the rewrite is not performance, it is that the old pipeline
+ * erased into an *alpha mask*: a mask carries coverage, so the boundary could
+ * only ever be a clean cut. The shader evaluates a signed distance *field*, and
+ * distance is what lets the edge be bent — refraction, chromatic aberration and
+ * specular all come off the field's gradient instead of being approximated with
+ * offset redraws.
  *
- * FIT MATH, derived by measuring the plates rather than assuming 16:9:
+ * FIT MATH lives in liquid-glass.ts and is unchanged, derived by measuring the
+ * plates rather than assuming 16:9:
  *   plate            2688 x 1520  (aspect 1.7684, not 1.7778)
  *   subject spans    x 812..1940  -> 1128px wide, centre x 0.512
  *   face centre      y 613        -> 0.403 of height
@@ -26,47 +31,6 @@ import { useEffect, useRef, useState } from "react";
  * the studio backdrop is literally #000000, sampled from all four corners, and
  * the page ground is the same value, so the letterbox is invisible.
  */
-
-const PLATE_W = 2688;
-const PLATE_H = 1520;
-const SUBJECT_W = 1128; // measured
-const SUBJECT_CX = 0.512; // measured, fraction of plate width
-const FACE_CY = 0.403; // measured, fraction of plate height
-
-/** Subject occupies at most this fraction of the viewport width. */
-const SUBJECT_TARGET = 0.9;
-/** Where the face sits vertically in the viewport. */
-const FOCAL_Y = 0.42;
-
-/** Per-frame heal rate. ~0.05 gives roughly a one second settle-back. */
-const HEAL_ALPHA = 0.05;
-
-/* Brush size scales with the subject, like the drift amplitudes do.
-   It was a fixed 128 CSS px at every viewport. Measured against the head
-   (~850px wide in plate space, read off a gridded overlay at eye level) that
-   is 63% of the head width on a 1280 viewport and 97% on a 390 one: on a
-   phone the brush was the whole face, so nothing read as a circle moving
-   across anything. Held at ~45% of head width everywhere instead. */
-const HEAD_W = 850; // plate px, measured at eye level
-const BRUSH_HEAD_FRAC = 0.225; // radius as a fraction of head width
-const BRUSH_MIN = 40;
-const BRUSH_MAX = 190;
-const FRINGE_ALPHA = 0.3;
-const IDLE_MS = 1200;
-
-/* Idle drift. Amplitudes are relative to the SUBJECT, not the viewport, and
-   the path is centred on the face the fit actually placed. Orbiting
-   cw*0.5 / ch*FOCAL_Y left the brush 205px left of the face on desktop, where
-   its maximum x (838) never even reached the face centre (845): the reveal was
-   sweeping empty backdrop. Speed raised from ~98 px/s, which was far slower
-   than any human sweep and, more importantly, moved the brush only 0.38 of a
-   radius during the ~0.75s heal window, hiding the tail underneath itself. */
-const DRIFT_AMP_X = 0.42; // of subject width
-const DRIFT_AMP_Y = 0.16; // of plate height
-const DRIFT_WX = 1.7;
-const DRIFT_WY = 1.15;
-
-type Pt = { x: number; y: number };
 
 /**
  * Must stay in lockstep with the <link rel="preload"> media queries in
@@ -80,10 +44,32 @@ function pickSrc(kind: "base" | "chrome") {
   return `/hero/king-${kind}-${step}.avif`;
 }
 
+const REDUCED_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeReduced(cb: () => void) {
+  const mq = window.matchMedia(REDUCED_QUERY);
+  mq.addEventListener("change", cb);
+  return () => mq.removeEventListener("change", cb);
+}
+
+/**
+ * useSyncExternalStore rather than an effect that calls setState: the server
+ * snapshot is false so the hydration render matches, and there is no cascading
+ * render on mount.
+ */
+function useReducedMotion() {
+  return useSyncExternalStore(
+    subscribeReduced,
+    () => window.matchMedia(REDUCED_QUERY).matches,
+    () => false
+  );
+}
+
 function load(src: string) {
   return new Promise<HTMLImageElement>((res, rej) => {
     const im = new Image();
     im.decoding = "async";
+    im.crossOrigin = "anonymous";
     im.onload = () => res(im);
     im.onerror = rej;
     im.src = src;
@@ -103,244 +89,70 @@ export function HeroReveal({
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [reduced, setReduced] = useState(false);
+  const engineRef = useRef<Handle | null>(null);
+  const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
+  const reduced = useReducedMotion();
+  const probeOn = useProbeEnabled();
 
   useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const on = () => setReduced(mq.matches);
-    mq.addEventListener("change", on);
-    return () => mq.removeEventListener("change", on);
-  }, []);
-
-  useEffect(() => {
-    if (reduced) return;
+    if (reduced || failed) return;
     const wrap = wrapRef.current;
     const canvas = canvasRef.current;
     if (!wrap || !canvas) return;
 
-    let raf = 0;
     let alive = true;
-    let base: HTMLImageElement, chrome: HTMLImageElement;
-
-    // offscreen: the top plate we punch holes in, and the fringe accumulator
-    const off = document.createElement("canvas");
-    const fringe = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const octx = off.getContext("2d");
-    const fctx = fringe.getContext("2d");
-    if (!ctx || !octx || !fctx) return;
-
-    let dpr = 1, cw = 0, ch = 0;
-    let fit = { dx: 0, dy: 0, dw: 0, dh: 0, scale: 1 };
-    let brushR = 128;
-    let prev: Pt | null = null;
-    let cur: Pt | null = null;
-    let lastInput = 0;
-    let t = 0;
-
-    function computeFit() {
-      const cover = Math.max(cw / PLATE_W, ch / PLATE_H);
-      // Cap so the subject never exceeds SUBJECT_TARGET of the viewport width.
-      const capped = (SUBJECT_TARGET * cw) / SUBJECT_W;
-      const scale = Math.min(cover, capped);
-      const dw = PLATE_W * scale;
-      const dh = PLATE_H * scale;
-
-      // Where the subject's centre sits horizontally in the viewport.
-      //
-      // Centred on narrow screens, where the plate letterboxes and the copy
-      // lives in the black below it. Pushed right on wide screens so the left
-      // third stays empty for the headline: centred + wide put the copy
-      // straight across the mouth, which the whole hero is meant to avoid.
-      const wide = cw >= 1024;
-      const anchorX = wide ? 0.66 : 0.5;
-      const anchorY = wide ? 0.5 : FOCAL_Y;
-
-      fit = {
-        scale,
-        dw,
-        dh,
-        dx: cw * anchorX - SUBJECT_CX * dw,
-        dy: ch * anchorY - FACE_CY * dh,
-      };
-
-      brushR = Math.max(BRUSH_MIN, Math.min(BRUSH_MAX, HEAD_W * BRUSH_HEAD_FRAC * scale));
-    }
-
-    function resize() {
-      const r = wrap!.getBoundingClientRect();
-      // A canvas with an unsized parent renders nothing and throws no error,
-      // so fall back to the viewport rather than silently painting a 0x0.
-      cw = Math.max(1, Math.round(r.width || window.innerWidth));
-      ch = Math.max(1, Math.round(r.height || window.innerHeight));
-      dpr = Math.min(2, window.devicePixelRatio || 1);
-      for (const c of [canvas!, off, fringe]) {
-        c.width = Math.round(cw * dpr);
-        c.height = Math.round(ch * dpr);
-      }
-      canvas!.style.width = `${cw}px`;
-      canvas!.style.height = `${ch}px`;
-      for (const c of [ctx!, octx!, fctx!]) c.setTransform(dpr, 0, 0, dpr, 0, 0);
-      computeFit();
-      // repaint the top plate solid after a resize
-      octx!.globalCompositeOperation = "source-over";
-      octx!.globalAlpha = 1;
-      octx!.clearRect(0, 0, cw, ch);
-      if (base) octx!.drawImage(base, fit.dx, fit.dy, fit.dw, fit.dh);
-      fctx!.clearRect(0, 0, cw, ch);
-    }
-
-    function stamp(x: number, y: number) {
-      // erase the top plate
-      octx!.globalCompositeOperation = "destination-out";
-      octx!.globalAlpha = 1;
-      const g = octx!.createRadialGradient(x, y, 0, x, y, brushR);
-      // Core is fully opaque so one stamp clears the centre outright. At 0.85
-      // a single stamp left 15% of the face on top and both layers showed at
-      // once. Softness belongs in the falloff.
-      g.addColorStop(0, "rgba(0,0,0,1)");
-      g.addColorStop(0.42, "rgba(0,0,0,0.72)");
-      g.addColorStop(0.72, "rgba(0,0,0,0.28)");
-      g.addColorStop(1, "rgba(0,0,0,0)");
-      octx!.fillStyle = g;
-      octx!.beginPath();
-      octx!.arc(x, y, brushR, 0, Math.PI * 2);
-      octx!.fill();
-
-      // warm ring just inside the brush edge -> the chromatic fringe
-      fctx!.globalCompositeOperation = "lighter";
-      const r0 = brushR * 0.62;
-      const ring = fctx!.createRadialGradient(x, y, r0, x, y, brushR * 1.04);
-      ring.addColorStop(0, "rgba(232,163,61,0)");
-      ring.addColorStop(0.45, "rgba(232,163,61,0.5)");
-      ring.addColorStop(0.72, "rgba(231,187,136,0.28)");
-      ring.addColorStop(1, "rgba(120,180,255,0)");
-      fctx!.fillStyle = ring;
-      fctx!.beginPath();
-      fctx!.arc(x, y, brushR * 1.04, 0, Math.PI * 2);
-      fctx!.fill();
-    }
-
-    function frame() {
-      if (!alive) return;
-      t += 1 / 60;
-
-      // heal: redraw the top plate faintly, exponentially closing the holes
-      octx!.globalCompositeOperation = "source-over";
-      octx!.globalAlpha = HEAL_ALPHA;
-      octx!.drawImage(base, fit.dx, fit.dy, fit.dw, fit.dh);
-      octx!.globalAlpha = 1;
-
-      // fade the fringe accumulator
-      fctx!.globalCompositeOperation = "destination-out";
-      fctx!.fillStyle = "rgba(0,0,0,0.12)";
-      fctx!.fillRect(0, 0, cw, ch);
-
-      // drift when nobody has touched it, and before first interaction
-      if (performance.now() - lastInput > IDLE_MS) {
-        const faceX = fit.dx + SUBJECT_CX * fit.dw;
-        const faceY = fit.dy + FACE_CY * fit.dh;
-        const subjW = SUBJECT_W * (fit.dw / PLATE_W);
-        prev = cur;
-        cur = {
-          x: faceX + Math.cos(t * DRIFT_WX) * subjW * DRIFT_AMP_X,
-          y: faceY + Math.sin(t * DRIFT_WY) * fit.dh * DRIFT_AMP_Y,
-        };
-      }
-
-      // interpolate so a fast flick leaves no gaps in the trail
-      if (cur) {
-        const from = prev ?? cur;
-        const dx = cur.x - from.x;
-        const dy = cur.y - from.y;
-        // Floor of 2 and tighter spacing: insurance against gaps on a fast
-        // flick. Measured stamp count was never the reason the tail was
-        // missing at idle, so this is not the fix for that, just correctness.
-        const steps = Math.max(2, Math.ceil(Math.hypot(dx, dy) / (brushR * 0.18)));
-        for (let i = 1; i <= steps; i++) {
-          stamp(from.x + (dx * i) / steps, from.y + (dy * i) / steps);
-        }
-        prev = cur;
-      }
-
-      // composite
-      ctx!.globalCompositeOperation = "source-over";
-      ctx!.clearRect(0, 0, cw, ch);
-      ctx!.drawImage(chrome, fit.dx, fit.dy, fit.dw, fit.dh);
-      ctx!.drawImage(off, 0, 0, cw, ch);
-      ctx!.globalCompositeOperation = "screen";
-      ctx!.globalAlpha = FRINGE_ALPHA;
-      ctx!.drawImage(fringe, 0, 0, cw, ch);
-      ctx!.globalAlpha = 1;
-      ctx!.globalCompositeOperation = "source-over";
-
-      raf = requestAnimationFrame(frame);
-    }
-
-    function onPointer(e: PointerEvent) {
-      const r = canvas!.getBoundingClientRect();
-      prev = cur;
-      cur = { x: e.clientX - r.left, y: e.clientY - r.top };
-      lastInput = performance.now();
-    }
-
-    let onScreen = true;
-
-    function pump() {
-      const shouldRun = alive && onScreen && !document.hidden;
-      if (shouldRun && !raf) raf = requestAnimationFrame(frame);
-      if (!shouldRun && raf) {
-        cancelAnimationFrame(raf);
-        raf = 0;
-      }
-    }
-
-    function onVisibility() {
-      pump();
-    }
+    let engine: Handle | null = null;
+    let ro: ResizeObserver | null = null;
+    let io: IntersectionObserver | null = null;
 
     Promise.all([load(pickSrc("base")), load(pickSrc("chrome"))])
-      .then(([b, c]) => {
+      .then(([base, chrome]) => {
         if (!alive) return;
-        base = b;
-        chrome = c;
-        resize();
+        engine = createLiquidGlass({
+          canvas,
+          wrap,
+          base,
+          chrome,
+          tuning: readTuningOverrides(),
+          // Any unrecoverable GL problem falls through to the same static plate
+          // the reduced-motion branch uses. There is one fallback, not two.
+          onFailure: () => setFailed(true),
+        });
+        engineRef.current = engine;
         setReady(true);
-        lastInput = 0;
-        pump();
+
+        ro = new ResizeObserver(() => engine?.resize());
+        ro.observe(wrap);
+
+        // The hero is one screen of a long page. Without this the shader keeps
+        // running while the visitor reads the case studies far below it.
+        io = new IntersectionObserver(
+          ([e]) => engine?.setVisible(e.isIntersecting),
+          { threshold: 0 }
+        );
+        io.observe(wrap);
       })
-      .catch(() => setReduced(true)); // fall back to the static plate
-
-    const ro = new ResizeObserver(resize);
-    ro.observe(wrap);
-
-    // The hero is one screen of a long page. Without this the loop keeps
-    // compositing two full-bleed images every frame while the visitor reads
-    // the case studies far below it.
-    const io = new IntersectionObserver(
-      ([e]) => {
-        onScreen = e.isIntersecting;
-        pump();
-      },
-      { threshold: 0 }
-    );
-    io.observe(wrap);
-    window.addEventListener("orientationchange", resize);
-    window.addEventListener("pointermove", onPointer, { passive: true });
-    document.addEventListener("visibilitychange", onVisibility);
+      .catch(() => {
+        // Plates unavailable: fall back to the static <picture>, same as above.
+        if (alive) setFailed(true);
+      });
 
     return () => {
       alive = false;
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-      io.disconnect();
-      window.removeEventListener("orientationchange", resize);
-      window.removeEventListener("pointermove", onPointer);
-      document.removeEventListener("visibilitychange", onVisibility);
+      ro?.disconnect();
+      io?.disconnect();
+      engine?.destroy();
+      engineRef.current = null;
     };
-  }, [reduced]);
+  }, [reduced, failed]);
+
+  const getStats = useCallback<() => Stats | null>(
+    () => engineRef.current?.stats() ?? null,
+    []
+  );
+
+  const staticPlate = reduced || failed;
 
   return (
     <section
@@ -349,7 +161,7 @@ export function HeroReveal({
       style={{ touchAction: "pan-y" }}
     >
       <div ref={wrapRef} className="absolute inset-0 h-full w-full">
-        {reduced ? (
+        {staticPlate ? (
           <picture>
             <source
               type="image/avif"
@@ -377,7 +189,7 @@ export function HeroReveal({
           />
         )}
         {/* Screen readers get the description the canvas cannot carry. */}
-        {!reduced && (
+        {!staticPlate && (
           <p className="sr-only">
             Portrait of Big Quiv against a black studio backdrop. Moving the pointer
             across the image reveals a black helmet with warm gold light seams
@@ -409,15 +221,24 @@ export function HeroReveal({
       {/* Copy: bottom-anchored on phones, a left column beside the subject on
           desktop. Never over the face at either size. */}
       {/* pt clears the fixed navbar, which is h-16 (64px). With no top padding
-          the kicker sat hard under the wordmark with nothing between them. */}
-      <div className="relative z-20 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pt-28 pb-14 md:px-10 md:pt-32 lg:justify-center lg:pb-0">
+          the kicker sat hard under the wordmark with nothing between them.
+          At lg the block is vertically centred anyway, so 128px of that is
+          spent rather than used; 80px still leaves 16px under the navbar and
+          buys back the room a short window needs to fit the CTAs. */}
+      <div className="relative z-20 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pt-28 pb-14 md:px-10 md:pt-32 lg:justify-center lg:pt-20 lg:pb-0">
         <div className="w-full lg:max-w-[36rem]">
           <p className="font-display text-[0.7rem] font-semibold uppercase tracking-[0.3em] text-accent">
             {kicker}
           </p>
+          {/* The size term was 5.4vw, keyed to viewport WIDTH alone. A wide but
+              short window (1360x614 on a laptop with browser chrome) therefore
+              rendered 73px type inside a 614px-tall hero and pushed the CTAs
+              off the bottom edge. Adding the svh term makes a short viewport
+              shrink the display size; on any normal window min() still picks
+              the vw term, so nothing changes there. */}
           <h1
             id="hero-heading"
-            className="mt-7 font-display text-[clamp(2.1rem,5.4vw,4.5rem)] font-bold leading-[0.96] tracking-[-0.025em] text-text-primary text-balance"
+            className="mt-7 font-display text-[clamp(2.1rem,min(5.4vw,10svh),4.5rem)] font-bold leading-[0.96] tracking-[-0.025em] text-text-primary text-balance"
           >
             {headline}
           </h1>
@@ -427,6 +248,8 @@ export function HeroReveal({
           {children ? <div className="mt-9 flex flex-wrap gap-4">{children}</div> : null}
         </div>
       </div>
+
+      {probeOn && !staticPlate ? <HeroProbe getStats={getStats} /> : null}
     </section>
   );
 }

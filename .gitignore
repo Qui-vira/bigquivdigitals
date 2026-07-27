@@ -41,3 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# Dev-only render output from scripts/preview-sdf.mjs
+scripts/out/
