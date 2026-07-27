@@ -71,11 +71,11 @@ export function AboutClient({ content, values, ecosystem, marqueeItems, mileston
       {/* ═══════════════════════════════════════════
           HERO
       ═══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-28">
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-[600px] w-[600px] rounded-full bg-accent/5 blur-[120px]" />
-        </div>
-
+      {/*
+        A static 600px blur-[120px] accent orb sat behind this hero. It was a
+        glow, not an animation, so it is removed. Nothing else here changed.
+      */}
+      <section className="relative pt-32 pb-20 md:pt-44 md:pb-28">
         <div className="relative mx-auto max-w-[1000px] px-6 text-center">
           {/* Profile image */}
           <motion.div

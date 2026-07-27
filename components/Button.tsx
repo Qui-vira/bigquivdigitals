@@ -22,7 +22,7 @@ export function Button({
   const baseStyles =
     "inline-flex items-center gap-2 rounded-lg px-7 py-3.5 text-base font-semibold tracking-wide transition-all duration-200 cursor-pointer";
   const primaryStyles =
-    "bg-gradient-to-br from-accent to-[#FF6B6B] text-white hover:scale-[1.02] hover:shadow-[0_4px_20px_rgba(230,57,70,0.3)]";
+    "bg-gradient-to-br from-accent to-[#F0B457] text-[#0A0806] hover:brightness-110";
   const secondaryStyles =
     "border border-border text-text-primary hover:border-border-hover hover:bg-bg-tertiary";
 

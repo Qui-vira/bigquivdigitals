@@ -5,6 +5,8 @@ import { TestimonialCard } from "@/components/TestimonialCard";
 import { SectionWrapper } from "@/components/SectionWrapper";
 import { CaseStudyCard } from "@/components/CaseStudyCard";
 import { ProofStrip, type ProofStatData } from "@/components/ProofStat";
+import { HeroReveal } from "@/components/HeroReveal";
+import { WaitlistForm } from "@/components/WaitlistForm";
 
 interface Testimonial {
   quote: string;
@@ -53,43 +55,44 @@ const CASE_STUDIES = [
   },
   {
     href: "/work/content-engine",
-    tag: "Technical",
+    tag: "Content",
     claim: "One video pulled 128,000 views and 1,700 comments.",
     support:
       "I answered every comment by hand. Behind it sits the pipeline: 13 deployed systems, a lead engine that scored 200 prospects, 25 published articles.",
-    image: "/proof/technical/admin-leads-blurred.webp",
+    image: "/proof/content/web3-video-128k.webp",
     imageAlt:
-      "Admin lead pipeline showing 200 of 200 leads scored, with target, score, matched keywords and match reason columns. Identities blurred.",
+      "The post's own metrics bar: 8:43 AM, 24 April 2025, 128K views, with 1.7K comments, 267 reposts, 1.4K likes and 598 bookmarks, and the follow-up post delivering the free Web3 guide the next day.",
   },
 ];
 
 export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClientProps) {
   return (
     <main>
-      {/* ───────── 1. HERO ───────── */}
-      <section className="px-6 pt-28 pb-16 md:pt-36 md:pb-24">
-        <div className="mx-auto max-w-[900px] text-center">
-          <p className="text-sm font-medium uppercase tracking-widest text-accent">
-            BigQuiv Digitals
+      {/* ───────── 1. HERO ─────────
+          Copy is unchanged from the humanizer pass. Only the container changed:
+          the centred text block became a full-viewport portrait reveal, with the
+          headline moved off-centre so it never sits over the subject's face. */}
+      <HeroReveal
+        kicker="BigQuiv Digitals"
+        headline="You are posting and nobody is buying."
+        supporting="The content goes out. People watch. Then it stops there, because there is nothing behind the post to catch anyone. I build the part that catches them."
+      >
+        {/* Primary action is the course waitlist. The consulting funnel is not
+            removed: "Book a call" still sits on the offer section and on
+            /services, so a buyer who wants the Growth OS still has a path. */}
+        <div className="w-full">
+          <p className="mb-3 text-sm text-text-secondary">
+            The Zero-to-Opportunity System opens soon. Put your name down and you hear first.
           </p>
-
-          <h1 className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight text-text-primary sm:text-5xl md:text-6xl">
-            You are posting and nobody is buying.
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-text-secondary">
-            The content goes out. People watch. Then it stops there, because there is nothing
-            behind the post to catch anyone. I build the part that catches them.
-          </p>
-
-          <div className="mt-10 flex flex-wrap justify-center gap-4">
-            <MagneticButton href={calendlyUrl}>Book a call</MagneticButton>
-            <MagneticButton href="#work" variant="secondary">
-              See the work
-            </MagneticButton>
-          </div>
+          <WaitlistForm source="hero" compact />
+          <a
+            href="#work"
+            className="mt-5 inline-block text-sm font-medium text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
+          >
+            See the work
+          </a>
         </div>
-      </section>
+      </HeroReveal>
 
       {/* ───────── 2. PROOF STRIP ─────────
           Renders only stats carrying an evidenceRef. */}
@@ -252,13 +255,16 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
             wanted to.
           </p>
 
-          <div className="mt-10">
-            <MagneticButton href={calendlyUrl}>Book a call</MagneticButton>
+          <div className="mx-auto mt-10 flex max-w-xl flex-col items-center">
+            <WaitlistForm source="footer-cta" className="text-left" />
           </div>
 
           <p className="mx-auto mt-6 max-w-xl text-sm text-text-muted">
-            No price on this page because there is no standard job. Tell me the scope on the
-            call and you get the number on the call.
+            Or if you want the Growth Operating System rather than the course,{" "}
+            <a href={calendlyUrl} className="text-accent underline underline-offset-4">
+              book a call
+            </a>{" "}
+            instead. No price on this page because there is no standard job.
           </p>
         </div>
       </SectionWrapper>

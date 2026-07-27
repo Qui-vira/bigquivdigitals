@@ -34,7 +34,7 @@ export function GlassCard3D({ children, className = "" }: GlassCard3DProps) {
     >
       <div
         ref={cardRef}
-        className={`relative rounded-xl border border-border bg-bg-secondary/80 backdrop-blur-xl p-8 transition-all duration-300 ease-out hover:border-accent/30 hover:shadow-[0_8px_32px_rgba(230,57,70,0.15)] ${className}`}
+        className={`relative rounded-xl border border-border bg-bg-secondary/80 backdrop-blur-xl p-8 transition-all duration-300 ease-out hover:border-accent/30 hover:shadow-[0_8px_32px_rgba(232,163,61,0.15)] ${className}`}
         style={{
           transform: `rotateX(${transform.rotateX}deg) rotateY(${transform.rotateY}deg) translateZ(0)`,
           transformStyle: "preserve-3d",

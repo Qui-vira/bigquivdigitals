@@ -31,9 +31,14 @@ export function ProofStat({ label, value, suffix, evidenceRef }: ProofStatData) 
   return (
     <div className="rounded-xl border border-border bg-bg-secondary p-6 text-center">
       <div
-        // Tabular figures stop the number jittering as it counts.
-        className="text-4xl font-extrabold tabular-nums text-text-primary md:text-[56px] md:leading-none"
-        style={{ textShadow: "0 0 20px rgba(230, 57, 70, 0.2)" }}
+        // Tabular figures keep the four numbers optically aligned across cards.
+        //
+        // Size is fluid and capped. It was a fixed 56px, at which the longest
+        // value ("1,000,000+") measures 330px against a 222px card interior and
+        // spilled straight out of the card. The cap is set so the longest
+        // realistic value still fits the narrowest column the grid produces.
+        // If a longer value is ever added, re-measure rather than nudging this.
+        className="font-extrabold tabular-nums leading-none tracking-tight text-text-primary text-[clamp(2rem,3vw,2.25rem)]"
       >
         {value.toLocaleString()}
         {suffix}
@@ -63,7 +68,12 @@ export function ProofStrip({ stats }: { stats: ProofStatData[] }) {
           Receipts.
         </h2>
 
-        <div className="mt-8 grid grid-cols-2 gap-6 md:grid-cols-4">
+        {/*
+          Four across only from xl. Below ~1280px four columns leave roughly
+          114px of usable width per card, which cannot hold a seven-figure
+          number at any readable size. Two columns until then, one on phones.
+        */}
+        <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
           {backed.map((stat) => (
             <ProofStat key={stat.label} {...stat} />
           ))}

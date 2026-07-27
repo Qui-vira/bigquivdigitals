@@ -75,7 +75,7 @@ export function ParticleField() {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(230, 57, 70, ${0.06 * (1 - Math.sqrt(dist) / 120)})`;
+            ctx.strokeStyle = `rgba(232, 163, 61, ${0.06 * (1 - Math.sqrt(dist) / 120)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }

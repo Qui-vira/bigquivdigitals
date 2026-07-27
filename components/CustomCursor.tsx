@@ -73,7 +73,7 @@ export function CustomCursor() {
           animate={{
             width: hovering ? 48 : 32,
             height: hovering ? 48 : 32,
-            borderColor: hovering ? "rgba(230, 57, 70, 0.8)" : "rgba(255,255,255,0.5)",
+            borderColor: hovering ? "rgba(232, 163, 61, 0.8)" : "rgba(255,255,255,0.5)",
           }}
           transition={{ duration: 0.2 }}
           className="rounded-full border-2"
@@ -87,7 +87,7 @@ export function CustomCursor() {
           animate={{
             width: hovering ? 6 : 4,
             height: hovering ? 6 : 4,
-            backgroundColor: hovering ? "rgba(230, 57, 70, 1)" : "rgba(255,255,255,0.9)",
+            backgroundColor: hovering ? "rgba(232, 163, 61, 1)" : "rgba(255,255,255,0.9)",
           }}
           transition={{ duration: 0.15 }}
           className="rounded-full"
