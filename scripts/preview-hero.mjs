@@ -78,7 +78,7 @@ function wrap(text, size, width, adv) {
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&apos;");
 
 const HEADLINE = "Your next skill is going to end exactly like the last one did.";
-const SUPPORTING = "Mine stopped ending that way in 2022, when I got my first seven-figure dev job. Now I have built the thing that fixes yours.";
+const SUPPORTING = "Mine stopped ending that way in 2022, when I got my first seven-figure naira dev job. Now I have built the thing that fixes yours.";
 const PROOF = "Same skills. One move.";
 const HELPER = "Zero-to-Opportunity opens soon. The list goes first.";
 

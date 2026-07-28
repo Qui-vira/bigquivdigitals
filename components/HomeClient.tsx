@@ -69,25 +69,19 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
   return (
     <main>
       {/* ───────── 1. HERO ─────────
-          The previous headline ("You are posting and nobody is buying") named a
-          business owner's pain while the primary CTA sold a course to people
-          starting from zero. Two different readers, and only one was addressed.
-
-          This names the pain both share: the distance between what you can do
-          and what you are paid for. That is the course's spine (confusion ->
-          skill -> proof -> visibility -> monetization) and it is what the
-          consulting delivers, so one headline can carry both funnels honestly. */}
-      {/* Written by the owner. Four beats: the reader's failure declared before
+          Written by the owner. Four beats: the reader's failure declared before
           they start, the owner as the contrast, the mechanism, the act-now.
 
           The figure is the owner's own claim about his own life and is taken as
           given. Two things about it are NOT settled and are flagged to him
           rather than decided here:
 
-          1. "seven-figure" carries no currency. In Lagos it reads as naira; to
-             an international reader it reads as dollars. On a page whose whole
-             argument is proof a stranger can check, the one number in it should
-             not mean two different things to two different readers.
+          1. Currency resolved by the owner: naira. Stated explicitly rather
+             than left to the reader, because this is the only number on a page
+             whose whole argument is proof a stranger can check, and unqualified
+             "seven figures" reads as naira in Lagos and dollars everywhere
+             else. Naming it is what stops the same sentence being a modest,
+             credible claim to one reader and an overclaim to another.
           2. The proof library's Block 4 publishes a neighbouring claim with a
              different year and unit: 15 dev jobs worth $50K+ with a $50,000.92
              portfolio screenshot, dated Oct 2023, opening "Started 2023 low on
@@ -95,7 +89,7 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
              then the case study will notice 2022 against 2023. */}
       <HeroReveal
         headline="Your next skill is going to end exactly like the last one did."
-        supporting="Mine stopped ending that way in 2022, when I got my first seven-figure dev job."
+        supporting="Mine stopped ending that way in 2022, when I got my first seven-figure naira dev job."
         mechanism="Now I have built the thing that fixes yours."
         proof="Same skills. One move."
       >
