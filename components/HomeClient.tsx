@@ -264,16 +264,24 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
         </SectionWrapper>
       )}
 
-      {/* ───────── 7. FINAL CTA ───────── */}
+      {/* ───────── 7. FINAL CTA ─────────
+          The headline and subcopy here used to be "Tell me what you are
+          building" / "One call, thirty minutes", which is book-a-call copy —
+          verbatim the same block /services still uses, where it correctly sits
+          above a call. Here the control underneath it is the waitlist form, so
+          the page promised a thirty-minute call and then asked for an email to
+          join a course. The copy now matches the action it sits above, and the
+          call keeps its own path in the line below. */}
       <SectionWrapper className="py-20 md:py-28">
         <div className="mx-auto max-w-[760px] px-6 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-5xl">
-            Tell me what you are building.
+            You have seen the proof. Now go and build your own.
           </h2>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-            One call, thirty minutes. You leave with a plan you could execute yourself if you
-            wanted to.
+            The Zero-to-Opportunity System is the loop this page is built on — learn,
+            build, show, sell — turned into something you can repeat. It opens soon, and
+            the list hears first.
           </p>
 
           <div className="mx-auto mt-10 flex max-w-xl flex-col items-center">
@@ -281,11 +289,11 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           </div>
 
           <p className="mx-auto mt-6 max-w-xl text-sm text-text-muted">
-            Or if you want the Growth Operating System rather than the course,{" "}
+            Want the Growth Operating System built for you instead?{" "}
             <a href={calendlyUrl} className="text-accent underline underline-offset-4">
-              book a call
-            </a>{" "}
-            instead. No price on this page because there is no standard job.
+              Book a call
+            </a>
+            . No price on this page because there is no standard job.
           </p>
         </div>
       </SectionWrapper>
