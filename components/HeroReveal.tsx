@@ -311,6 +311,31 @@ export function HeroReveal({
           what is covering the subject. */}
       {!dev.noscrim && !dev.plateonly && (
         <>
+          {/* Mobile only, under 768px. The bottom scrim below starts at 58% of
+              the viewport, but the copy column is bottom-anchored and starts at
+              roughly 42%, which is the eye line. So the headline and the first
+              lines of body copy sat on bare portrait, over the brightest part
+              of the face. Measured worst-case contrast before this existed was
+              1.08:1 to 1.35:1 across 375, 390, 414 and 592 wide: not poor, but
+              effectively invisible.
+
+              This ramps to 78% black through that band and holds. The first 24%
+              stays fully clear so the crown, hair and forehead still read as a
+              portrait rather than a dark rectangle. Measured after: headline
+              5.91 to 10.37:1, body 7.08 to 11.54:1, proof 6.99 to 8.48:1, all
+              AA or better, checked against the brightest pixel behind each
+              block rather than the mean.
+
+              md:hidden, so 768px and up is untouched. See
+              scripts/hero-contrast.mjs. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 z-10 md:hidden"
+            style={{
+              background:
+                "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 24%, rgba(0,0,0,0.42) 36%, rgba(0,0,0,0.72) 46%, rgba(0,0,0,0.78) 58%, rgba(0,0,0,0.78) 100%)",
+            }}
+          />
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[42%] lg:hidden"
@@ -372,13 +397,20 @@ export function HeroReveal({
           {/* Gaps between blocks 1-3 are tight on purpose: they are one
               argument and should read as one group. The only large gap on the
               page is the one before the form. */}
-          <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-text-secondary lg:text-lg">
+          {/* Colour is lifted on mobile only. text-secondary (#A39C93) against
+              the scrimmed portrait measured 1.16 to 1.55:1 under 768px. The
+              same token is restored at md, so desktop is byte-identical. */}
+          <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-text-primary/85 md:text-text-secondary lg:text-lg">
             {supporting} {mechanism}
           </p>
 
-          {/* Block 3. Checkable evidence, not a claim. Text only. */}
+          {/* Block 3. Checkable evidence, not a claim. Text only.
+              Same mobile treatment as the paragraph above: text-muted
+              (#6B655D) measured 1.49 to 2.85:1 under 768px, below AA at every
+              size. Restored at md. Kept a step below the body copy so the
+              hierarchy survives the lift. */}
           {proof ? (
-            <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-text-muted">
+            <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-text-primary/70 md:text-text-muted">
               {proof}
             </p>
           ) : null}

@@ -139,7 +139,16 @@ async function render(cw, ch, label) {
          <stop offset="1" stop-color="#000" stop-opacity="0"/>
        </linearGradient>
        <rect x="0" y="0" width="${cw * 0.72}" height="${ch}" fill="url(#s)"/>`
-    : `<linearGradient id="s" x1="0" y1="1" x2="0" y2="0">
+    : `<linearGradient id="m" x1="0" y1="0" x2="0" y2="1">
+         <stop offset="0" stop-color="#000" stop-opacity="0"/>
+         <stop offset="0.24" stop-color="#000" stop-opacity="0"/>
+         <stop offset="0.36" stop-color="#000" stop-opacity="0.42"/>
+         <stop offset="0.46" stop-color="#000" stop-opacity="0.72"/>
+         <stop offset="0.58" stop-color="#000" stop-opacity="0.78"/>
+         <stop offset="1" stop-color="#000" stop-opacity="0.78"/>
+       </linearGradient>
+       <rect x="0" y="0" width="${cw}" height="${ch}" fill="url(#m)"/>
+       <linearGradient id="s" x1="0" y1="1" x2="0" y2="0">
          <stop offset="0" stop-color="#000" stop-opacity="1"/>
          <stop offset="0.34" stop-color="#000" stop-opacity="1"/>
          <stop offset="0.62" stop-color="#000" stop-opacity="0.72"/>
@@ -161,12 +170,12 @@ async function render(cw, ch, label) {
   y += gapSup;
   for (const l of bodyLines) {
     y += bodyLead;
-    text += `<text x="${padX}" y="${y - bodyLead * 0.28}" font-size="${bodySize}" fill="#A8A29C" font-family="sans-serif">${esc(l)}</text>`;
+    text += `<text x="${padX}" y="${y - bodyLead * 0.28}" font-size="${bodySize}" fill="${wide ? '#A39C93' : '#CEC9C3'}" font-family="sans-serif">${esc(l)}</text>`;
   }
   y += gapProof;
   for (const l of proofLines) {
     y += proofLead;
-    text += `<text x="${padX}" y="${y - proofLead * 0.28}" font-size="${proofSize}" fill="#6B6862" font-family="sans-serif">${esc(l)}</text>`;
+    text += `<text x="${padX}" y="${y - proofLead * 0.28}" font-size="${proofSize}" fill="${wide ? '#6B655D' : '#A9A6A1'}" font-family="sans-serif">${esc(l)}</text>`;
   }
   y += gapForm;
   text += `<text x="${padX}" y="${y + 14}" font-size="14" fill="#A8A29C" font-family="sans-serif">${esc(HELPER)}</text>`;
