@@ -279,8 +279,8 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           </h2>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-            The Zero-to-Opportunity System is the loop this page is built on — learn,
-            build, show, sell — turned into something you can repeat. It opens soon, and
+            The Zero-to-Opportunity System is the loop this page is built on: learn,
+            build, show, sell, turned into something you can repeat. It opens soon, and
             the list hears first.
           </p>
 
@@ -288,13 +288,18 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
             <WaitlistForm source="footer-cta" className="text-left" />
           </div>
 
-          <p className="mx-auto mt-6 max-w-xl text-sm text-text-muted">
-            Want the Growth Operating System built for you instead?{" "}
-            <a href={calendlyUrl} className="text-accent underline underline-offset-4">
-              Book a call
-            </a>
-            . No price on this page because there is no standard job.
+          {/* The consulting path is a button, not a buried inline link. Secondary
+              variant so the waitlist above it stays the primary action. */}
+          <p className="mx-auto mt-10 max-w-xl text-sm text-text-muted">
+            Want the Growth Operating System built for you instead? No price on this page
+            because there is no standard job.
           </p>
+
+          <div className="mt-5 flex justify-center">
+            <MagneticButton href={calendlyUrl} variant="secondary">
+              Book a call
+            </MagneticButton>
+          </div>
         </div>
       </SectionWrapper>
     </main>
