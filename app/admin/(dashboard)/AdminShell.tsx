@@ -55,7 +55,7 @@ function SidebarContent({
     <>
       <div className="flex h-14 shrink-0 items-center px-5">
         <Link href="/admin" onClick={onNavigate} className="text-lg font-bold text-white">
-          Quivira <span className="text-xs font-normal text-[#666]">Admin</span>
+          BigQuiv Digitals <span className="text-xs font-normal text-[#666]">Admin</span>
         </Link>
       </div>
 
@@ -115,7 +115,7 @@ export default function AdminShell({
       {/* Mobile top header */}
       <header className="fixed left-0 right-0 top-0 z-40 flex h-14 items-center justify-between border-b border-[#222] bg-[#111] px-4 md:hidden">
         <Link href="/admin" className="text-lg font-bold text-white">
-          Quivira <span className="text-xs font-normal text-[#666]">Admin</span>
+          BigQuiv Digitals <span className="text-xs font-normal text-[#666]">Admin</span>
         </Link>
         <button
           type="button"

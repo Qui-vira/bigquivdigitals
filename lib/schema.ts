@@ -21,6 +21,10 @@ export const stats = sqliteTable("stats", {
   label: text("label").notNull(),
   value: integer("value").notNull(),
   suffix: text("suffix").default(""),
+  // Pointer to the proof block backing this number, e.g. "quivira/blocks.md#block-1".
+  // A stat without one must not render. The claim register is enforced here,
+  // not only in documentation.
+  evidenceRef: text("evidence_ref"),
   sortOrder: integer("sort_order").notNull().default(0),
 });
 
@@ -91,6 +95,11 @@ export const testimonials = sqliteTable("testimonials", {
   rating: integer("rating").notNull().default(5),
   avatar: text("avatar"),
   category: text("category").notNull().default("general"),
+  // Real name of the person quoted. Renders ONLY when consentConfirmed = 1;
+  // otherwise the role-level `attribution` is used. Promotes a quote from
+  // Semi-verified to Personal tier.
+  attributionName: text("attribution_name"),
+  consentConfirmed: integer("consent_confirmed").notNull().default(0),
   sortOrder: integer("sort_order").notNull().default(0),
 });
 

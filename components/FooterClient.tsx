@@ -2,9 +2,8 @@ import Link from "next/link";
 
 const pageLinks = [
   { href: "/services", label: "Services" },
-  { href: "/pricing", label: "Pricing" },
   { href: "/about", label: "About" },
-  { href: "/portfolio", label: "Portfolio" },
+  { href: "/#work", label: "Work" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -24,10 +23,10 @@ export function FooterClient({ socialLinks, email, telegramHandle, telegramUrl, 
           {/* Brand */}
           <div>
             <Link href="/" className="text-xl font-bold text-white">
-              Quivira
+              BigQuiv Digitals
             </Link>
             <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-              Automated trading signals. AI content intelligence. Real education that produces builders.
+              Growth systems that turn attention into revenue. Website, AI content, community, strategy and reporting, built as one.
             </p>
           </div>
 
@@ -89,7 +88,7 @@ export function FooterClient({ socialLinks, email, telegramHandle, telegramUrl, 
         </div>
 
         <div className="mt-12 border-t border-border pt-6 text-center text-xs text-text-muted">
-          &copy; {new Date().getFullYear()} Quivira. All rights reserved.
+          &copy; {new Date().getFullYear()} BigQuiv Digitals. All rights reserved.
         </div>
       </div>
     </footer>

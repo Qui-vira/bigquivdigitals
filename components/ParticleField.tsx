@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 interface Particle {
   x: number;
@@ -11,9 +12,31 @@ interface Particle {
   opacity: number;
 }
 
+/**
+ * Ambient particle field, mounted globally from app/layout.tsx.
+ *
+ * Visuals are deliberately untouched: count, sizes, velocities, opacities,
+ * colours, the 120px link radius and the 0.6 canvas opacity are all as they
+ * were. Only *when* it runs changed.
+ *
+ * It previously animated on every page at every scroll position for the life of
+ * the tab, with no pause of any kind. Because it renders before <main> it paints
+ * behind the hero's opaque canvas, so on the homepage it was burning a
+ * full-viewport clearRect, 25 arcs and a 300-pair O(n^2) link pass every frame
+ * to draw something nobody could see — directly against the hero shader on the
+ * same main thread. Two gates now:
+ *
+ *   - paused while the hero is on screen, so the field is below the fold only
+ *   - paused when the tab is hidden
+ *
+ * The hero is looked up per route because it exists on the homepage alone, and
+ * an observer bound to an element that later unmounts would otherwise leave the
+ * field paused forever after a client-side navigation away from it.
+ */
 export function ParticleField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
+  const pathname = usePathname();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -21,7 +44,8 @@ export function ParticleField() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animationId: number;
+    let animationId = 0;
+    let heroOnScreen = false;
     let w = window.innerWidth;
     let h = window.innerHeight;
 
@@ -75,7 +99,7 @@ export function ParticleField() {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
-            ctx.strokeStyle = `rgba(230, 57, 70, ${0.06 * (1 - Math.sqrt(dist) / 120)})`;
+            ctx.strokeStyle = `rgba(232, 163, 61, ${0.06 * (1 - Math.sqrt(dist) / 120)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -84,13 +108,41 @@ export function ParticleField() {
 
       animationId = requestAnimationFrame(animate);
     };
-    animate();
+
+    // Left painted rather than cleared when it stops: the last frame sits behind
+    // the hero where it cannot be seen, and clearing would cost a frame to
+    // achieve nothing.
+    const pump = () => {
+      const run = !heroOnScreen && !document.hidden;
+      if (run && !animationId) animationId = requestAnimationFrame(animate);
+      if (!run && animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = 0;
+      }
+    };
+
+    const hero = document.querySelector('section[aria-labelledby="hero-heading"]');
+    const io = hero
+      ? new IntersectionObserver(
+          ([e]) => {
+            heroOnScreen = e.isIntersecting;
+            pump();
+          },
+          { threshold: 0 }
+        )
+      : null;
+    io?.observe(hero!);
+
+    document.addEventListener("visibilitychange", pump);
+    pump();
 
     return () => {
-      cancelAnimationFrame(animationId);
+      if (animationId) cancelAnimationFrame(animationId);
+      io?.disconnect();
+      document.removeEventListener("visibilitychange", pump);
       window.removeEventListener("resize", resize);
     };
-  }, []);
+  }, [pathname]);
 
   return (
     <canvas

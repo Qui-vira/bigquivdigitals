@@ -7,6 +7,9 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // NOTE: this layout is the ONLY admin auth guard. There is no middleware.ts,
+  // so any admin route created OUTSIDE the (dashboard) route group is
+  // unprotected by default. Put new admin pages inside this group.
   const session = await verifySession();
   if (!session) redirect("/admin/login");
 

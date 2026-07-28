@@ -23,7 +23,7 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
           <div className="mb-16 text-center">
             <motion.h1
               className="text-4xl font-bold tracking-tight text-text-primary sm:text-5xl"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 1, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
@@ -31,7 +31,7 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
             </motion.h1>
             <motion.p
               className="mx-auto mt-4 max-w-xl text-lg text-text-secondary"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 1, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >

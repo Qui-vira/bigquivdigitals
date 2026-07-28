@@ -39,7 +39,7 @@ interface AboutClientProps {
 }
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 1, y: 12 },
   show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } },
 };
 
@@ -71,15 +71,15 @@ export function AboutClient({ content, values, ecosystem, marqueeItems, mileston
       {/* ═══════════════════════════════════════════
           HERO
       ═══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-28">
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-[600px] w-[600px] rounded-full bg-accent/5 blur-[120px]" />
-        </div>
-
+      {/*
+        A static 600px blur-[120px] accent orb sat behind this hero. It was a
+        glow, not an animation, so it is removed. Nothing else here changed.
+      */}
+      <section className="relative pt-32 pb-20 md:pt-44 md:pb-28">
         <div className="relative mx-auto max-w-[1000px] px-6 text-center">
           {/* Profile image */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 1, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="mx-auto mb-10 w-full max-w-[480px]"
@@ -100,7 +100,7 @@ export function AboutClient({ content, values, ecosystem, marqueeItems, mileston
             {content.hero_title || "The person behind the brand."}
           </TextReveal>
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 1, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4, duration: 0.6 }}
             className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-text-secondary whitespace-pre-line"
@@ -128,7 +128,7 @@ export function AboutClient({ content, values, ecosystem, marqueeItems, mileston
                 {content.services_list.split("\n").filter(Boolean).map((s, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, x: -12 }}
+                    initial={{ opacity: 1, x: -6 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.06, duration: 0.4 }}
@@ -251,7 +251,7 @@ export function AboutClient({ content, values, ecosystem, marqueeItems, mileston
               Why People Trust Me
             </div>
             <TextReveal as="h2" mode="words" className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
-              What Quivira Stands For
+              What BigQuiv Digitals Stands For
             </TextReveal>
           </div>
 

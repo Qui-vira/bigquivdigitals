@@ -96,7 +96,7 @@ export function AutoCarousel({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <AnimatePresence mode="wait" custom={direction}>
+      <AnimatePresence mode="wait" custom={direction} initial={false}>
         <motion.div
           key={current}
           custom={direction}

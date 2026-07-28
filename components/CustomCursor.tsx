@@ -1,11 +1,29 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { motion, useSpring } from "framer-motion";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { usePathname } from "next/navigation";
+import { motion, useSpring, useReducedMotion } from "framer-motion";
+
+/**
+ * Not rendered on the homepage.
+ *
+ * The ring is a 32px bordered circle following a spring. Over a full-bleed
+ * portrait it does not read as a cursor, it reads as a stray artifact floating
+ * on the face. An earlier pass stopped it flying in from 0,0, which was a real
+ * bug, but the object itself is still wrong on this page. It stays everywhere
+ * else, where it sits over flat backgrounds.
+ */
+const DISABLED_ON = new Set(["/"]);
 
 export function CustomCursor() {
+  const pathname = usePathname();
+  return DISABLED_ON.has(pathname) ? null : <CursorLayer />;
+}
+
+function CursorLayer() {
   const [visible, setVisible] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   const springConfig = { damping: 25, stiffness: 250 };
   const cursorX = useSpring(0, springConfig);
@@ -13,16 +31,37 @@ export function CustomCursor() {
 
   const onEnter = useCallback(() => setHovering(true), []);
   const onLeave = useCallback(() => setHovering(false), []);
+  const placed = useRef(false);
 
   useEffect(() => {
     // Only on desktop
     if (window.matchMedia("(max-width: 768px)").matches) return;
     if ("ontouchstart" in window) return;
+    // A spring-following cursor is exactly the kind of motion people disable.
+    // Leave the system cursor alone for them.
+    if (reduceMotion) return;
+
+    // Hide the system cursor only now that we know this component is mounted
+    // and about to take over. globals.css scopes `cursor: none` to this class,
+    // so a failed mount leaves the visitor with a normal pointer.
+    document.documentElement.classList.add("custom-cursor-active");
 
     const onMouseMove = (e: MouseEvent) => {
+      // Both springs are created at 0, so set() on the first move makes them
+      // ANIMATE from the top-left corner to the pointer. That is the ringed dot
+      // parked at the top-left edge: the cursor visibly flying in from 0,0 on
+      // the first movement, and sitting there in any screenshot taken during
+      // it. jump() places them without animating, so the first paint is already
+      // under the pointer. Subsequent moves spring normally, as intended.
+      if (!placed.current) {
+        placed.current = true;
+        cursorX.jump(e.clientX);
+        cursorY.jump(e.clientY);
+        setVisible(true);
+        return;
+      }
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
-      if (!visible) setVisible(true);
     };
 
     window.addEventListener("mousemove", onMouseMove, { passive: true });
@@ -45,11 +84,15 @@ export function CustomCursor() {
     document.addEventListener("mouseout", onOut, { passive: true });
 
     return () => {
+      document.documentElement.classList.remove("custom-cursor-active");
       window.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseover", onOver);
       document.removeEventListener("mouseout", onOut);
     };
-  }, [cursorX, cursorY, visible]);
+    // `visible` is deliberately not a dependency: it was, and flipping it tore
+    // down and re-registered every listener one frame after the first move.
+    // The ref carries that state now.
+  }, [cursorX, cursorY, reduceMotion]);
 
   if (!visible) return null;
 
@@ -63,7 +106,7 @@ export function CustomCursor() {
           animate={{
             width: hovering ? 48 : 32,
             height: hovering ? 48 : 32,
-            borderColor: hovering ? "rgba(230, 57, 70, 0.8)" : "rgba(255,255,255,0.5)",
+            borderColor: hovering ? "rgba(232, 163, 61, 0.8)" : "rgba(255,255,255,0.5)",
           }}
           transition={{ duration: 0.2 }}
           className="rounded-full border-2"
@@ -77,7 +120,7 @@ export function CustomCursor() {
           animate={{
             width: hovering ? 6 : 4,
             height: hovering ? 6 : 4,
-            backgroundColor: hovering ? "rgba(230, 57, 70, 1)" : "rgba(255,255,255,0.9)",
+            backgroundColor: hovering ? "rgba(232, 163, 61, 1)" : "rgba(255,255,255,0.9)",
           }}
           transition={{ duration: 0.15 }}
           className="rounded-full"

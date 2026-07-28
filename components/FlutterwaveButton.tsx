@@ -74,7 +74,7 @@ export function FlutterwaveButton({
           name: email.split("@")[0],
         },
         customizations: {
-          title: "Quivira",
+          title: "BigQuiv Digitals",
           description: serviceName,
           logo: "https://bigquivdigitals.com/logo.png",
         },

@@ -22,13 +22,13 @@ export function StaggerGrid({
   const getInitial = () => {
     switch (direction) {
       case "left":
-        return { opacity: 0, x: -40 };
+        return { opacity: 1, x: -12 };
       case "right":
-        return { opacity: 0, x: 40 };
+        return { opacity: 1, x: 12 };
       case "scale":
-        return { opacity: 0, scale: 0.8 };
+        return { opacity: 1, scale: 0.97 };
       default:
-        return { opacity: 0, y: 40 };
+        return { opacity: 1, y: 12 };
     }
   };
 

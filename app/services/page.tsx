@@ -1,48 +1,19 @@
-import { getServices, getMarqueeItems, getCtaBanner } from "@/lib/queries";
+import { getSetting } from "@/lib/queries";
 import { ServicesClient } from "@/components/ServicesClient";
-import { resolveHref } from "@/lib/resolve-href";
 
 export const revalidate = 60;
 
-async function resolveServices(services: Awaited<ReturnType<typeof getServices>>) {
-  return Promise.all(
-    services.map(async (s) => ({
-      ...s,
-      ctaHref: s.ctaHref ? await resolveHref(s.ctaHref) : null,
-    }))
-  );
-}
+export const metadata = {
+  title: "The Growth Operating System | BigQuiv Digitals",
+  description:
+    "One system covering website, AI content, community infrastructure, strategy and reporting. One invoice, one person responsible.",
+};
 
 export default async function ServicesPage() {
-  const [consulting, education, aiProducts, marqueeItems, cta] =
-    await Promise.all([
-      getServices("consulting"),
-      getServices("education"),
-      getServices("ai_products"),
-      getMarqueeItems("services"),
-      getCtaBanner("services"),
-    ]);
+  // The `services` table held 14 rows across consulting, education and
+  // ai_products. All 14 were retired on 2026-07-25. This page now presents the
+  // single Growth Operating System offer, so it needs no service rows at all.
+  const calendlyUrl = await getSetting("calendly_url");
 
-  const [resolvedConsulting, resolvedEducation, resolvedAiProducts] = await Promise.all([
-    resolveServices(consulting),
-    resolveServices(education),
-    resolveServices(aiProducts),
-  ]);
-
-  const resolvedCta = cta
-    ? {
-        ...cta,
-        buttonHref: await resolveHref(cta.buttonHref),
-      }
-    : null;
-
-  return (
-    <ServicesClient
-      consulting={resolvedConsulting}
-      education={resolvedEducation}
-      aiProducts={resolvedAiProducts}
-      marqueeItems={marqueeItems}
-      cta={resolvedCta}
-    />
-  );
+  return <ServicesClient calendlyUrl={calendlyUrl} />;
 }

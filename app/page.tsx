@@ -1,39 +1,22 @@
-import { getStats, getTestimonials, getMarqueeItems, getCtaBanner, getSetting } from "@/lib/queries";
+import { getStats, getTestimonials, getSetting } from "@/lib/queries";
 import { HomeClient } from "@/components/HomeClient";
-import { resolveHref } from "@/lib/resolve-href";
 
 export const revalidate = 60;
 
 export default async function Home() {
-  const [trustStats, resultStats, testimonials, marqueeItems, cta, calendlyUrl, heroTagline, heroSubtitle] =
-    await Promise.all([
-      getStats("home_trust"),
-      getStats("home_results"),
-      getTestimonials("home"),
-      getMarqueeItems("home"),
-      getCtaBanner("home"),
-      getSetting("calendly_url"),
-      getSetting("hero_tagline"),
-      getSetting("hero_subtitle"),
-    ]);
-
-  const resolvedCta = cta
-    ? {
-        ...cta,
-        buttonHref: await resolveHref(cta.buttonHref),
-      }
-    : null;
+  // Proof strip only. The old page ran two stat bars, a pillars section and a
+  // product grid, all of which described retired offers. See a2-site-audit.md.
+  const [proofStats, testimonials, calendlyUrl] = await Promise.all([
+    getStats("home_trust"),
+    getTestimonials("home"),
+    getSetting("calendly_url"),
+  ]);
 
   return (
     <HomeClient
       calendlyUrl={calendlyUrl}
-      heroTagline={heroTagline}
-      heroSubtitle={heroSubtitle}
-      trustStats={trustStats}
-      resultStats={resultStats}
+      proofStats={proofStats}
       testimonials={testimonials}
-      marqueeItems={marqueeItems}
-      cta={resolvedCta}
     />
   );
 }
