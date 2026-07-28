@@ -56,6 +56,60 @@ export function useProbeEnabled() {
   return useSyncExternalStore(subscribeProbe, () => probeOn, () => false);
 }
 
+/* ── bisect flags for the portrait paint issue ─────────────────────────── */
+
+export interface DevFlags {
+  /** Remove the legibility scrim overlays. */
+  noscrim: boolean;
+  /** Do not mount the WebGL canvas at all. */
+  nocanvas: boolean;
+  /** Base plate alone: no copy, no scrim, no canvas. */
+  plateonly: boolean;
+}
+
+/**
+ * Frozen and shared, so getSnapshot returns a stable reference and the
+ * hydration snapshot is identical to the server's. Returning a fresh object
+ * from getSnapshot would make useSyncExternalStore loop forever.
+ */
+const NO_FLAGS: DevFlags = Object.freeze({
+  noscrim: false,
+  nocanvas: false,
+  plateonly: false,
+});
+
+let devFlags: DevFlags = NO_FLAGS;
+let devRead = false;
+const devListeners = new Set<() => void>();
+
+function readDev() {
+  if (devRead) return;
+  devRead = true;
+  if (process.env.NODE_ENV === "production") return;
+  const q = new URLSearchParams(window.location.search);
+  const next: DevFlags = {
+    noscrim: q.has("noscrim"),
+    nocanvas: q.has("nocanvas"),
+    plateonly: q.has("plateonly"),
+  };
+  if (next.noscrim || next.nocanvas || next.plateonly) {
+    devFlags = next;
+    for (const l of devListeners) l();
+  }
+}
+
+function subscribeDev(cb: () => void) {
+  devListeners.add(cb);
+  queueMicrotask(readDev);
+  return () => {
+    devListeners.delete(cb);
+  };
+}
+
+export function useDevFlags(): DevFlags {
+  return useSyncExternalStore(subscribeDev, () => devFlags, () => NO_FLAGS);
+}
+
 const TUNE_KEYS = ["k", "amp", "lens", "chroma", "band", "blobScale", "drift"] as const;
 const TIER_KEYS = { octaves: "octaves", res: "resScale", blobs: "maxBlobs" } as const;
 

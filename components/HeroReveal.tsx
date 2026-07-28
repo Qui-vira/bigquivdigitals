@@ -6,6 +6,7 @@ import {
   HeroProbe,
   readTierOverrides,
   readTuningOverrides,
+  useDevFlags,
   useProbeEnabled,
 } from "./hero/HeroProbe";
 
@@ -97,26 +98,37 @@ function load(src: string) {
 export function HeroReveal({
   headline,
   supporting,
-  supportingShort,
+  mechanism,
+  proof,
   children,
 }: {
   headline: string;
-  /** Desktop paragraph. */
+  /** The reader's situation. */
   supporting: string;
-  /** Narrow-viewport variant. A real sentence, not a truncation of the above. */
-  supportingShort: string;
+  /** What I do, one sentence. Shares a paragraph with `supporting` so the
+   *  hero stays at four blocks. */
+  mechanism: string;
+  /** Checkable evidence. One line, text and a link. */
+  proof?: React.ReactNode;
   children?: React.ReactNode;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const plateRef = useRef<HTMLImageElement>(null);
   const engineRef = useRef<Handle | null>(null);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
   const reduced = useReducedMotion();
   const probeOn = useProbeEnabled();
+  const dev = useDevFlags();
 
   useEffect(() => {
     if (reduced || failed) return;
+    // The flags resolve one microtask after mount, so the canvas is briefly
+    // present before they apply. Without them in the dependency list the engine
+    // would start, the canvas would then unmount, and the loop would keep
+    // running against a detached element with no teardown.
+    if (dev.nocanvas || dev.plateonly) return;
     const wrap = wrapRef.current;
     const canvas = canvasRef.current;
     if (!wrap || !canvas) return;
@@ -166,12 +178,57 @@ export function HeroReveal({
       engine?.destroy();
       engineRef.current = null;
     };
-  }, [reduced, failed]);
+  }, [reduced, failed, dev.nocanvas, dev.plateonly]);
 
   const getStats = useCallback<() => Stats | null>(
     () => engineRef.current?.stats() ?? null,
     []
   );
+
+  /**
+   * Bisect instrumentation for the portrait paint issue. Dev only.
+   *
+   * Geometry has been computed correct at every width and the plate has never
+   * been observed painting, so this stops reasoning and reports the facts:
+   * which source the <picture> actually resolved, whether the bytes decoded,
+   * and what the canvas opacity is at the moment the plate is ready. Re-runs
+   * when `ready` flips so the canvas value is captured at first paint.
+   */
+  useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    const img = plateRef.current;
+    const canvas = canvasRef.current;
+    const snap = (phase: string, decode: string) =>
+      console.info(`[hero] ${phase}`, {
+        resolvedSrc: img?.currentSrc || img?.src || null,
+        naturalWidth: img?.naturalWidth ?? null,
+        naturalHeight: img?.naturalHeight ?? null,
+        imgComplete: img?.complete ?? null,
+        decode,
+        canvasMounted: !!canvas,
+        canvasOpacity: canvas ? getComputedStyle(canvas).opacity : null,
+        canvasBacking: canvas ? `${canvas.width}x${canvas.height}` : null,
+        ready,
+      });
+
+    if (!img) {
+      snap("plate", "no <img> element mounted");
+      return;
+    }
+    let cancelled = false;
+    img
+      .decode()
+      .then(() => {
+        if (!cancelled) snap("plate decode", "resolved");
+      })
+      .catch((e: unknown) => {
+        if (!cancelled)
+          snap("plate decode", `rejected: ${e instanceof Error ? `${e.name}: ${e.message}` : String(e)}`);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [ready, reduced, failed, dev.plateonly, dev.nocanvas]);
 
   const staticPlate = reduced || failed;
 
@@ -205,6 +262,7 @@ export function HeroReveal({
             sizes="100vw"
           />
           <img
+            ref={plateRef}
             src="/hero/king-base-1600.png"
             alt="Portrait of Big Quiv, founder of BigQuiv Digitals, against a black studio backdrop."
             className="absolute inset-0 h-full w-full object-cover"
@@ -212,7 +270,7 @@ export function HeroReveal({
             fetchPriority="high"
           />
         </picture>
-        {!staticPlate && (
+        {!staticPlate && !dev.nocanvas && !dev.plateonly && (
           <canvas
             ref={canvasRef}
             aria-hidden="true"
@@ -223,23 +281,29 @@ export function HeroReveal({
 
       {/* Legibility scrim, shaped to wherever the copy actually is.
           A blanket 62% band was swallowing the face on portrait viewports,
-          which defeats the point of a portrait hero. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[42%] lg:hidden"
-        style={{
-          background:
-            "linear-gradient(to top, #000 0%, #000 34%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0) 100%)",
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-[72%] lg:block"
-        style={{
-          background:
-            "linear-gradient(to right, #000 0%, rgba(0,0,0,0.88) 34%, rgba(0,0,0,0.45) 66%, rgba(0,0,0,0) 100%)",
-        }}
-      />
+          which defeats the point of a portrait hero.
+          ?noscrim=1 and ?plateonly=1 remove it, to isolate whether the scrim is
+          what is covering the subject. */}
+      {!dev.noscrim && !dev.plateonly && (
+        <>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[42%] lg:hidden"
+            style={{
+              background:
+                "linear-gradient(to top, #000 0%, #000 34%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0) 100%)",
+            }}
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-[72%] lg:block"
+            style={{
+              background:
+                "linear-gradient(to right, #000 0%, rgba(0,0,0,0.88) 34%, rgba(0,0,0,0.45) 66%, rgba(0,0,0,0) 100%)",
+            }}
+          />
+        </>
+      )}
 
       {/* Copy: bottom-anchored on phones, a left column beside the subject on
           desktop. Never over the face at either size. */}
@@ -248,7 +312,10 @@ export function HeroReveal({
           At lg the block is vertically centred anyway, so 128px of that is
           spent rather than used; 80px still leaves 16px under the navbar and
           buys back the room a short window needs to fit the CTAs. */}
-      <div className="relative z-20 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pt-28 pb-14 md:px-10 md:pt-32 lg:justify-center lg:pt-20 lg:pb-0">
+      {/* ?plateonly=1 drops the copy entirely, leaving the plate alone. */}
+      <div
+        className={`relative z-20 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pt-28 pb-14 md:px-10 md:pt-32 lg:justify-center lg:pt-20 lg:pb-0 ${dev.plateonly ? "hidden" : ""}`}
+      >
         {/* The "BIGQUIV DIGITALS" eyebrow that sat here is gone. It repeated
             the navbar wordmark verbatim, directly beneath it. */}
         {/* The column was only capped at lg, so the 640-1024 band ran the
@@ -268,19 +335,23 @@ export function HeroReveal({
             {headline}
           </h1>
 
-          {/* Two real variants, swapped on the breakpoint. display:none keeps
-              the hidden one out of the accessibility tree, so neither is read
-              twice. Not a CSS truncation of the long paragraph. */}
-          <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-text-secondary lg:hidden">
-            {supportingShort}
-          </p>
-          <p className="mt-5 hidden max-w-[46ch] text-lg leading-relaxed text-text-secondary lg:block">
-            {supporting}
+          {/* Block 2. The reader's situation and the mechanism share one
+              paragraph, which is what keeps the hero at four blocks while still
+              stating both. Tight coupling to the headline above it. */}
+          <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-text-secondary md:mt-5 lg:text-lg">
+            {supporting} {mechanism}
           </p>
 
-          {/* Large gap before the form. The rhythm was near-uniform, so nothing
-              grouped: headline and supporting now couple tightly, the form sits
-              clearly apart, and its helper text couples tightly back to it. */}
+          {/* Block 3. Checkable evidence, not a claim. Text only. */}
+          {proof ? (
+            <p className="mt-5 max-w-[46ch] text-sm leading-relaxed text-text-muted">
+              {proof}
+            </p>
+          ) : null}
+
+          {/* Block 4. Large gap before the form. The rhythm was near-uniform,
+              so nothing grouped: the first three blocks couple, the form sits
+              clearly apart. */}
           {children ? <div className="mt-10 w-full md:mt-12">{children}</div> : null}
         </div>
       </div>

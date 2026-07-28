@@ -77,41 +77,39 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           and what you are paid for. That is the course's spine (confusion ->
           skill -> proof -> visibility -> monetization) and it is what the
           consulting delivers, so one headline can carry both funnels honestly. */}
-      <HeroReveal
-        headline="Skill was never your problem. Your proof is."
-        supportingShort="You can do the work. Proof, visibility and a path to the buyer are what's missing."
-        supporting="You can do the work. What is missing is proof a stranger can check, visibility with the people who buy, and a path that ends at a decision. I built that system for myself, I run it for clients, and I am teaching it."
-      >
-        {/* Four blocks at narrow widths, down from eight: headline, one
-            supporting line, the form, one link row. The waitlist microcopy
-            folded into helper text under the form, where it reads as part of
-            the control rather than as another paragraph competing with it.
+      {/* The previous headline claimed that proof beats skill and then showed
+          none, so the page failed its own test in its first sentence. The
+          headline now states the reader's situation instead of asserting a
+          credential, and block 3 carries something checkable.
 
-            Primary action stays the course waitlist. "hire me to build it" sits
-            beside "See the work" because the headline speaks to a buyer as much
-            as a learner. It still leads the offer section and /services. */}
+          13 deployed systems is reused from the content-engine case-study card
+          below, on the owner's authorisation. It is stated as published: not
+          rounded, not widened into a range, not paired with any figure that has
+          not already appeared on this site. */}
+      <HeroReveal
+        headline="You collected the proof. Nothing was behind it, so you stopped."
+        supporting="Certificates, finished builds, a portfolio nobody opened. The work was never the part that was missing."
+        mechanism="I build the system that carries work to a buyer, so proof has somewhere to go."
+        proof={
+          <>
+            13 deployed systems sit behind one of the builds below.{" "}
+            <a
+              href="/work/content-engine"
+              className="text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
+            >
+              See what they run
+            </a>
+            .
+          </>
+        }
+      >
+        {/* Block 4. The system name sits ABOVE the button, where it can inform
+            the decision, rather than below it where it arrived too late. */}
         <div className="w-full">
-          <WaitlistForm source="hero" compact />
-          <p className="mt-2 text-xs text-text-muted">
-            The Zero-to-Opportunity System opens soon. You hear first.
+          <p className="mb-3 text-sm text-text-secondary">
+            The Zero-to-Opportunity System. Opens soon, the list hears first.
           </p>
-          <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm font-medium">
-            <a
-              href="#work"
-              className="text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
-            >
-              See the work
-            </a>
-            <span aria-hidden="true" className="text-text-muted">
-              &middot;
-            </span>
-            <a
-              href={calendlyUrl}
-              className="text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
-            >
-              hire me to build it
-            </a>
-          </div>
+          <WaitlistForm source="hero" compact />
         </div>
       </HeroReveal>
 
