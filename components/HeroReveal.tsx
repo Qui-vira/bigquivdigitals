@@ -112,6 +112,7 @@ export function HeroReveal({
   proof?: React.ReactNode;
   children?: React.ReactNode;
 }) {
+  const sectionRef = useRef<HTMLElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const plateRef = useRef<HTMLImageElement>(null);
@@ -186,6 +187,29 @@ export function HeroReveal({
   );
 
   /**
+   * Publish the navbar's measured height as --hero-nav-h.
+   *
+   * The copy column had no allowance for the fixed navbar at lg. It used
+   * justify-center, which centres content in the padding box and, when the
+   * content is taller than that box, overflows it at BOTH ends: at 1337x594
+   * the first headline line rose to the same y as the nav wordmark. The
+   * padding below is derived from this measurement rather than a hard 64px,
+   * so a nav that changes height cannot silently reintroduce the collision.
+   */
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const nav = document.querySelector<HTMLElement>("nav, header");
+    if (!nav) return;
+    const apply = () =>
+      section.style.setProperty("--hero-nav-h", `${nav.offsetHeight}px`);
+    apply();
+    const ro = new ResizeObserver(apply);
+    ro.observe(nav);
+    return () => ro.disconnect();
+  }, []);
+
+  /**
    * Bisect instrumentation for the portrait paint issue. Dev only.
    *
    * Geometry has been computed correct at every width and the plate has never
@@ -234,6 +258,7 @@ export function HeroReveal({
 
   return (
     <section
+      ref={sectionRef}
       aria-labelledby="hero-heading"
       className="relative isolate flex h-[100svh] min-h-[520px] w-full flex-col justify-end overflow-hidden bg-bg-primary"
       style={{ touchAction: "pan-y" }}
@@ -312,9 +337,15 @@ export function HeroReveal({
           At lg the block is vertically centred anyway, so 128px of that is
           spent rather than used; 80px still leaves 16px under the navbar and
           buys back the room a short window needs to fit the CTAs. */}
-      {/* ?plateonly=1 drops the copy entirely, leaving the plate alone. */}
+      {/* ?plateonly=1 drops the copy entirely, leaving the plate alone.
+
+          `safe center` rather than plain center: safe centring falls back to
+          flex-start the moment the content is taller than the box, so it can
+          overflow the bottom but never the top. That is what stops the headline
+          rising into the navbar on a short viewport. Top padding is the
+          measured nav height plus a real gap. */}
       <div
-        className={`relative z-20 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pt-28 pb-14 md:px-10 md:pt-32 lg:justify-center lg:pt-20 lg:pb-0 ${dev.plateonly ? "hidden" : ""}`}
+        className={`relative z-20 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pt-28 pb-14 md:px-10 md:pt-32 lg:[justify-content:safe_center] lg:pt-[calc(var(--hero-nav-h,4rem)+1.5rem)] lg:pb-6 ${dev.plateonly ? "hidden" : ""}`}
       >
         {/* The "BIGQUIV DIGITALS" eyebrow that sat here is gone. It repeated
             the navbar wordmark verbatim, directly beneath it. */}
@@ -330,7 +361,7 @@ export function HeroReveal({
               rendering desktop-size type and pushing the CTAs off the bottom. */}
           <h1
             id="hero-heading"
-            className="font-display text-[clamp(1.75rem,7.5vw,2.5rem)] font-bold leading-[0.98] tracking-[-0.025em] text-text-primary text-balance sm:text-[clamp(2.5rem,5.2vw,3.25rem)] sm:leading-[0.96] lg:text-[clamp(3rem,min(5.4vw,10svh),4.5rem)]"
+            className="font-display text-[clamp(1.75rem,7.5vw,2.5rem)] font-bold leading-[0.98] tracking-[-0.025em] text-text-primary text-balance sm:text-[clamp(2.5rem,5.2vw,3.25rem)] sm:leading-[0.96] lg:text-[clamp(3rem,min(5.4vw,7.2svh),4.5rem)]"
           >
             {headline}
           </h1>
@@ -338,13 +369,16 @@ export function HeroReveal({
           {/* Block 2. The reader's situation and the mechanism share one
               paragraph, which is what keeps the hero at four blocks while still
               stating both. Tight coupling to the headline above it. */}
-          <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-text-secondary md:mt-5 lg:text-lg">
+          {/* Gaps between blocks 1-3 are tight on purpose: they are one
+              argument and should read as one group. The only large gap on the
+              page is the one before the form. */}
+          <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-text-secondary lg:text-lg">
             {supporting} {mechanism}
           </p>
 
           {/* Block 3. Checkable evidence, not a claim. Text only. */}
           {proof ? (
-            <p className="mt-5 max-w-[46ch] text-sm leading-relaxed text-text-muted">
+            <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-text-muted">
               {proof}
             </p>
           ) : null}

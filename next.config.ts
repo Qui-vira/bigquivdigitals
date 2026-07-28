@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
   // so a claim, its screenshot, its alt text and its verification tier stay
   // one unit. See 05-backend-schema.md.
   pageExtensions: ["ts", "tsx", "js", "jsx", "md", "mdx"],
+  // The circled "N" at the bottom-left is this indicator, not site code. It
+  // never shipped to production, but it sits on top of the hero during every
+  // review and has been reported as an artifact twice. Off.
+  devIndicators: false,
   images: {
     // Explicit allowlist. This was previously hostname "**", which let the
     // image optimizer fetch and resize from any host on the internet and

@@ -29,6 +29,26 @@ const FACE_CY = 0.403;
 const SUBJECT_TARGET = 0.9;
 const FOCAL_Y = 0.42;
 
+/**
+ * The band that must stay inside the frame, in normalised plate height:
+ * crown of the head to the shoulder line, read off scripts/plate-grid.mjs.
+ *
+ * The fit was min(cover, widthCap) with the FACE pinned to viewport centre.
+ * That formula is unchanged since the first canvas version and never regressed,
+ * but it only ever constrained width. Vertically it guaranteed nothing: at wide
+ * viewports it placed plate 0.403 at viewport centre, which pushes the plate
+ * down by about 0.097 of its height, so the shoulder line at 0.90 landed at
+ * roughly 0.997 of the viewport and fell off the moment the plate was taller
+ * than the viewport. At 1337x594 that cut the shoulders by 79px.
+ *
+ * This was invisible while the hero rendered black. It became a visible fault
+ * the moment the plate started painting.
+ */
+const SUBJECT_CROWN = 0.1;
+const SUBJECT_SHOULDER = 0.9;
+const SUBJECT_BAND = SUBJECT_SHOULDER - SUBJECT_CROWN;
+const SUBJECT_BAND_CY = (SUBJECT_CROWN + SUBJECT_SHOULDER) / 2;
+
 const HEAD_W = 850;
 const BRUSH_HEAD_FRAC = 0.225;
 /**
@@ -401,19 +421,29 @@ export function createLiquidGlass(opts: Options): Handle {
 
   function computeFit() {
     const cover = Math.max(cw / PLATE_W, ch / PLATE_H);
-    const capped = (SUBJECT_TARGET * cw) / SUBJECT_W;
-    const scale = Math.min(cover, capped);
+    // Cap so the subject never exceeds SUBJECT_TARGET of the viewport width.
+    const widthCap = (SUBJECT_TARGET * cw) / SUBJECT_W;
+    // Cap so crown-to-shoulders always fits the viewport height. This is the
+    // constraint the original formula lacked entirely.
+    const heightCap = ch / (SUBJECT_BAND * PLATE_H);
+    const scale = Math.min(cover, widthCap, heightCap);
     const dw = PLATE_W * scale;
     const dh = PLATE_H * scale;
     const wide = cw >= 1024;
     const anchorX = wide ? 0.66 : 0.5;
-    const anchorY = wide ? 0.5 : FOCAL_Y;
     fit = {
       scale,
       dw,
       dh,
       dx: cw * anchorX - SUBJECT_CX * dw,
-      dy: ch * anchorY - FACE_CY * dh,
+      // Wide centres the crown-to-shoulder BAND, not the face. Centring the
+      // face is what pushed the shoulders off the bottom edge; centring the
+      // band keeps both ends in frame and reads as a deliberate portrait crop.
+      // Narrow is unchanged: it letterboxes and the copy sits in the black
+      // below, so the face wants to be high, at FOCAL_Y.
+      dy: wide
+        ? ch * 0.5 - SUBJECT_BAND_CY * dh
+        : ch * FOCAL_Y - FACE_CY * dh,
     };
     // Plate space, multiplied by the fit scale: the blob covers 0.225 of the
     // head width at every viewport (verified 390/620/1280/1440, all 0.2250).

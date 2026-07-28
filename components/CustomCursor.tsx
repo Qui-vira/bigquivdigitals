@@ -1,9 +1,26 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { motion, useSpring, useReducedMotion } from "framer-motion";
 
+/**
+ * Not rendered on the homepage.
+ *
+ * The ring is a 32px bordered circle following a spring. Over a full-bleed
+ * portrait it does not read as a cursor, it reads as a stray artifact floating
+ * on the face. An earlier pass stopped it flying in from 0,0, which was a real
+ * bug, but the object itself is still wrong on this page. It stays everywhere
+ * else, where it sits over flat backgrounds.
+ */
+const DISABLED_ON = new Set(["/"]);
+
 export function CustomCursor() {
+  const pathname = usePathname();
+  return DISABLED_ON.has(pathname) ? null : <CursorLayer />;
+}
+
+function CursorLayer() {
   const [visible, setVisible] = useState(false);
   const [hovering, setHovering] = useState(false);
   const reduceMotion = useReducedMotion();
