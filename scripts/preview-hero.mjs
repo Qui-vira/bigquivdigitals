@@ -100,7 +100,7 @@ async function render(cw, ch, label) {
   const bodyLines = wrap(SUPPORTING, bodySize, Math.min(colW, 46 * bodySize * ADV_BODY), ADV_BODY);
   const proofLines = wrap(PROOF, proofSize, Math.min(colW, 46 * proofSize * ADV_PROOF), ADV_PROOF);
 
-  const gapSup = 16, gapProof = 12, gapForm = cw >= 768 ? 48 : 40;
+  const gapSup = cw >= 768 ? 16 : 32, gapProof = 12, gapForm = cw >= 768 ? 48 : 40;
   const helpH = 21, gapHelp = 12, formH = 48, ctaH = 16 + 20; // + 'Hire me'
 
   const blockH =
@@ -139,15 +139,18 @@ async function render(cw, ch, label) {
          <stop offset="1" stop-color="#000" stop-opacity="0"/>
        </linearGradient>
        <rect x="0" y="0" width="${cw * 0.72}" height="${ch}" fill="url(#s)"/>`
-    : `<linearGradient id="m" x1="0" y1="0" x2="0" y2="1">
-         <stop offset="0" stop-color="#000" stop-opacity="0"/>
-         <stop offset="0.24" stop-color="#000" stop-opacity="0"/>
-         <stop offset="0.36" stop-color="#000" stop-opacity="0.42"/>
-         <stop offset="0.46" stop-color="#000" stop-opacity="0.72"/>
-         <stop offset="0.58" stop-color="#000" stop-opacity="0.78"/>
-         <stop offset="1" stop-color="#000" stop-opacity="0.78"/>
+    : `<linearGradient id="m" x1="0" y1="0" x2="1" y2="0">
+         <stop offset="0" stop-color="#000" stop-opacity="0.90"/>
+         <stop offset="0.45" stop-color="#000" stop-opacity="0.80"/>
+         <stop offset="0.75" stop-color="#000" stop-opacity="0.64"/>
+         <stop offset="1" stop-color="#000" stop-opacity="0.52"/>
        </linearGradient>
-       <rect x="0" y="0" width="${cw}" height="${ch}" fill="url(#m)"/>
+       <linearGradient id="mk" x1="0" y1="0" x2="0" y2="1">
+         <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+         <stop offset="0.25" stop-color="#fff" stop-opacity="1"/>
+       </linearGradient>
+       <mask id="mm"><rect x="0" y="0" width="${cw}" height="${ch}" fill="url(#mk)"/></mask>
+       <rect x="0" y="0" width="${cw}" height="${ch}" fill="url(#m)" mask="url(#mm)"/>
        <linearGradient id="s" x1="0" y1="1" x2="0" y2="0">
          <stop offset="0" stop-color="#000" stop-opacity="1"/>
          <stop offset="0.34" stop-color="#000" stop-opacity="1"/>
@@ -170,12 +173,12 @@ async function render(cw, ch, label) {
   y += gapSup;
   for (const l of bodyLines) {
     y += bodyLead;
-    text += `<text x="${padX}" y="${y - bodyLead * 0.28}" font-size="${bodySize}" fill="${wide ? '#A39C93' : '#CEC9C3'}" font-family="sans-serif">${esc(l)}</text>`;
+    text += `<text x="${padX}" y="${y - bodyLead * 0.28}" font-size="${bodySize}" fill="${wide ? '#A39C93' : '#F3F3F3'}" font-family="sans-serif">${esc(l)}</text>`;
   }
   y += gapProof;
   for (const l of proofLines) {
     y += proofLead;
-    text += `<text x="${padX}" y="${y - proofLead * 0.28}" font-size="${proofSize}" fill="${wide ? '#6B655D' : '#A9A6A1'}" font-family="sans-serif">${esc(l)}</text>`;
+    text += `<text x="${padX}" y="${y - proofLead * 0.28}" font-size="${proofSize}" fill="${wide ? '#6B655D' : '#F3F3F3'}" font-family="sans-serif">${esc(l)}</text>`;
   }
   y += gapForm;
   text += `<text x="${padX}" y="${y + 14}" font-size="14" fill="#A8A29C" font-family="sans-serif">${esc(HELPER)}</text>`;

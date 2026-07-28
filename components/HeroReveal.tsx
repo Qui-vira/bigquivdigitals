@@ -311,20 +311,29 @@ export function HeroReveal({
           what is covering the subject. */}
       {!dev.noscrim && !dev.plateonly && (
         <>
-          {/* Mobile only, under 768px. The bottom scrim below starts at 58% of
-              the viewport, but the copy column is bottom-anchored and starts at
-              roughly 42%, which is the eye line. So the headline and the first
-              lines of body copy sat on bare portrait, over the brightest part
-              of the face. Measured worst-case contrast before this existed was
-              1.08:1 to 1.35:1 across 375, 390, 414 and 592 wide: not poor, but
-              effectively invisible.
+          {/* Mobile only, under 768px. Left-to-right, so the darkness sits
+              where the copy is and the portrait keeps its light on the right,
+              rather than the whole image being dimmed.
 
-              This ramps to 78% black through that band and holds. The first 24%
-              stays fully clear so the crown, hair and forehead still read as a
-              portrait rather than a dark rectangle. Measured after: headline
-              5.91 to 10.37:1, body 7.08 to 11.54:1, proof 6.99 to 8.48:1, all
-              AA or better, checked against the brightest pixel behind each
-              block rather than the mean.
+              It floors at 0.52 instead of reaching transparent. The mobile copy
+              column is full width, so headline lines run to about 93% across,
+              and a ramp that fades to zero leaves their right-hand end on bare
+              cheek: measured 3.98:1 at 592 and 4.04:1 at 390, below AA. Same
+              shape, same feel, with a floor.
+
+              Repositioning the subject was tried first and rejected. Moving the
+              focal point from 0.42 up to 0.28 only slides a different bright
+              region under the headline; at 375 wide it stayed at 4.09:1 no
+              matter where the face went.
+
+              Measured worst case, sampled across each line rather than only
+              down it, at 375, 390, 414 and 592 wide:
+                headline  7.04 to 8.63:1   AAA
+                body      11.1 to 15.9:1   AAA
+                proof     16.2 to 18.9:1   AAA
+              The right edge of the frame keeps 48% of its brightness, against
+              22% under the full-bleed version this replaces, so the portrait
+              reads better than it did before.
 
               md:hidden, so 768px and up is untouched. See
               scripts/hero-contrast.mjs. */}
@@ -333,7 +342,15 @@ export function HeroReveal({
             className="pointer-events-none absolute inset-0 z-10 md:hidden"
             style={{
               background:
-                "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 24%, rgba(0,0,0,0.42) 36%, rgba(0,0,0,0.72) 46%, rgba(0,0,0,0.78) 58%, rgba(0,0,0,0.78) 100%)",
+                "linear-gradient(to right, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.80) 45%, rgba(0,0,0,0.64) 75%, rgba(0,0,0,0.52) 100%)",
+              // Faded out over the top quarter, where there is no copy. A
+              // horizontal ramp alone darkens the full height, including the
+              // head, and the portrait went flat. The mask is fully opaque by
+              // 25% and the highest any copy starts is 31%, so it costs nothing
+              // in contrast: measured ratios are identical with and without it.
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent 0%, #000 25%)",
+              maskImage: "linear-gradient(to bottom, transparent 0%, #000 25%)",
             }}
           />
           <div
@@ -397,20 +414,27 @@ export function HeroReveal({
           {/* Gaps between blocks 1-3 are tight on purpose: they are one
               argument and should read as one group. The only large gap on the
               page is the one before the form. */}
-          {/* Colour is lifted on mobile only. text-secondary (#A39C93) against
-              the scrimmed portrait measured 1.16 to 1.55:1 under 768px. The
-              same token is restored at md, so desktop is byte-identical. */}
-          <p className="mt-4 max-w-[46ch] text-base leading-relaxed text-text-primary/85 md:text-text-secondary lg:text-lg">
+          {/* Mobile: near-white, no grey. text-secondary (#A39C93) measured
+              1.16 to 1.55:1 here and the earlier 85% lift was still reading as
+              grey against a photograph. mt-8 adds 16px over the previous mt-4
+              so the paragraph is not crowded under the headline.
+
+              leading-relaxed is already 1.625, which is the requested ~1.6, so
+              line-height is left alone rather than restated.
+
+              Every mobile value carries an md: restore, so desktop is
+              byte-identical. */}
+          <p className="mt-8 max-w-[46ch] text-base leading-relaxed text-[#F3F3F3] md:mt-4 md:text-text-secondary lg:text-lg">
             {supporting} {mechanism}
           </p>
 
           {/* Block 3. Checkable evidence, not a claim. Text only.
-              Same mobile treatment as the paragraph above: text-muted
-              (#6B655D) measured 1.49 to 2.85:1 under 768px, below AA at every
-              size. Restored at md. Kept a step below the body copy so the
-              hierarchy survives the lift. */}
+              Same near-white on mobile: text-muted (#6B655D) measured 1.49 to
+              2.85:1 under 768px, below AA at every size. With grey ruled out on
+              mobile, hierarchy against the paragraph above is carried by size,
+              14px against 16px, rather than by colour. Restored at md. */}
           {proof ? (
-            <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-text-primary/70 md:text-text-muted">
+            <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-[#F3F3F3] md:text-text-muted">
               {proof}
             </p>
           ) : null}
