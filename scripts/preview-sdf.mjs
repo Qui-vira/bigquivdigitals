@@ -40,7 +40,17 @@ const BAND_FACTOR = arg("band", 0.28);
 // Defaults mirror the shipped constants in components/hero/glsl.ts.
 const NOISE_FREQ = arg("freq", 1.7);
 const GAIN = arg("gain", 0.35);
-const R0 = 90;
+/**
+ * Blob radius in SHADER pixels, which is the only size at which the silhouette
+ * detail can be judged honestly.
+ *
+ * Default 59.5 is the mobile case, not the desktop one: at a 390px viewport the
+ * fit scale is 0.3112, so baseR = 850 * 0.225 * 0.3112 = 59.5 CSS px. Tier 2
+ * renders at resScale 0.5 on a dpr-2 phone, so 390 * 2 * 0.5 = 390 shader px
+ * across the viewport, i.e. 1 shader px per CSS px, i.e. a 59.5px blob rendered
+ * with 2 octaves. Desktop for comparison is --r0 91 --octaves 4.
+ */
+const R0 = arg("r0", 59.5);
 
 /* ── field math, mirroring components/hero/glsl.ts ─────────────────────── */
 
@@ -110,7 +120,7 @@ function field(px, py, blobs, k) {
 
 /* ── panels ────────────────────────────────────────────────────────────── */
 
-const S = 320;
+const S = Math.round(R0 * 3.6);
 const HALF = S / 2;
 
 const panels = [

@@ -56,17 +56,40 @@ export function useProbeEnabled() {
   return useSyncExternalStore(subscribeProbe, () => probeOn, () => false);
 }
 
-/** Reads k / amp / lens / chroma / band overrides out of the query string. */
-export function readTuningOverrides(): Record<string, number> {
+const TUNE_KEYS = ["k", "amp", "lens", "chroma", "band", "blobScale", "drift"] as const;
+const TIER_KEYS = { octaves: "octaves", res: "resScale", blobs: "maxBlobs" } as const;
+
+function numbers(keys: readonly string[]) {
   if (typeof window === "undefined") return {};
   if (process.env.NODE_ENV === "production") return {};
   const q = new URLSearchParams(window.location.search);
   const out: Record<string, number> = {};
-  for (const key of ["k", "amp", "lens", "chroma", "band"]) {
+  for (const key of keys) {
     const raw = q.get(key);
     if (raw === null) continue;
     const n = Number.parseFloat(raw);
     if (Number.isFinite(n)) out[key] = n;
+  }
+  return out;
+}
+
+/** Shader tuning from the query string: k, amp, lens, chroma, band, blobScale, drift. */
+export function readTuningOverrides(): Record<string, number> {
+  return numbers(TUNE_KEYS);
+}
+
+/**
+ * Tier overrides from the query string: octaves, res, blobs.
+ *
+ * These let a candidate tier be tested on a real device without shipping it —
+ * tier 2 at 3 octaves and 0.65 resolution, say — so the decision is made on a
+ * measured frame time rather than on how it looks on a desktop GPU.
+ */
+export function readTierOverrides(): Record<string, number> {
+  const raw = numbers(Object.keys(TIER_KEYS));
+  const out: Record<string, number> = {};
+  for (const [param, field] of Object.entries(TIER_KEYS)) {
+    if (raw[param] !== undefined) out[field] = raw[param];
   }
   return out;
 }
@@ -128,6 +151,14 @@ export function HeroProbe({ getStats }: { getStats: () => Stats | null }) {
           {s.activeBlobs} / {s.maxBlobs}
         </span>
       </div>
+      <div className={ROW}>
+        <span>blob ceiling</span>
+        <span>{s.blobCeiling}</span>
+      </div>
+      <div className={ROW}>
+        <span>base radius</span>
+        <span>{s.baseRadiusPx.toFixed(1)} px</span>
+      </div>
       <div className="my-1.5 h-px bg-white/15" />
       <div className={ROW}>
         <span>smin k</span>
@@ -148,6 +179,14 @@ export function HeroProbe({ getStats }: { getStats: () => Stats | null }) {
       <div className={ROW}>
         <span>band</span>
         <span>{s.tune.band}</span>
+      </div>
+      <div className={ROW}>
+        <span>blobScale</span>
+        <span>{s.tune.blobScale}</span>
+      </div>
+      <div className={ROW}>
+        <span>drift</span>
+        <span>{s.tune.drift}</span>
       </div>
     </div>
   );

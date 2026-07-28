@@ -31,16 +31,55 @@ const FOCAL_Y = 0.42;
 
 const HEAD_W = 850;
 const BRUSH_HEAD_FRAC = 0.225;
-const BRUSH_MIN = 40;
-const BRUSH_MAX = 190;
+/**
+ * Degenerate-scale guards only, in CSS px.
+ *
+ * These were 40 and 190, tight enough to be a second, viewport-relative
+ * definition of the radius fighting the plate-relative one. They never actually
+ * bite between 390px and 1440px (the raw value runs 59.5 to 113.2), but at 40
+ * the floor would have engaged below a 262px viewport and quietly broken the
+ * "same fraction of the face at every width" property. Widened so the plate
+ * relation is the only thing setting the size in any real case.
+ */
+const BRUSH_MIN = 14;
+const BRUSH_MAX = 400;
 
 /* ── trail timing, carried over ────────────────────────────────────────── */
 
 const IDLE_MS = 1200;
-const DRIFT_AMP_X = 0.42;
-const DRIFT_AMP_Y = 0.16;
-const DRIFT_WX = 1.7;
-const DRIFT_WY = 1.15;
+
+/* ── drift path, in normalised PLATE coordinates ───────────────────────── */
+
+/**
+ * Landmarks read off the plate via scripts/plate-grid.mjs, normalised to plate
+ * height: crown 0.10, brow 0.30, eyes 0.42, nose 0.55, mouth 0.63, jaw/beard
+ * 0.77, shoulders 0.90.
+ *
+ * The old path was centred on the face at 0.403 with amplitude 0.16, so it
+ * ranged 0.24..0.56: forehead, eyes and nose, and nothing below. It never
+ * reached the mouth. The range is now the whole subject, crown to shoulder
+ * line, so the reveal travels the full head rather than hovering over the eyes.
+ *
+ * Everything here is time-based and plate-relative, so traversal takes the same
+ * number of SECONDS at any viewport and covers the same part of the subject.
+ */
+const DRIFT_CX = 0.512; // subject centre
+const DRIFT_AX = 0.2014; // 0.48 x subject width -> spans 0.311..0.713
+const DRIFT_CY = 0.5;
+const DRIFT_AY = 0.4; // spans 0.10..0.90, crown to shoulders
+/**
+ * Slowed from 1.7 rad/s. That crossed the sweep in 1.848s, which reads as a
+ * rush on a phone: there is no pointer on touch, so drift is the ONLY motion
+ * and it plays against a face filling 90% of the viewport rather than 42%.
+ * Same seconds at every width either way; this is a pacing choice, not a fix.
+ */
+const DRIFT_WX = 0.95;
+/** Two incommensurate vertical terms, so the path fills the band rather than
+ *  retracing one line. */
+const DRIFT_WY1 = 0.62;
+const DRIFT_WY2 = 1.43;
+const DRIFT_MIX = 0.68;
+const DRIFT_PHASE = 1.7;
 
 /** Per-frame survival factor from the old HEAL_ALPHA = 0.05. */
 const HEAL_PER_FRAME = 0.95;
@@ -66,7 +105,18 @@ const SPACING_FRAC = 0.55;
  * consecutive circles always overlap before smin() is even considered — smin
  * then closes the neck rather than being asked to invent one.
  */
-const VEL_REF = 1600;
+/**
+ * PLATE px/s, not CSS px/s. This was 1600 CSS px/s, and it was the one genuine
+ * unit-space bug in the trail: pointer velocity is measured in CSS px, so the
+ * same gesture across the subject produced 351px of travel on a 390 viewport
+ * and 668px on a 1440 one. The radius therefore grew roughly twice as eagerly
+ * on desktop for the identical movement. Dividing by the fit scale puts the
+ * measurement in the same space as the radius it feeds.
+ *
+ * 3200 plate px/s preserves the previous desktop behaviour: 1600 CSS px/s at a
+ * typical desktop fit scale of ~0.5 is 3200 plate px/s.
+ */
+const VEL_REF = 3200;
 const VEL_GROWTH = 0.6;
 const VEL_MAX = 1.8;
 const VEL_HARD_MAX = 2.2;
@@ -114,6 +164,10 @@ export interface Tuning {
   chroma: number;
   /** Rim band width, as a fraction of radius. */
   band: number;
+  /** Multiplier on the plate-derived blob radius. 1 = 0.225 of head width. */
+  blobScale: number;
+  /** Multiplier on drift angular speed. 1 = a 3.31s sweep across the subject. */
+  drift: number;
 }
 
 export const DEFAULT_TUNING: Tuning = {
@@ -122,7 +176,16 @@ export const DEFAULT_TUNING: Tuning = {
   lens: 0.1,
   chroma: 0.08,
   band: 0.28,
+  blobScale: 1,
+  drift: 1,
 };
+
+/** Dev-only tier overrides, so a tier can be tested without shipping it. */
+export interface TierOverrides {
+  octaves?: number;
+  resScale?: number;
+  maxBlobs?: number;
+}
 
 export interface Stats {
   meanMs: number;
@@ -134,6 +197,9 @@ export interface Stats {
   octaves: number;
   maxBlobs: number;
   activeBlobs: number;
+  /** Largest MAX_BLOBS this GPU's uniform budget would allow. */
+  blobCeiling: number;
+  baseRadiusPx: number;
   warmingUp: boolean;
   tune: Tuning;
 }
@@ -161,6 +227,7 @@ interface Options {
   base: HTMLImageElement;
   chrome: HTMLImageElement;
   tuning?: Partial<Tuning>;
+  overrides?: TierOverrides;
   /** Called if WebGL cannot run at all. The caller shows the static plate. */
   onFailure: () => void;
 }
@@ -221,6 +288,15 @@ export function createLiquidGlass(opts: Options): Handle {
   }
 
   const tune: Tuning = { ...DEFAULT_TUNING, ...opts.tuning };
+  const ov: TierOverrides = opts.overrides ?? {};
+
+  /** Tier values with any dev override applied. */
+  const tierOf = (i: number) => ({
+    name: TIERS[i].name,
+    resScale: ov.resScale ?? TIERS[i].resScale,
+    octaves: ov.octaves ?? TIERS[i].octaves,
+    maxBlobs: ov.maxBlobs ?? TIERS[i].maxBlobs,
+  });
 
   /**
    * GLSL ES 1.00 only guarantees 16 fragment uniform vectors. Every real device
@@ -252,7 +328,7 @@ export function createLiquidGlass(opts: Options): Handle {
   let texChrome = makeTexture(gl, chrome);
 
   function buildProgram(index: number) {
-    const tier = TIERS[index];
+    const tier = tierOf(index);
     const blobs = Math.min(tier.maxBlobs, blobCeiling);
     const prog = gl!.createProgram();
     if (!prog) throw new Error("createProgram failed");
@@ -339,9 +415,11 @@ export function createLiquidGlass(opts: Options): Handle {
       dx: cw * anchorX - SUBJECT_CX * dw,
       dy: ch * anchorY - FACE_CY * dh,
     };
+    // Plate space, multiplied by the fit scale: the blob covers 0.225 of the
+    // head width at every viewport (verified 390/620/1280/1440, all 0.2250).
     baseR = Math.max(
       BRUSH_MIN,
-      Math.min(BRUSH_MAX, HEAD_W * BRUSH_HEAD_FRAC * scale)
+      Math.min(BRUSH_MAX, HEAD_W * BRUSH_HEAD_FRAC * tune.blobScale * scale)
     );
   }
 
@@ -350,7 +428,7 @@ export function createLiquidGlass(opts: Options): Handle {
     cw = Math.max(1, Math.round(r.width || window.innerWidth));
     ch = Math.max(1, Math.round(r.height || window.innerHeight));
     dpr = Math.min(2, window.devicePixelRatio || 1);
-    const scale = TIERS[tierIndex].resScale;
+    const scale = tierOf(tierIndex).resScale;
     canvas.width = Math.max(1, Math.round(cw * dpr * scale));
     canvas.height = Math.max(1, Math.round(ch * dpr * scale));
     canvas.style.width = `${cw}px`;
@@ -359,9 +437,15 @@ export function createLiquidGlass(opts: Options): Handle {
     computeFit();
   }
 
-  /** Velocity-adaptive radius. See the VEL_* block above for the curve. */
+  /**
+   * Velocity-adaptive radius. See the VEL_* block above for the curve.
+   * `velocity` is CSS px/s, so it is divided by the fit scale to reach plate
+   * px/s before being compared against VEL_REF. Without that division the same
+   * gesture grew the radius about twice as fast on desktop as on a phone.
+   */
   function radiusFor(spacing: number) {
-    const rVel = baseR * Math.min(VEL_MAX, 1 + (VEL_GROWTH * velocity) / VEL_REF);
+    const vPlate = velocity / Math.max(1e-6, fit.scale);
+    const rVel = baseR * Math.min(VEL_MAX, 1 + (VEL_GROWTH * vPlate) / VEL_REF);
     const rGeo = spacing * CONTINUITY;
     return Math.min(baseR * VEL_HARD_MAX, Math.max(baseR, rVel, rGeo));
   }
@@ -439,17 +523,19 @@ export function createLiquidGlass(opts: Options): Handle {
     }
     lastFrameAt = now;
 
-    // Idle drift, on the original constants and still anchored to the face the
-    // fit actually placed rather than to viewport centre.
+    // Idle drift. Both terms are normalised PLATE coordinates mapped through
+    // the fit rect, so the path traces the same features and takes the same
+    // seconds at every viewport. On touch there is no pointer, so this is the
+    // only motion the visitor ever sees.
     if (now - lastInput > IDLE_MS) {
-      const t = (now - t0) / 1000;
-      const faceX = fit.dx + SUBJECT_CX * fit.dw;
-      const faceY = fit.dy + FACE_CY * fit.dh;
-      const subjW = SUBJECT_W * (fit.dw / PLATE_W);
-      head = {
-        x: faceX + Math.cos(t * DRIFT_WX) * subjW * DRIFT_AMP_X,
-        y: faceY + Math.sin(t * DRIFT_WY) * fit.dh * DRIFT_AMP_Y,
-      };
+      const t = ((now - t0) / 1000) * tune.drift;
+      const nx = DRIFT_CX + DRIFT_AX * Math.cos(t * DRIFT_WX);
+      const ny =
+        DRIFT_CY +
+        DRIFT_AY *
+          (DRIFT_MIX * Math.sin(t * DRIFT_WY1) +
+            (1 - DRIFT_MIX) * Math.sin(t * DRIFT_WY2 + DRIFT_PHASE));
+      head = { x: fit.dx + nx * fit.dw, y: fit.dy + ny * fit.dh };
       emitTo(head.x, head.y, now);
     }
 
@@ -493,7 +579,7 @@ export function createLiquidGlass(opts: Options): Handle {
     }
     activeBlobs = slot;
 
-    const resScale = TIERS[tierIndex].resScale;
+    const resScale = tierOf(tierIndex).resScale;
     const aa = 1.2 / (dpr * resScale);
 
     gl!.useProgram(program);
@@ -656,11 +742,13 @@ export function createLiquidGlass(opts: Options): Handle {
         p95Ms: p95,
         fps: mean > 0 ? 1000 / mean : 0,
         tierIndex,
-        tierName: TIERS[tierIndex].name,
-        resScale: TIERS[tierIndex].resScale,
-        octaves: TIERS[tierIndex].octaves,
+        tierName: tierOf(tierIndex).name,
+        resScale: tierOf(tierIndex).resScale,
+        octaves: tierOf(tierIndex).octaves,
         maxBlobs,
         activeBlobs,
+        blobCeiling,
+        baseRadiusPx: baseR,
         warmingUp: performance.now() - firstFrameAt < WARMUP_MS,
         tune: { ...tune },
       };
@@ -698,6 +786,8 @@ function noopHandle(): Handle {
         octaves: 0,
         maxBlobs: 0,
         activeBlobs: 0,
+        blobCeiling: 0,
+        baseRadiusPx: 0,
         warmingUp: false,
         tune: { ...DEFAULT_TUNING },
       };

@@ -2,7 +2,12 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createLiquidGlass, type Handle, type Stats } from "./hero/liquid-glass";
-import { HeroProbe, readTuningOverrides, useProbeEnabled } from "./hero/HeroProbe";
+import {
+  HeroProbe,
+  readTierOverrides,
+  readTuningOverrides,
+  useProbeEnabled,
+} from "./hero/HeroProbe";
 
 /**
  * The hero. Two pixel-aligned plates of the same portrait: the chrome helmet
@@ -130,6 +135,7 @@ export function HeroReveal({
           base,
           chrome,
           tuning: readTuningOverrides(),
+          overrides: readTierOverrides(),
           // Any unrecoverable GL problem falls through to the same static plate
           // the reduced-motion branch uses. There is one fallback, not two.
           onFailure: () => setFailed(true),
