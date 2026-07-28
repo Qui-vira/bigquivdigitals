@@ -82,24 +82,36 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           headline now states the reader's situation instead of asserting a
           credential, and block 3 carries something checkable.
 
-          13 deployed systems is reused from the content-engine case-study card
-          below, on the owner's authorisation. It is stated as published: not
-          rounded, not widened into a range, not paired with any figure that has
-          not already appeared on this site. */}
+          The proof line was "13 deployed systems". That is a volume metric: it
+          counts activity, not outcome, and shipping thirteen of something is
+          not evidence that any of it worked.
+
+          The two other published figures, 128,000 views and 8,874 subscribers,
+          are worse for this slot. They are attention numbers, and the headline
+          directly above them argues that attention without a system behind it
+          produces nothing. Using one as the proof would undercut the sentence
+          it sits under.
+
+          A business running on the thing is outcome, and it is the only proof
+          here a stranger can check in ten seconds. The claim is the owner's own
+          published case-study wording. The link opens in a new tab: a proof
+          link that navigates away at the exact point the page asks for an email
+          is the reason Direction 1 was rejected. */}
       <HeroReveal
         headline="You collected the proof. Nothing was behind it, so you stopped."
         supporting="Certificates, finished builds, a portfolio nobody opened. The work was never the part that was missing."
         mechanism="I build the system that carries work to a buyer, so proof has somewhere to go."
         proof={
           <>
-            13 deployed systems sit behind one of the builds below.{" "}
+            A Lagos pharmacy takes orders end to end on a system I built.{" "}
             <a
-              href="/work/content-engine"
+              href="https://peacewayonline.com"
+              target="_blank"
+              rel="noopener noreferrer"
               className="text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
             >
-              See what they run
+              peacewayonline.com
             </a>
-            .
           </>
         }
       >

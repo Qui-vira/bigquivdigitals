@@ -75,7 +75,7 @@ const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, 
 
 const HEADLINE = "You collected the proof. Nothing was behind it, so you stopped.";
 const SUPPORTING = "Certificates, finished builds, a portfolio nobody opened. The work was never the part that was missing. I build the system that carries work to a buyer, so proof has somewhere to go.";
-const PROOF = "13 deployed systems sit behind one of the builds below. See what they run.";
+const PROOF = "A Lagos pharmacy takes orders end to end on a system I built. peacewayonline.com";
 const HELPER = "The Zero-to-Opportunity System. Opens soon, the list hears first.";
 
 const NAV_H = 64, NAV_GAP = 24;
