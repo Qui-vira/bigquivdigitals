@@ -77,51 +77,43 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           and what you are paid for. That is the course's spine (confusion ->
           skill -> proof -> visibility -> monetization) and it is what the
           consulting delivers, so one headline can carry both funnels honestly. */}
-      {/* The previous headline claimed that proof beats skill and then showed
-          none, so the page failed its own test in its first sentence. The
-          headline now states the reader's situation instead of asserting a
-          credential, and block 3 carries something checkable.
+      {/* Written by the owner. Four beats: the reader's failure declared before
+          they start, the owner as the contrast, the mechanism, the act-now.
 
-          The proof line was "13 deployed systems". That is a volume metric: it
-          counts activity, not outcome, and shipping thirteen of something is
-          not evidence that any of it worked.
+          The figure is the owner's own claim about his own life and is taken as
+          given. Two things about it are NOT settled and are flagged to him
+          rather than decided here:
 
-          The two other published figures, 128,000 views and 8,874 subscribers,
-          are worse for this slot. They are attention numbers, and the headline
-          directly above them argues that attention without a system behind it
-          produces nothing. Using one as the proof would undercut the sentence
-          it sits under.
-
-          A business running on the thing is outcome, and it is the only proof
-          here a stranger can check in ten seconds. The claim is the owner's own
-          published case-study wording. The link opens in a new tab: a proof
-          link that navigates away at the exact point the page asks for an email
-          is the reason Direction 1 was rejected. */}
+          1. "seven-figure" carries no currency. In Lagos it reads as naira; to
+             an international reader it reads as dollars. On a page whose whole
+             argument is proof a stranger can check, the one number in it should
+             not mean two different things to two different readers.
+          2. The proof library's Block 4 publishes a neighbouring claim with a
+             different year and unit: 15 dev jobs worth $50K+ with a $50,000.92
+             portfolio screenshot, dated Oct 2023, opening "Started 2023 low on
+             liquidity". Both can be true, but a visitor who reads the hero and
+             then the case study will notice 2022 against 2023. */}
       <HeroReveal
-        headline="You collected the proof. Nothing was behind it, so you stopped."
-        supporting="Certificates, finished builds, a portfolio nobody opened. The work was never the part that was missing."
-        mechanism="I build the system that carries work to a buyer, so proof has somewhere to go."
-        proof={
-          <>
-            A Lagos pharmacy takes orders end to end on a system I built.{" "}
-            <a
-              href="https://peacewayonline.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
-            >
-              peacewayonline.com
-            </a>
-          </>
-        }
+        headline="Your next skill is going to end exactly like the last one did."
+        supporting="Mine stopped ending that way in 2022, when I got my first seven-figure dev job."
+        mechanism="Now I have built the thing that fixes yours."
+        proof="Same skills. One move."
       >
-        {/* Block 4. The system name sits ABOVE the button, where it can inform
-            the decision, rather than below it where it arrived too late. */}
+        {/* Block 4. The course name sits ABOVE the button, where it can inform
+            the decision rather than arrive after it. Two CTAs, one intent each:
+            the waitlist is the primary filled control, hiring is a quiet link
+            beside it so the buyer who is not a learner still has a door. */}
         <div className="w-full">
           <p className="mb-3 text-sm text-text-secondary">
-            The Zero-to-Opportunity System. Opens soon, the list hears first.
+            Zero-to-Opportunity opens soon. The list goes first.
           </p>
           <WaitlistForm source="hero" compact />
+          <a
+            href={calendlyUrl}
+            className="mt-4 inline-block text-sm font-medium text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
+          >
+            Hire me
+          </a>
         </div>
       </HeroReveal>
 

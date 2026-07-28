@@ -361,7 +361,7 @@ export function HeroReveal({
               rendering desktop-size type and pushing the CTAs off the bottom. */}
           <h1
             id="hero-heading"
-            className="font-display text-[clamp(1.75rem,7.5vw,2.5rem)] font-bold leading-[0.98] tracking-[-0.025em] text-text-primary text-balance sm:text-[clamp(2.5rem,5.2vw,3.25rem)] sm:leading-[0.96] lg:text-[clamp(3rem,min(5.4vw,7.2svh),4.5rem)]"
+            className="font-display text-[clamp(1.75rem,7.5vw,2.5rem)] font-bold leading-[0.98] tracking-[-0.025em] text-text-primary text-balance sm:text-[clamp(2.5rem,5.2vw,3.25rem)] sm:leading-[0.96] lg:text-[clamp(3rem,min(5.4vw,7.2svh),4rem)]"
           >
             {headline}
           </h1>

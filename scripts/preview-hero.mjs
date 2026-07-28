@@ -22,7 +22,7 @@ import { mkdirSync } from "node:fs";
 
 const PLATE_W = 2688, PLATE_H = 1520;
 const SUBJECT_W = 1128, SUBJECT_CX = 0.512, FACE_CY = 0.403;
-const SUBJECT_TARGET = 0.9, FOCAL_Y = 0.42;
+const SUBJECT_TARGET = 0.9, FOCAL_Y = 0.42, SUBJECT_DESKTOP = 0.42;
 const CROWN = 0.1, SHOULDER = 0.9;
 const BAND = SHOULDER - CROWN, BAND_CY = (CROWN + SHOULDER) / 2;
 
@@ -30,11 +30,15 @@ function computeFit(cw, ch) {
   const cover = Math.max(cw / PLATE_W, ch / PLATE_H);
   const widthCap = (SUBJECT_TARGET * cw) / SUBJECT_W;
   const heightCap = ch / (BAND * PLATE_H);
-  const scale = Math.min(cover, widthCap, heightCap);
-  const dw = PLATE_W * scale, dh = PLATE_H * scale;
   const wide = cw >= 1024;
-  const branch =
-    scale === heightCap ? "height-cap" : scale === cover ? "cover" : "width-cap";
+  const deskTarget = (SUBJECT_DESKTOP * cw) / SUBJECT_W;
+  const scale = wide
+    ? Math.min(deskTarget, heightCap)
+    : Math.min(cover, widthCap, heightCap);
+  const dw = PLATE_W * scale, dh = PLATE_H * scale;
+  const branch = wide
+    ? (scale === heightCap ? "height-cap" : "subject-42%")
+    : (scale === heightCap ? "height-cap" : scale === cover ? "cover" : "width-cap");
   return {
     scale, dw, dh, branch,
     dx: cw * (wide ? 0.66 : 0.5) - SUBJECT_CX * dw,
@@ -46,7 +50,7 @@ function computeFit(cw, ch) {
 
 const clamp = (lo, v, hi) => Math.min(hi, Math.max(lo, v));
 const headlineSize = (w, h) =>
-  w >= 1024 ? clamp(48, Math.min(w * 0.054, h * 0.072), 72)
+  w >= 1024 ? clamp(48, Math.min(w * 0.054, h * 0.072), 64)
   : w >= 640 ? clamp(40, w * 0.052, 52)
   : clamp(28, w * 0.075, 40);
 
@@ -73,10 +77,10 @@ function wrap(text, size, width, adv) {
 
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/'/g, "&apos;");
 
-const HEADLINE = "You collected the proof. Nothing was behind it, so you stopped.";
-const SUPPORTING = "Certificates, finished builds, a portfolio nobody opened. The work was never the part that was missing. I build the system that carries work to a buyer, so proof has somewhere to go.";
-const PROOF = "A Lagos pharmacy takes orders end to end on a system I built. peacewayonline.com";
-const HELPER = "The Zero-to-Opportunity System. Opens soon, the list hears first.";
+const HEADLINE = "Your next skill is going to end exactly like the last one did.";
+const SUPPORTING = "Mine stopped ending that way in 2022, when I got my first seven-figure dev job. Now I have built the thing that fixes yours.";
+const PROOF = "Same skills. One move.";
+const HELPER = "Zero-to-Opportunity opens soon. The list goes first.";
 
 const NAV_H = 64, NAV_GAP = 24;
 
@@ -97,12 +101,12 @@ async function render(cw, ch, label) {
   const proofLines = wrap(PROOF, proofSize, Math.min(colW, 46 * proofSize * ADV_PROOF), ADV_PROOF);
 
   const gapSup = 16, gapProof = 12, gapForm = cw >= 768 ? 48 : 40;
-  const helpH = 21, gapHelp = 12, formH = 48;
+  const helpH = 21, gapHelp = 12, formH = 48, ctaH = 16 + 20; // + 'Hire me'
 
   const blockH =
     hLines.length * hLead + gapSup + bodyLines.length * bodyLead +
     gapProof + proofLines.length * proofLead +
-    gapForm + helpH + gapHelp + formH;
+    gapForm + helpH + gapHelp + formH + ctaH;
 
   // lg: safe-centre inside [navH+gap, ch-24]. Narrow: bottom-anchored.
   const padTop = wide ? NAV_H + NAV_GAP : 112;
@@ -172,7 +176,8 @@ async function render(cw, ch, label) {
   text += `<text x="${padX + 14}" y="${y + 30}" font-size="14" fill="#6B6862" font-family="sans-serif">your email</text>`;
   text += `<rect x="${padX + inputW * 0.56 + 10}" y="${y}" width="${inputW * 0.46}" height="${formH}" rx="6" fill="#E8A33D"/>`;
   text += `<text x="${padX + inputW * 0.56 + 26}" y="${y + 30}" font-size="14" font-weight="600" fill="#111" font-family="sans-serif">Join the waitlist</text>`;
-  const formBottom = y + formH;
+  text += `<text x="${padX}" y="${y + formH + 30}" font-size="14" fill="#A8A29C" font-family="sans-serif">Hire me</text>`;
+  const formBottom = y + formH + ctaH;
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${cw}" height="${ch}">${scrim}${text}</svg>`;
   const out = `scripts/out/hero-${label}.png`;

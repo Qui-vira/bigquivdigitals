@@ -49,6 +49,23 @@ const SUBJECT_SHOULDER = 0.9;
 const SUBJECT_BAND = SUBJECT_SHOULDER - SUBJECT_CROWN;
 const SUBJECT_BAND_CY = (SUBJECT_CROWN + SUBJECT_SHOULDER) / 2;
 
+/**
+ * Fraction of viewport width the subject occupies at desktop.
+ *
+ * Cover made this drift with aspect ratio rather than hold steady. The plate is
+ * 1.768:1, so at 1920x1080 (1.778) cover is width-driven and the subject lands
+ * at 42%, while at 1440x900 (1.6) cover is height-driven, the plate overflows
+ * sideways, and the subject swells to 46.4%. Same code, two different crops:
+ * one framed, one tight on the head.
+ *
+ * Pinning the subject to a constant fraction costs a vertical letterbox at
+ * shorter aspect ratios, and that is free here for the same reason it is free
+ * on a phone: the studio backdrop is #000000 on all four corners, the page
+ * ground is the same value, and the shader paints black outside the plate rect.
+ * The band is invisible.
+ */
+const SUBJECT_DESKTOP = 0.42;
+
 const HEAD_W = 850;
 const BRUSH_HEAD_FRAC = 0.225;
 /**
@@ -426,10 +443,15 @@ export function createLiquidGlass(opts: Options): Handle {
     // Cap so crown-to-shoulders always fits the viewport height. This is the
     // constraint the original formula lacked entirely.
     const heightCap = ch / (SUBJECT_BAND * PLATE_H);
-    const scale = Math.min(cover, widthCap, heightCap);
+    const wide = cw >= 1024;
+    // Desktop targets a constant subject width and accepts an invisible
+    // letterbox. Narrow still covers, because there the plate is the whole
+    // backdrop and the copy sits in the black beneath it.
+    const scale = wide
+      ? Math.min((SUBJECT_DESKTOP * cw) / SUBJECT_W, heightCap)
+      : Math.min(cover, widthCap, heightCap);
     const dw = PLATE_W * scale;
     const dh = PLATE_H * scale;
-    const wide = cw >= 1024;
     const anchorX = wide ? 0.66 : 0.5;
     fit = {
       scale,
