@@ -201,6 +201,8 @@ async function render(cw, ch, label) {
 
 mkdirSync("scripts/out", { recursive: true });
 const files = [];
+files.push(await render(592, 800, "592x800"));
+files.push(await render(1280, 720, "1280x720"));
 files.push(await render(1337, 594, "1337x594"));
 files.push(await render(1440, 900, "1440x900"));
 files.push(await render(1920, 1080, "1920x1080"));
