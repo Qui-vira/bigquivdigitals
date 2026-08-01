@@ -46,6 +46,18 @@ const EDITS: Edit[] = [
   {
     id: 9,
     date: "2026-08-01",
+    from: "Some of their stories still shock me.",
+    to:
+      "Together they have made over two hundred thousand dollars.\r\n\r\nSome of their stories still shock me.",
+    why:
+      "The aggregate student figure was in the pinned thread ('My students have made over $200k') " +
+      "and on no page of the site. Placed immediately before the individual stories so it reads as " +
+      "the headline those five receipts then prove, rather than a number floating on its own. " +
+      "Owner confirmed 2026-08-01. Spelled out in words to match the rest of the milestone.",
+  },
+  {
+    id: 9,
+    date: "2026-08-01",
     from: "One landed a six thousand dollar dev role and celebrated with an iPhone 14 Pro Max.",
     to: "One landed a dev role paying six thousand dollars a month and celebrated with an iPhone 14 Pro Max.",
     why:
