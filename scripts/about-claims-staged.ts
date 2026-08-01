@@ -36,15 +36,17 @@ const STAGED: Staged[] = [
     claim: "$100M trading volume as a KOL for Bybit and Adashe — FILE THIS, DO NOT CUT",
     milestoneId: 11,
     from:
-      "I have driven over one hundred million dollars in trading volume as a KOL and affiliate for platforms including Bybit and Adashe. ",
-    // Cutting this would also remove the named KOL relationship, which is
+      "I have driven over one hundred million dollars in trading volume as a KOL and affiliate for Bybit. ",
+    // Cutting this would also remove the Bybit KOL relationship, which is
     // independently true. If the dashboard shows a smaller number, edit the
     // number by hand — do not run --cut on this one.
-    cutTo: "I have worked as a KOL and affiliate for platforms including Bybit and Adashe. ",
+    cutTo: "I was a KOL and affiliate for Bybit. ",
     artifact:
-      "The Bybit / Adashe affiliate dashboard: cumulative referred volume against his own " +
-      "account, identity and date range visible. Highest-value artifact on the list — it " +
-      "closes this claim AND backs the named relationship in one screenshot. Tier: Personal.",
+      "The BYBIT affiliate dashboard: cumulative referred volume against his own account, " +
+      "identity and date range visible. Highest-value artifact on the list — it closes this " +
+      "claim AND backs the Bybit relationship in one screenshot. Tier: Personal. " +
+      "The $100M is Bybit ONLY — it has nothing to do with Adashe, which was a separate " +
+      "marketing manager role. Never merge the two.",
   },
   {
     key: "students",
