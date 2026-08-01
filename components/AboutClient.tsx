@@ -66,7 +66,7 @@ function ImageGrid({ images, alt }: { images: string[]; alt: string }) {
 
 export function AboutClient({ content, values, ecosystem, marqueeItems, milestones }: AboutClientProps) {
   return (
-    <main className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen bg-bg-primary">
 
       {/* ═══════════════════════════════════════════
           HERO
@@ -305,6 +305,6 @@ export function AboutClient({ content, values, ecosystem, marqueeItems, mileston
           </StaggerGrid>
         </div>
       </SectionWrapper>
-    </main>
+    </div>
   );
 }

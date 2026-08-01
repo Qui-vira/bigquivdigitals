@@ -4,7 +4,7 @@
  */
 export default function Loading() {
   return (
-    <main className="px-6 pt-28 pb-24 md:pt-36" aria-busy="true" aria-label="Loading">
+    <div role="status" className="px-6 pt-28 pb-24 md:pt-36" aria-busy="true" aria-label="Loading">
       <div className="mx-auto max-w-[900px] animate-pulse">
         <div className="mx-auto h-4 w-40 rounded bg-bg-secondary" />
         <div className="mx-auto mt-8 h-12 w-full rounded bg-bg-secondary" />
@@ -20,6 +20,6 @@ export default function Loading() {
           ))}
         </div>
       </div>
-    </main>
+    </div>
   );
 }

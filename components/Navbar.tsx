@@ -93,17 +93,32 @@ export function Navbar() {
         </div>
 
         {/* Mobile hamburger */}
+        {/*
+          A screen reader previously announced this as an unnamed button and
+          never reported whether the menu was open — WCAG 4.1.2 (Name, Role,
+          Value), Level A. `aria-label` names it, `aria-expanded` reports state,
+          and `aria-controls` ties it to the overlay it opens.
+
+          The icon was 24x24, which technically clears WCAG 2.5.8 (AA) and fails
+          Apple's 44pt guidance. `-m-2.5 p-2.5` grows the tap target to 44x44
+          without moving the icon a pixel: the padding is cancelled by an equal
+          negative margin, so layout is unchanged.
+        */}
         <button
+          type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className="text-white md:hidden cursor-pointer"
+          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isOpen}
+          aria-controls="mobile-menu"
+          className="-m-2.5 p-2.5 text-white md:hidden cursor-pointer"
         >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {isOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
         </button>
       </div>
 
       {/* Mobile overlay */}
       {isOpen && (
-        <div className="fixed inset-0 top-16 z-40 bg-bg-primary/95 backdrop-blur-xl md:hidden">
+        <div id="mobile-menu" className="fixed inset-0 top-16 z-40 bg-bg-primary/95 backdrop-blur-xl md:hidden">
           <div className="flex flex-col items-center gap-8 pt-12">
             {links.map((link) => (
               <Link

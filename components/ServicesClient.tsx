@@ -60,7 +60,7 @@ const ENTRY_POINTS = [
 
 export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
   return (
-    <main>
+    <div>
       {/* ───────── HERO ───────── */}
       <section className="px-6 pt-28 pb-12 md:pt-36">
         <div className="mx-auto max-w-[820px]">
@@ -151,6 +151,6 @@ export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
           </p>
         </div>
       </SectionWrapper>
-    </main>
+    </div>
   );
 }

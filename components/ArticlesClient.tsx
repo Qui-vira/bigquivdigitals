@@ -16,7 +16,7 @@ interface Article {
 
 export function ArticlesClient({ articles }: { articles: Article[] }) {
   return (
-    <main className="min-h-screen pt-32 pb-24">
+    <div className="min-h-screen pt-32 pb-24">
       <div className="mx-auto max-w-[1200px] px-6">
         {/* Hero */}
         <SectionWrapper>
@@ -91,6 +91,6 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
           </SectionWrapper>
         )}
       </div>
-    </main>
+    </div>
   );
 }

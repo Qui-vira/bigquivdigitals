@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 
 export default function WorkLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="px-6 pt-28 pb-24 md:pt-36">
+    <div className="px-6 pt-28 pb-24 md:pt-36">
       <div className="mx-auto max-w-[760px]">
         <Link
           href="/#work"
@@ -31,6 +31,6 @@ export default function WorkLayout({ children }: { children: React.ReactNode }) 
           </Link>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

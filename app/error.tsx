@@ -15,7 +15,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <main className="flex min-h-[70vh] items-center px-6 py-28">
+    <div className="flex min-h-[70vh] items-center px-6 py-28">
       <div className="mx-auto max-w-[560px] text-center">
         <p className="text-sm font-medium uppercase tracking-widest text-accent">Error</p>
         <h1 className="mt-6 text-3xl font-extrabold tracking-tight text-text-primary md:text-4xl">
@@ -45,6 +45,6 @@ export default function Error({
           <p className="mt-8 font-mono text-xs text-text-muted">Ref: {error.digest}</p>
         )}
       </div>
-    </main>
+    </div>
   );
 }

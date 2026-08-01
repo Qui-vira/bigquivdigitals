@@ -96,7 +96,7 @@ export function ContactClient({ contactOptions, socialLinks, serviceOptions, for
   const [submitted, setSubmitted] = useState(false);
 
   return (
-    <main className="min-h-screen bg-bg-primary">
+    <div className="min-h-screen bg-bg-primary">
       {/* Hero */}
       <SectionWrapper className="pt-32 pb-16 md:pt-40">
         <div className="mx-auto max-w-[1200px] px-6 text-center">
@@ -203,6 +203,6 @@ export function ContactClient({ contactOptions, socialLinks, serviceOptions, for
           )}
         </div>
       </SectionWrapper>
-    </main>
+    </div>
   );
 }

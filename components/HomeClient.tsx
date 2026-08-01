@@ -67,7 +67,7 @@ const CASE_STUDIES = [
 
 export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClientProps) {
   return (
-    <main>
+    <div>
       {/* ───────── 1. HERO ─────────
           Written by the owner. Four beats: the reader's failure declared before
           they start, the owner as the contrast, the mechanism, the act-now.
@@ -298,6 +298,6 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           </div>
         </div>
       </SectionWrapper>
-    </main>
+    </div>
   );
 }

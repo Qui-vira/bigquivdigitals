@@ -55,7 +55,7 @@ export default async function DocPage({
   const bodyHtml = mdToHtml(data.content);
 
   return (
-    <main className="min-h-screen pt-28 pb-24">
+    <div className="min-h-screen pt-28 pb-24">
       <div className="mx-auto max-w-[680px] px-6">
         <Link
           href="/articles"
@@ -79,6 +79,6 @@ export default async function DocPage({
           </p>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
