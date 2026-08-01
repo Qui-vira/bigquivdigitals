@@ -99,7 +99,7 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
             beside it so the buyer who is not a learner still has a door. */}
         <div className="w-full">
           <p className="mb-3 text-sm text-text-secondary">
-            Ophir&apos;s Codex opens soon. The list goes first.
+            The Great Work opens soon. The list goes first.
           </p>
           <WaitlistForm source="hero" compact />
           <a
@@ -275,7 +275,7 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           </h2>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
-            Ophir&apos;s Codex is the loop this page is built on: learn,
+            The Great Work is the loop this page is built on: learn,
             build, show, sell, turned into something you can repeat. It opens soon, and
             the list hears first.
           </p>
