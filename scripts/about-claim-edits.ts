@@ -21,18 +21,27 @@ type Edit = {
   why: string;
 };
 
+// REMOVED, do not reinstate: an edit that cut "Today it is one of the fastest
+// rising dev institutes in Web3" from milestone 9. The owner overruled it — the
+// line stays. It is recorded here rather than left in EDITS because leaving it
+// executable made every run cut the sentence and then restore it from REPAIRS,
+// which converges but churns the live row twice per run. A superseded edit
+// belongs in the history, not in the pipeline.
+
 const EDITS: Edit[] = [
   {
     id: 9,
     date: "2026-08-01",
-    from: "A crazy idea at the time.Today it is one of the fastest rising dev institutes in Web3.",
-    to: "A crazy idea at the time.",
+    from:
+      "building products across ecosystems like Ethereum, Solana, Cardano, and Fantom.",
+    to:
+      "building products across ecosystems like Ethereum, Solana, Cardano, Fantom, Flow, and Base.",
     why:
-      "'one of the fastest rising dev institutes in Web3' is a world-ranking claim with no " +
-      "possible artifact — there is no such ranking to be near the top of. Cut, not replaced: " +
-      "an interim 'It is still running today' was tried and reverted because a survival claim " +
-      "sitting on top of 'Over 2,000 students trained' steps on the line that actually converts. " +
-      "The owner's own 'A crazy idea at the time.' is kept.",
+      "Flow and Base added at the owner's direction. Both have filed receipts in " +
+      "12-Proof-Library/students/: the $5,000 hackathon was the FLOW bounty on LearnWeb3 " +
+      "(publicly verifiable results page), and the $6,000 dev job chat reads 'thanks to those " +
+      "projects you shared on base'. The original four stay — they are the owner's own knowledge " +
+      "of what his graduates built, which is his to state.",
   },
   {
     id: 11,
@@ -61,6 +70,21 @@ const REPAIRS: Edit[] = [
     from: "A crazy idea at the time.It is still running today.",
     to: "A crazy idea at the time.",
     why: "interim wording from the superseded pass",
+  },
+  {
+    id: 9,
+    date: "2026-08-01 (owner override)",
+    // Anchored on the following line so this cannot match inside the already-
+    // restored sentence and double-apply on a replay.
+    from: "A crazy idea at the time.\r\n\r\nOver 2,000 students trained.",
+    to: "A crazy idea at the time.Today it is one of the fastest rising dev institutes in Web3.\r\n\r\nOver 2,000 students trained.",
+    why:
+      "RESTORED at the owner's direction. My removal was wrong. I ruled it unprovable on the " +
+      "assumption that no ranking of Web3 dev institutes exists — that was my inference, not a " +
+      "checked fact, and it is the owner's claim about his own organisation to make. " +
+      "Open question logged in claim-verification-requirements.md #8: Ophir is an NGO and is " +
+      "NOT currently taking students, so whether the present tense 'Today it is' still holds is " +
+      "for the owner to decide. Not changed unilaterally a second time.",
   },
   {
     id: 11,
@@ -121,7 +145,7 @@ async function main() {
     ["Adashe named", true],
     ["marketing manager for Adashe", true],
     ["KOL and affiliate for Bybit", true],
-    ["fastest rising", false],
+    ["fastest rising", true],
     ["It is still running today", false],
     ["most respected projects", false],
     ["established exchanges and Web3 projects", false],
