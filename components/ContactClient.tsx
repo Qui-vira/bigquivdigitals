@@ -104,7 +104,7 @@ export function ContactClient({ contactOptions, socialLinks, serviceOptions, for
             Let&apos;s build something.
           </TextReveal>
           <p className="mx-auto mt-4 max-w-xl text-lg text-text-secondary">
-            Whether you need signals, strategy, or a full system, the first step is a conversation.
+            Whether you need an ordering system, a build, or the whole thing run for you, the first step is a conversation.
           </p>
         </div>
       </SectionWrapper>
