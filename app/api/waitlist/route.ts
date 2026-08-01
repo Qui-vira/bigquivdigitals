@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
 
 /**
- * Zero-to-Opportunity waitlist capture.
+ * Ophir's Codex waitlist capture (formerly Zero-to-Opportunity).
  *
  * Writes to public.course_waitlist in Supabase, following the same pattern as
  * /api/drone-signup. It does NOT use the existing `waitlist` table: that one

@@ -3,7 +3,7 @@
 import { useId, useRef, useState } from "react";
 
 /**
- * Email capture for the Zero-to-Opportunity waitlist.
+ * Email capture for the Ophir's Codex waitlist (formerly Zero-to-Opportunity).
  *
  * Email only. Anything else is friction on a form whose single job is to hold
  * a place, and every extra field is one more reason to close the tab.
