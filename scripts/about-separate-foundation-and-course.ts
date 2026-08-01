@@ -2,7 +2,7 @@
  * /about — say plainly that the non-profit and the paid course are different things.
  *
  * The Ophir milestone now carries the foundation's CAC registration. The owner
- * sells Ophir's Codex himself, through BigQuiv Digitals — the foundation does
+ * sells The Great Work (formerly Ophir's Codex) himself, through BigQuiv Digitals — the foundation does
  * not sell it and does not receive the money. Without a line saying so, a reader
  * can reasonably assume a registered non-profit is selling a paid course, which
  * is the one misreading worth spending a sentence to prevent.
@@ -21,7 +21,7 @@ const MILESTONE_ID = 9;
 const FROM = "Registered in Nigeria as Ophir Digital Education Foundation, CAC 9071886.";
 const TO =
   "Registered in Nigeria as Ophir Digital Education Foundation, CAC 9071886.\r\n" +
-  "The foundation is a non-profit. Ophir's Codex, my paid course, is a separate BigQuiv Digitals product.";
+  "The foundation is a non-profit. The Great Work, my paid course, is a separate BigQuiv Digitals product.";
 
 async function main() {
   const url = process.env.TURSO_DATABASE_URL;
