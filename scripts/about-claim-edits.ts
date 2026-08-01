@@ -68,6 +68,22 @@ const EDITS: Edit[] = [
   {
     id: 9,
     date: "2026-08-01",
+    from: "The foundation is a non-profit. Ophir's Codex, my paid course, is a separate BigQuiv Digitals product.",
+    to: "The foundation is a non-profit. The Great Work, my paid course, is a separate BigQuiv Digitals product.",
+    why:
+      "The owner renamed the course from Ophir's Codex to The Great Work (his own edit in " +
+      "HomeClient.tsx, 2026-08-01). This reword covers the /about separation line ONLY, at his " +
+      "explicit direction — the contact picker row, code comments and the Launch-System scripts " +
+      "still carry the old name and are deliberately untouched. Side benefit: the new name shares " +
+      "nothing with 'Ophir', so the charity/course confusion this line exists to prevent shrinks " +
+      "on its own. " +
+      "NOTE: this entry never actually fired. When it first ran, the row was already in the " +
+      "target state — the owner had made the identical edit himself through /admin. Kept as the " +
+      "record of the change and as the guard that stops the old wording coming back on a replay.",
+  },
+  {
+    id: 9,
+    date: "2026-08-01",
     from: "A student who lost everything on Binance now owns a fully furnished apartment and a car.",
     to: "Ayola Babs lost everything on Binance. He now owns a fully furnished apartment and a car.",
     why:
