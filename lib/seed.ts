@@ -225,7 +225,7 @@ Every product I sell, I use myself. Every strategy I teach, I've tested. The bra
   await db.insert(schema.contactOptions).values([
     { icon: "MessageCircle", title: "Telegram", description: "DM @Quivira_Ophir", href: "https://t.me/Quivira_Ophir", sortOrder: 0 },
     { icon: "Mail", title: "Email", description: "contact@bigquivdigitals.com", href: "mailto:contact@bigquivdigitals.com", sortOrder: 1 },
-    { icon: "Calendar", title: "Book a Call", description: "Schedule a free 15-minute call", href: "https://calendly.com/bigquiv/15min", sortOrder: 2 },
+    { icon: "Calendar", title: "Book a Call", description: "Schedule a free intro call", href: "https://calendly.com/_quivira/one-on-one-meeting", sortOrder: 2 },
   ]);
   console.log("✓ Contact options seeded");
 
