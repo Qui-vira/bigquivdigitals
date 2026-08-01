@@ -80,6 +80,26 @@ const EDITS: Edit[] = [
   {
     id: 9,
     date: "2026-08-01",
+    from: "Two students made five thousand dollars from a hackathon.",
+    to:
+      "Bernard made half a million naira from a single job.\r\n\r\nTwo students made five thousand dollars from a hackathon.",
+    // Insertion — the anchor survives in `to`, so this guard is mandatory.
+    skipIf: "Bernard made half a million naira",
+    why:
+      "Added and named at the owner's explicit direction, asked and answered. His student, his " +
+      "relationship, his call to make. " +
+      "Recorded honestly: this claim was NOT previously on /about — it existed only in the Nov " +
+      "2023 thread — and neither filed screenshot shows the N500,000 figure. " +
+      "(12-Proof-Library/students/03-bernard-congrats.jpg and 03b-bernard-workspace.jpg show the " +
+      "congratulations exchange and a workspace, not the number.) It is owner-attested. " +
+      "CORRECTION: an earlier version of this note said Bernard had not been named publicly. " +
+      "That was wrong. 03-half-million-job-a.jpg was downloaded from the pinned thread's own " +
+      "media URL and shows 'Bernard.O' in the chat header, so the name has been public to 1M " +
+      "views since Nov 2023. Every chat in that folder is already published there.",
+  },
+  {
+    id: 9,
+    date: "2026-08-01",
     from: "Some of their stories still shock me.",
     to:
       "Together they have made over two hundred thousand dollars.\r\n\r\nSome of their stories still shock me.",
