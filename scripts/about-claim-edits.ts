@@ -44,6 +44,18 @@ const EDITS: Edit[] = [
       "of what his graduates built, which is his to state.",
   },
   {
+    id: 9,
+    date: "2026-08-01",
+    from: "One landed a six thousand dollar dev role and celebrated with an iPhone 14 Pro Max.",
+    to: "One landed a dev role paying six thousand dollars a month and celebrated with an iPhone 14 Pro Max.",
+    why:
+      "The site was underselling this by an order of magnitude. The uncropped receipt " +
+      "(12-Proof-Library/students/05-6k-MONTHLY-dev-gig.jpg) reads: 'Thanks to those projects " +
+      "you shared on base, I got a $6,000 MONTHLY dev gig.' The original Nov 2023 thread " +
+      "compressed it to '$6K Dev Job', so a $72k/year outcome has read as a single payment " +
+      "ever since. Confirmed by the owner 2026-08-01.",
+  },
+  {
     id: 11,
     date: "2026-08-01",
     from:
