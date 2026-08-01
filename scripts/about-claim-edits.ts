@@ -19,6 +19,18 @@ type Edit = {
   from: string;
   to: string;
   why: string;
+  /**
+   * Skip the edit when this string is already in the row.
+   *
+   * REQUIRED whenever `to` contains `from` — i.e. any INSERTION, where the
+   * anchor sentence survives in the output. For those the "is `from` present?"
+   * guard is useless: the anchor is still there after a successful run, so the
+   * edit fires again and inserts a second copy. That happened live on
+   * 2026-08-01 with the $200k line, which shipped twice.
+   *
+   * Set it to the text being inserted.
+   */
+  skipIf?: string;
 };
 
 // REMOVED, do not reinstate: an edit that cut "Today it is one of the fastest
@@ -35,7 +47,7 @@ const EDITS: Edit[] = [
     from:
       "building products across ecosystems like Ethereum, Solana, Cardano, and Fantom.",
     to:
-      "building products across ecosystems like Ethereum, Solana, Cardano, Fantom, Flow, and Base.",
+      "building products across ecosystems like Ethereum, Solana, Cardano, Fantom, Flow, Base, and Scroll.",
     why:
       "Flow and Base added at the owner's direction. Both have filed receipts in " +
       "12-Proof-Library/students/: the $5,000 hackathon was the FLOW bounty on LearnWeb3 " +
@@ -45,10 +57,23 @@ const EDITS: Edit[] = [
   },
   {
     id: 9,
+    date: "2026-08-01 (Scroll added later, so this catches the already-live six-chain form)",
+    from: "Ethereum, Solana, Cardano, Fantom, Flow, and Base.",
+    to: "Ethereum, Solana, Cardano, Fantom, Flow, Base, and Scroll.",
+    why:
+      "Scroll has a filed receipt — the Babcock student's chat reads 'landed a job on scroll for " +
+      "a one time payment of $500' (12-Proof-Library/students/02-babcock-n300k-full-story.jpg). " +
+      "Three of the seven now carry receipts: Flow, Base and Scroll.",
+  },
+  {
+    id: 9,
     date: "2026-08-01",
     from: "Some of their stories still shock me.",
     to:
       "Together they have made over two hundred thousand dollars.\r\n\r\nSome of their stories still shock me.",
+    // Insertion: the anchor survives in `to`, so without this the line is added
+    // again on every run. It shipped twice on 2026-08-01 before this existed.
+    skipIf: "Together they have made over two hundred thousand dollars.",
     why:
       "The aggregate student figure was in the pinned thread ('My students have made over $200k') " +
       "and on no page of the site. Placed immediately before the individual stories so it reads as " +
@@ -88,6 +113,17 @@ const EDITS: Edit[] = [
 
 /** Intermediate states from superseded passes, so a replay converges. */
 const REPAIRS: Edit[] = [
+  {
+    id: 9,
+    date: "2026-08-01 (bug repair)",
+    from:
+      "Together they have made over two hundred thousand dollars.\r\n\r\nTogether they have made over two hundred thousand dollars.",
+    to: "Together they have made over two hundred thousand dollars.",
+    why:
+      "De-duplicate. The $200k insertion ran twice because its anchor sentence survives in `to`, " +
+      "so the 'is `from` present?' guard could not tell a fresh row from an already-edited one. " +
+      "Fixed properly with the skipIf field; this repair cleans the row that shipped doubled.",
+  },
   {
     id: 9,
     date: "2026-08-01",
@@ -147,7 +183,10 @@ async function main() {
       args: [e.id],
     })).rows;
 
-    if (!row || !String(row.text).includes(e.from)) continue;
+    if (!row) continue;
+    const current = String(row.text);
+    if (e.skipIf && current.includes(e.skipIf)) continue;
+    if (!current.includes(e.from)) continue;
 
     await db.execute({
       sql: "UPDATE milestones SET text = REPLACE(text, ?, ?) WHERE id = ?",
