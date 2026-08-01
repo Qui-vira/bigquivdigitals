@@ -33,14 +33,18 @@ type Staged = {
 const STAGED: Staged[] = [
   {
     key: "volume",
-    claim: "over one hundred million dollars in trading volume",
+    claim: "$100M trading volume as a KOL for Bybit and Adashe — FILE THIS, DO NOT CUT",
     milestoneId: 11,
-    from: "I have driven over one hundred million dollars in trading volume for exchanges. ",
-    cutTo: "",
+    from:
+      "I have driven over one hundred million dollars in trading volume as a KOL and affiliate for platforms including Bybit and Adashe. ",
+    // Cutting this would also remove the named KOL relationship, which is
+    // independently true. If the dashboard shows a smaller number, edit the
+    // number by hand — do not run --cut on this one.
+    cutTo: "I have worked as a KOL and affiliate for platforms including Bybit and Adashe. ",
     artifact:
-      "Exchange-side volume attribution: a referral/affiliate dashboard showing cumulative " +
-      "volume against the account, or a written statement from the exchange. Must show the " +
-      "volume is attributed to him, not merely that it passed through a venue he used.",
+      "The Bybit / Adashe affiliate dashboard: cumulative referred volume against his own " +
+      "account, identity and date range visible. Highest-value artifact on the list — it " +
+      "closes this claim AND backs the named relationship in one screenshot. Tier: Personal.",
   },
   {
     key: "students",
