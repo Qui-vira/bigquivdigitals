@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { createClient } from "@supabase/supabase-js";
+import { articlesDb } from "@/lib/articles-db";
 import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 3600;
@@ -37,11 +37,7 @@ const STATIC_ROUTES: Array<{ path: string; priority: number; changeFrequency: Me
 
 async function articleSlugs(): Promise<Array<{ slug: string; updated: Date }>> {
   try {
-    const supabase = createClient(
-      process.env.SUPABASE_URL ?? "https://bnoqtghdptobbtrssmdj.supabase.co",
-      process.env.SUPABASE_ANON_KEY ?? ""
-    );
-    const { data, error } = await supabase
+    const { data, error } = await articlesDb
       .from("cta_documents")
       .select("slug, created_at")
       .order("created_at", { ascending: false });
