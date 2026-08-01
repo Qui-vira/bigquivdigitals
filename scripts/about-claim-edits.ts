@@ -68,6 +68,18 @@ const EDITS: Edit[] = [
   {
     id: 9,
     date: "2026-08-01",
+    from: "A student who lost everything on Binance now owns a fully furnished apartment and a car.",
+    to: "Ayola Babs lost everything on Binance. He now owns a fully furnished apartment and a car.",
+    why:
+      "Named at the owner's direction. No new exposure: the owner already named him publicly as " +
+      "'Ayola Babs' in the pinned thread in Nov 2023, in front of 1M views. A named person is a " +
+      "materially stronger proof than 'a student', and the WhatsApp receipt is filed at " +
+      "12-Proof-Library/students/01-babs-apartment-chat.jpg. " +
+      "NOTE: that chat evidences the apartment, not the car — the car is owner-attested only.",
+  },
+  {
+    id: 9,
+    date: "2026-08-01",
     from: "Some of their stories still shock me.",
     to:
       "Together they have made over two hundred thousand dollars.\r\n\r\nSome of their stories still shock me.",
