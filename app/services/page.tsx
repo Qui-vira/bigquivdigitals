@@ -7,6 +7,7 @@ export const metadata = {
   title: "The Growth Operating System | BigQuiv Digitals",
   description:
     "One system covering website, AI content, community infrastructure, strategy and reporting. One invoice, one person responsible.",
+  alternates: { canonical: "/services" },
 };
 
 export default async function ServicesPage() {

@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
+import { SITE_URL } from "@/lib/site";
 import { Bricolage_Grotesque, Karla } from "next/font/google";
 import "./globals.css";
 import { PublicNavbar, PublicWrapper } from "@/components/PublicShell";
 import { FooterServer } from "@/components/FooterServer";
 import { ParticleFieldLoader } from "@/components/ParticleFieldLoader";
 import { CustomCursor } from "@/components/CustomCursor";
+import { OrganizationJsonLd } from "@/components/StructuredData";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -32,14 +34,15 @@ const body = Karla({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bigquivdigitals.com"),
+  metadataBase: new URL(SITE_URL),
+  alternates: { canonical: "/" },
   title: "BigQuiv Digitals | Growth systems that turn attention into revenue",
   description: "Website, AI content, community infrastructure, strategy and reporting, built as one system. Three live builds you can go and check.",
   openGraph: {
     title: "BigQuiv Digitals | Growth systems that turn attention into revenue",
     description: "Website, AI content, community infrastructure, strategy and reporting, built as one system. Three live builds you can go and check.",
     type: "website",
-    url: "https://bigquivdigitals.com",
+    url: SITE_URL,
     images: [
       {
         url: "/og-image.webp",
@@ -85,6 +88,9 @@ export default function RootLayout({
         <link rel="preload" as="image" type="image/avif" href="/hero/king-chrome-2560.avif" media="(min-width: 1601px)" />
       </head>
       <body className="min-h-screen bg-bg-primary font-sans text-text-primary antialiased">
+        {/* JSON-LD. In the root layout so it is present on every route, and in
+            the SSR HTML so a crawler sees it without executing anything. */}
+        <OrganizationJsonLd />
         <CustomCursor />
         <ParticleFieldLoader />
         <PublicNavbar />
