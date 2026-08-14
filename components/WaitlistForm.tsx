@@ -8,9 +8,15 @@ import { useId, useRef, useState } from "react";
  * Email only. Anything else is friction on a form whose single job is to hold
  * a place, and every extra field is one more reason to close the tab.
  *
- * Deliberately makes no promise about price, dates, launch windows or refunds:
- * none of those are decided, and an invented one is exactly the kind of
- * unbacked claim the site's claim register exists to prevent.
+ * This component makes no promise of its own about price, dates or refunds.
+ * Where a promise is made it is made by the surrounding page, in copy, next to
+ * the evidence for it — see app/waitlist. A promise baked in here would follow
+ * the form onto every surface it is ever dropped into, including ones where it
+ * is not true.
+ *
+ * `onSuccess` lets a host page take over after the signup lands, which is how
+ * /waitlist swaps the form out for the Opportunity Map. When it is passed the
+ * built-in confirmation line is skipped, because the host is showing its own.
  */
 type State = "idle" | "sending" | "done" | "error";
 
@@ -18,10 +24,12 @@ export function WaitlistForm({
   source = "homepage",
   className = "",
   compact = false,
+  onSuccess,
 }: {
   source?: string;
   className?: string;
   compact?: boolean;
+  onSuccess?: () => void;
 }) {
   const id = useId();
   const [state, setState] = useState<State>("idle");
@@ -47,6 +55,7 @@ export function WaitlistForm({
       }
       setState("done");
       setMessage("You're on the list. You'll hear from me before anyone else.");
+      onSuccess?.();
     } catch {
       setState("error");
       setMessage("Could not reach the server. Try again in a moment.");
@@ -54,6 +63,9 @@ export function WaitlistForm({
   }
 
   if (state === "done") {
+    // The host is rendering its own confirmation. Showing this one too would
+    // say the same thing twice.
+    if (onSuccess) return null;
     return (
       <p
         role="status"
