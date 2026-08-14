@@ -12,7 +12,14 @@ import { Resend } from "resend";
  * group them, so `segments: [id]` on create is what places a contact on a list.
  */
 
-const SEGMENT_ID = () => process.env.RESEND_WAITLIST_SEGMENT_ID || "";
+/**
+ * Trimmed deliberately. `vercel env add` reading from a heredoc or `<<<`
+ * appends a trailing newline to the stored value, and Resend then rejects the
+ * segment with "The `id` must be a valid UUID" — a failure that only shows up
+ * in production runtime logs, never locally or at build time. Set values with
+ * `printf '%s'` and trim on read, so neither mistake can break a signup.
+ */
+const SEGMENT_ID = () => (process.env.RESEND_WAITLIST_SEGMENT_ID || "").trim();
 
 /**
  * Add someone to the waitlist segment.
@@ -28,7 +35,7 @@ export async function addToWaitlistSegment(
   email: string,
   firstName?: string
 ): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = process.env.RESEND_API_KEY?.trim();
   const segmentId = SEGMENT_ID();
 
   if (!apiKey || !segmentId) {
