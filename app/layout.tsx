@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { SITE_URL } from "@/lib/site";
-import { Bricolage_Grotesque, Karla } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { PublicNavbar, PublicWrapper } from "@/components/PublicShell";
 import { FooterServer } from "@/components/FooterServer";
@@ -18,17 +18,34 @@ export const viewport: Viewport = {
  * Display / body pairing. Inter was doing both jobs, which is why every heading
  * read as neutral. Bricolage Grotesque carries the headline weight without
  * looking like a default; Karla keeps body copy quiet underneath it.
+ *
+ * SELF-HOSTED, deliberately. These were `next/font/google` until 2026-08-14,
+ * when two consecutive production builds failed with
+ * `Module not found: Can't resolve '@vercel/turbopack-next/internal/font/google/font'`.
+ * next/font/google downloads the woff2 files at build time, and when
+ * fonts.gstatic.com is unreachable from the build machine it emits CSS pointing
+ * at a module it never created. The build then fails on code that has not
+ * changed, which is the worst kind of failure to debug.
+ *
+ * The files are committed under app/fonts (120 KB total, latin subset only), so
+ * the build no longer depends on a third-party host being up. Identical
+ * rendering; the only cost is that a font update is now a manual re-download.
  */
-const display = Bricolage_Grotesque({
-  subsets: ["latin"],
-  weight: ["600", "700"],
+const display = localFont({
+  src: [
+    { path: "./fonts/BricolageGrotesque-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/BricolageGrotesque-700.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-display-face",
   display: "swap",
 });
 
-const body = Karla({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+const body = localFont({
+  src: [
+    { path: "./fonts/Karla-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/Karla-500.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/Karla-600.woff2", weight: "600", style: "normal" },
+  ],
   variable: "--font-body",
   display: "swap",
 });

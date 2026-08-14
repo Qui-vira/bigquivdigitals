@@ -93,13 +93,18 @@ async function main() {
   const failed: string[] = [];
 
   for (const row of rows) {
+    // `segments` takes objects, not bare id strings — resend@6.12.4 types it as
+    // `{ id: string }[]`. This previously passed `[SEGMENT_ID]` with a cast
+    // silencing the type error, and every write failed at runtime with
+    // "Invalid input: expected object, received string". Do not reintroduce
+    // the cast; it is what hid the bug.
     const { error } = await resend.contacts.create({
       email: row.email,
       firstName: row.firstName,
       unsubscribed: false,
-      segments: [SEGMENT_ID!],
+      segments: [{ id: SEGMENT_ID! }],
       properties: { source: row.source },
-    } as Parameters<typeof resend.contacts.create>[0]);
+    });
 
     if (error) {
       failed.push(`${row.email}: ${error.message}`);
