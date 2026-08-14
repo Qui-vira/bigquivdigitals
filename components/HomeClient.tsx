@@ -6,7 +6,6 @@ import { SectionWrapper } from "@/components/SectionWrapper";
 import { CaseStudyCard } from "@/components/CaseStudyCard";
 import { ProofStrip, type ProofStatData } from "@/components/ProofStat";
 import { HeroReveal } from "@/components/HeroReveal";
-import { WaitlistForm } from "@/components/WaitlistForm";
 
 interface Testimonial {
   quote: string;
@@ -96,15 +95,23 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
         {/* Block 4. The course name sits ABOVE the button, where it can inform
             the decision rather than arrive after it. Two CTAs, one intent each:
             the waitlist is the primary filled control, hiring is a quiet link
-            beside it so the buyer who is not a learner still has a door. */}
+            beside it so the buyer who is not a learner still has a door.
+
+            This was an inline email field until 2026-08-15. It posted straight
+            to /api/waitlist, which meant a visitor could join here without ever
+            seeing what joining gets them, and without receiving the Opportunity
+            Map that /waitlist hands over on signup. Two doors into one list,
+            and the shorter one delivered less. The control is now a link, so
+            every signup goes through the page carrying the promises and the
+            tool, and every signup is attributable to one source. */}
         <div className="w-full">
           <p className="mb-3 text-sm text-text-secondary">
             The Great Work opens soon. The list goes first.
           </p>
-          <WaitlistForm source="hero" compact />
+          <MagneticButton href="/waitlist">Join the waitlist</MagneticButton>
           <a
             href={calendlyUrl}
-            className="mt-4 inline-block text-sm font-medium text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
+            className="mt-4 block text-sm font-medium text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
           >
             Hire me
           </a>
@@ -280,8 +287,11 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
             the list hears first.
           </p>
 
+          {/* Also a link rather than an inline field, for the same reason as
+              the hero: /waitlist is the only door onto the list, so nobody
+              joins without the promises or the tool. */}
           <div className="mx-auto mt-10 flex max-w-xl flex-col items-center">
-            <WaitlistForm source="footer-cta" className="text-left" />
+            <MagneticButton href="/waitlist">Join the waitlist</MagneticButton>
           </div>
 
           {/* The consulting path is a button, not a buried inline link. Secondary
