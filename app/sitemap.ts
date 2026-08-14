@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { articlesDb } from "@/lib/articles-db";
+import { listArticles } from "@/lib/articles-db";
 import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 3600;
@@ -37,13 +37,9 @@ const STATIC_ROUTES: Array<{ path: string; priority: number; changeFrequency: Me
 
 async function articleSlugs(): Promise<Array<{ slug: string; updated: Date }>> {
   try {
-    const { data, error } = await articlesDb
-      .from("cta_documents")
-      .select("slug, created_at")
-      .order("created_at", { ascending: false });
-    if (error || !data) return [];
+    const { articles: data } = await listArticles();
     return data
-      .filter((d): d is { slug: string; created_at: string } => Boolean(d?.slug))
+      .filter((d) => Boolean(d?.slug))
       .map((d) => ({ slug: d.slug, updated: new Date(d.created_at ?? Date.now()) }));
   } catch {
     return [];

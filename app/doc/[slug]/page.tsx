@@ -1,14 +1,9 @@
-import { createClient } from "@supabase/supabase-js";
 import { notFound } from "next/navigation";
+import { getArticle } from "@/lib/articles-db";
 import Link from "next/link";
 import "./doc.css";
 
 export const revalidate = 60;
-
-const supabase = createClient(
-  "https://bnoqtghdptobbtrssmdj.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJub3F0Z2hkcHRvYmJ0cnNzbWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTYwMjQsImV4cCI6MjA4OTE3MjAyNH0.-Jl2_r83rEmKiyWAJOY5MCqPIiateTYYWlcW8bvYTLY"
-);
 
 function mdToHtml(md: string): string {
   let html = md;
@@ -44,15 +39,17 @@ export default async function DocPage({
 }) {
   const { slug } = await params;
 
-  const { data, error } = await supabase
-    .from("cta_documents")
-    .select("title, content")
-    .eq("slug", slug)
-    .single();
+  // Supabase first, Neon mirror if it will not answer. See lib/articles-db.ts:
+  // this page used to 404 whenever Supabase was rate limited, which made an
+  // outage look exactly like a deleted article.
+  const { article, source } = await getArticle(slug);
 
-  if (error || !data) notFound();
+  if (!article) notFound();
+  if (source === "mirror") {
+    console.warn(`[doc] "${slug}" served from the Neon mirror`);
+  }
 
-  const bodyHtml = mdToHtml(data.content);
+  const bodyHtml = mdToHtml(article.content);
 
   return (
     <div className="min-h-screen pt-28 pb-24">

@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { listArticles } from "@/lib/articles-db";
 import { ArticlesClient } from "@/components/ArticlesClient";
 
 export const revalidate = 60;
@@ -10,16 +10,15 @@ export const metadata = {
   alternates: { canonical: "/articles" },
 };
 
-const supabase = createClient(
-  "https://bnoqtghdptobbtrssmdj.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJub3F0Z2hkcHRvYmJ0cnNzbWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTYwMjQsImV4cCI6MjA4OTE3MjAyNH0.-Jl2_r83rEmKiyWAJOY5MCqPIiateTYYWlcW8bvYTLY"
-);
-
 export default async function ArticlesPage() {
-  const { data: articles } = await supabase
-    .from("cta_documents")
-    .select("slug, title, cta_keyword, video_title, views, created_at")
-    .order("created_at", { ascending: false });
+  // The old version did `const { data } = await ...` then `data ?? []`, which
+  // turned a rate-limited database into an empty page that returned HTTP 200.
+  // Twenty-five articles were dark for days and nothing alerted.
+  const { articles, source } = await listArticles();
 
-  return <ArticlesClient articles={articles ?? []} />;
+  if (source === "none") {
+    console.error("[articles] BOTH Supabase and the Neon mirror failed");
+  }
+
+  return <ArticlesClient articles={articles} />;
 }
