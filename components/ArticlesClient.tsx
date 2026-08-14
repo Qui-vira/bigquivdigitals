@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { SectionWrapper } from "./SectionWrapper";
 import { ArrowRight, FileText, Eye } from "lucide-react";
+import { Typewriter } from "@/components/TextMotion";
 
 interface Article {
   slug: string;
@@ -27,7 +28,10 @@ export function ArticlesClient({ articles }: { articles: Article[] }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              Articles
+              {/* One short word on its own line, which is the only shape a
+                  typewriter suits. A multi-line headline typed out reflows as
+                  it goes and drags the whole page around under the reader. */}
+              <Typewriter text="Articles" speed={85} />
             </motion.h1>
             <motion.p
               className="mx-auto mt-4 max-w-xl text-lg text-text-secondary"

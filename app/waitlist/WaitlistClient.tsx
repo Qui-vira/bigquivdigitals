@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { WaitlistForm } from "@/components/WaitlistForm";
+import { PopIn, RiseWords, Typewriter } from "@/components/TextMotion";
 import { OPPORTUNITY_MAP, OPPORTUNITY_MAP_HOW_TO } from "@/lib/opportunity-map";
 
 /**
@@ -80,13 +81,23 @@ export function WaitlistClient() {
 function Pitch({ onJoined }: { onJoined: () => void }) {
   return (
     <>
-      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-        The Great Work
-      </p>
+      {/* Types itself out. It is three words at the very top of the page, so
+          it finishes long before anyone has finished reading the headline. */}
+      <Typewriter
+        as="p"
+        text="The Great Work"
+        speed={65}
+        className="text-sm font-semibold uppercase tracking-[0.2em] text-accent"
+      />
 
-      <h1 className="mt-5 font-display text-4xl font-bold leading-[1.1] tracking-tight text-text-primary md:text-6xl">
+      <RiseWords
+        as="h1"
+        className="mt-5 font-display text-4xl font-bold leading-[1.1] tracking-tight text-text-primary md:text-6xl"
+        stagger={0.035}
+        delay={0.25}
+      >
         You already have the skill. Nobody showed you where the money is.
-      </h1>
+      </RiseWords>
 
       <p className="mt-7 text-lg leading-relaxed text-text-secondary">
         On day one I asked one question. What skill do you have that is not
@@ -133,9 +144,12 @@ function Pitch({ onJoined }: { onJoined: () => void }) {
           A small private list. Three things come with it.
         </h2>
 
+        {/* Staggered pop. These three are the argument for joining today, so
+            they arrive one at a time rather than as a block, which makes the
+            eye read them in order instead of scanning past. */}
         <ol className="mt-8 space-y-7">
           {PROMISES.map((p, i) => (
-            <li key={p.title} className="flex gap-5">
+            <PopIn key={p.title} as="li" delay={i * 0.12} className="flex gap-5">
               <span
                 aria-hidden
                 className="mt-0.5 shrink-0 font-display text-2xl font-bold leading-none text-accent"
@@ -150,7 +164,7 @@ function Pitch({ onJoined }: { onJoined: () => void }) {
                   {p.body}
                 </p>
               </div>
-            </li>
+            </PopIn>
           ))}
         </ol>
 
@@ -168,13 +182,23 @@ function Pitch({ onJoined }: { onJoined: () => void }) {
 function Unlocked() {
   return (
     <>
-      <p className="text-sm font-semibold uppercase tracking-[0.2em] text-accent">
-        You are on the list
-      </p>
+      {/* The confirmation types out. This is the one moment on the site where
+          something just happened because of the visitor, so it is worth the
+          half second of theatre. */}
+      <Typewriter
+        as="p"
+        text="You are on the list"
+        speed={55}
+        className="text-sm font-semibold uppercase tracking-[0.2em] text-accent"
+      />
 
-      <h1 className="mt-5 font-display text-4xl font-bold leading-[1.1] tracking-tight text-text-primary md:text-5xl">
+      <RiseWords
+        as="h1"
+        className="mt-5 font-display text-4xl font-bold leading-[1.1] tracking-tight text-text-primary md:text-5xl"
+        delay={0.4}
+      >
         Here is the first thing, right now.
-      </h1>
+      </RiseWords>
 
       <p className="mt-7 text-lg leading-relaxed text-text-secondary">
         The Opportunity Map. It is an interview that finds the one skill you

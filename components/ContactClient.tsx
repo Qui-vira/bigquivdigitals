@@ -196,7 +196,10 @@ export function ContactClient({ contactOptions, socialLinks, serviceOptions, for
                 <AnimatedInput as="textarea" id="message" name="message" rows={5} required placeholder="Tell me about your project or what you need help with..." />
               </div>
 
-              <MagneticButton className="w-full justify-center" showArrow={false}>
+              {/* No emphasis. This is a form submit, and a control that
+                  pulses while someone is still typing into the field above it
+                  reads as nagging rather than inviting. */}
+              <MagneticButton emphasis={false} className="w-full justify-center" showArrow={false}>
                 Send Message
               </MagneticButton>
             </form>

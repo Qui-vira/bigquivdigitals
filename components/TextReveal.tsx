@@ -26,15 +26,26 @@ export function TextReveal({
   const units = mode === "words" ? children.split(" ") : children.split("");
 
   return (
-    <Tag ref={ref} className={`overflow-hidden ${className}`}>
+    // No overflow-hidden. It was there to clip words sliding up from below,
+    // which is the same failure mode as opacity 0: if the observer never fires,
+    // the clip hides the heading permanently — exactly what left ~2,950px of
+    // the homepage blank on 2026-07-25. The entrance is now a small lift from a
+    // fully visible position, so the worst case is a heading sitting 14px low.
+    <Tag ref={ref} className={className}>
       {units.map((unit, i) => (
         <motion.span
           key={i}
           className="inline-block"
-          initial={{ y: "0%", opacity: 1 }}
-          animate={isInView ? { y: 0, opacity: 1 } : {}}
+          // Was initial y:"0%" animating to y:0 — the same value — so this
+          // component rendered every heading on /about, /contact and the CTA
+          // banner with no motion whatsoever. It went inert during the
+          // blank-page fix, which removed the danger and the animation
+          // together, and nobody noticed because the failure looks exactly
+          // like static text.
+          initial={{ opacity: 1, y: 14 }}
+          animate={isInView ? { y: 0 } : undefined}
           transition={{
-            duration: 0.5,
+            duration: 0.55,
             delay: i * staggerDelay,
             ease: [0.16, 1, 0.3, 1],
           }}

@@ -6,6 +6,7 @@ import { SectionWrapper } from "@/components/SectionWrapper";
 import { CaseStudyCard } from "@/components/CaseStudyCard";
 import { ProofStrip, type ProofStatData } from "@/components/ProofStat";
 import { HeroReveal } from "@/components/HeroReveal";
+import { RiseWords } from "@/components/TextMotion";
 
 interface Testimonial {
   quote: string;
@@ -125,9 +126,9 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
       {/* ───────── 3. CASE STUDIES ───────── */}
       <SectionWrapper className="py-16 md:py-24" id="work">
         <div className="mx-auto max-w-[1200px] px-6">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-text-primary md:text-5xl md:leading-tight">
+          <RiseWords className="text-center text-3xl font-bold tracking-tight text-text-primary md:text-5xl md:leading-tight">
             Three builds. Go and check them.
-          </h2>
+          </RiseWords>
 
           <div className="mt-14 grid gap-8 md:grid-cols-3">
             {CASE_STUDIES.map((cs) => (
@@ -140,9 +141,9 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
       {/* ───────── 4. THE PROBLEM ───────── */}
       <SectionWrapper className="py-16 md:py-24">
         <div className="mx-auto max-w-[760px] px-6">
-          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+          <RiseWords className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
             Five freelancers, five invoices, and nobody answering for the result.
-          </h2>
+          </RiseWords>
 
           <p className="mt-6 text-lg leading-relaxed text-text-secondary">
             Your designer has never spoken to your writer. Your developer has never read the
@@ -277,9 +278,9 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           call keeps its own path in the line below. */}
       <SectionWrapper className="py-20 md:py-28">
         <div className="mx-auto max-w-[760px] px-6 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-5xl">
+          <RiseWords className="text-3xl font-bold tracking-tight text-text-primary md:text-5xl">
             You have seen the proof. Now go and build your own.
-          </h2>
+          </RiseWords>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-text-secondary">
             The Great Work is the loop this page is built on: learn,
@@ -302,7 +303,9 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           </p>
 
           <div className="mt-5 flex justify-center">
-            <MagneticButton href={calendlyUrl} variant="secondary">
+            {/* No emphasis: the waitlist button directly above it already
+                has it, and two pulsing controls in one viewport cancel out. */}
+            <MagneticButton href={calendlyUrl} variant="secondary" emphasis={false}>
               Book a call
             </MagneticButton>
           </div>

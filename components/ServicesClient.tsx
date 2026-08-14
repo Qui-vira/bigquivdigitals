@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { MagneticButton } from "@/components/MagneticButton";
 import { SectionWrapper } from "@/components/SectionWrapper";
+import { RiseWords } from "@/components/TextMotion";
 
 interface ServicesClientProps {
   calendlyUrl: string;
@@ -64,9 +65,9 @@ export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
       {/* ───────── HERO ───────── */}
       <section className="px-6 pt-28 pb-12 md:pt-36">
         <div className="mx-auto max-w-[820px]">
-          <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-text-primary md:text-5xl">
+          <RiseWords as="h1" className="text-4xl font-extrabold leading-[1.1] tracking-tight text-text-primary md:text-5xl">
             You are paying five people and none of them own the result.
-          </h1>
+          </RiseWords>
 
           <p className="mt-6 text-lg leading-relaxed text-text-secondary">
             The designer never speaks to the writer. The developer has never read the content
@@ -88,9 +89,9 @@ export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
       {/* ───────── WHAT IT INCLUDES ───────── */}
       <SectionWrapper className="py-16 md:py-24">
         <div className="mx-auto max-w-[820px] px-6">
-          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+          <RiseWords className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
             What the Growth Operating System includes
-          </h2>
+          </RiseWords>
 
           <div className="mt-12 space-y-10">
             {INCLUDES.map((item) => (
@@ -108,9 +109,9 @@ export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
       {/* ───────── ENTRY POINTS ───────── */}
       <SectionWrapper className="py-16 md:py-24">
         <div className="mx-auto max-w-[1000px] px-6">
-          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+          <RiseWords className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
             Where people usually start
-          </h2>
+          </RiseWords>
 
           <p className="mt-4 max-w-2xl text-lg text-text-secondary">
             Nobody needs the whole system on day one. These are the common front doors, and
@@ -140,9 +141,9 @@ export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
       {/* ───────── CTA ───────── */}
       <SectionWrapper className="py-20 md:py-28">
         <div className="mx-auto max-w-[760px] px-6 text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+          <RiseWords className="text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
             Tell me what you are building.
-          </h2>
+          </RiseWords>
           <div className="mt-8">
             <MagneticButton href={calendlyUrl}>Book a call</MagneticButton>
           </div>

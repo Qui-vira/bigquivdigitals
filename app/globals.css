@@ -75,6 +75,185 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ── Motion layer ───────────────────────────────────────────────────────────
+   One vocabulary for every animation on the site, so nothing invents its own
+   curve. Durations are short because most of this repeats on every page.
+
+   THE RULE THAT GOVERNS ALL OF IT: nothing here animates opacity from 0, and
+   nothing hides content behind a clip waiting for a trigger. On 2026-07-25 the
+   homepage shipped with ~2,950px of blank space because scroll reveals never
+   fired and everything below the fold stayed at opacity 0. Every entrance
+   below therefore lifts from a VISIBLE state. If the trigger never fires the
+   worst case is text sitting 12px low, which nobody will ever notice.
+   ────────────────────────────────────────────────────────────────────────── */
+@theme {
+  /* Ease-out for anything responding to the user. Never ease-in. */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  /* A restrained overshoot, for pops that should feel physical.
+     Deliberately NOT the common cubic-bezier(0.34, 1.56, 0.64, 1): at 1.56 the
+     element visibly rubber-bands, which reads as a 2014 mobile app rather than
+     a premium dark brand. 1.22 is enough overshoot to register as a pop and
+     little enough that it still reads as weight rather than bounce. */
+  --ease-out-back: cubic-bezier(0.34, 1.22, 0.64, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Entrance: rise. The workhorse. Opacity stays at 1 throughout. */
+@keyframes rise-in {
+  from {
+    transform: translate3d(0, 14px, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Entrance: pop, with overshoot. For things that should announce themselves. */
+@keyframes pop-in {
+  0% {
+    transform: scale(0.92);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* CTA emphasis, part 1: a ring that expands out of the button and fades.
+   Runs on a ::after pseudo-element so it never affects layout, and the fade is
+   on the RING, not on the button, so the control itself is always solid. */
+@keyframes cta-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    transform: scale(1.14);
+    opacity: 0;
+  }
+}
+
+/* CTA emphasis, part 2: a sheen that sweeps across the face.
+   Deliberately slow and infrequent. A fast repeating shine reads as a scam
+   banner; one unhurried pass every few seconds reads as a live surface. */
+@keyframes cta-sheen {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  55%,
+  100% {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+/* Ambient: a slow vertical drift, for a single element that should feel alive
+   while idle. Used sparingly — one per viewport at most. */
+@keyframes float-y {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+/* Typewriter caret. */
+@keyframes caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  50%,
+  95% {
+    opacity: 0;
+  }
+}
+
+.anim-rise {
+  animation: rise-in 0.6s var(--ease-out-expo) both;
+}
+
+.anim-pop {
+  animation: pop-in 0.5s var(--ease-out-back) both;
+}
+
+.anim-float {
+  animation: float-y 5s var(--ease-in-out-soft) infinite;
+}
+
+.caret {
+  display: inline-block;
+  width: 0.08em;
+  height: 1em;
+  margin-left: 0.06em;
+  vertical-align: text-bottom;
+  background-color: var(--color-accent);
+  animation: caret-blink 1.1s steps(1) infinite;
+}
+
+/* ── CTA emphasis ───────────────────────────────────────────────────────────
+   Applied to primary calls to action so the eye lands on them.
+
+   Three layers, all on pseudo-elements or transforms so none of them can
+   affect layout or hide the label:
+     ::before  the sheen sweep, clipped to the button
+     ::after   the expanding ring
+     hover     lift + press feedback, handled inline by the component
+
+   `isolation` and `overflow-hidden` keep the sheen inside the radius. The
+   button label sits in its own stacking context above both pseudo-elements.
+   ────────────────────────────────────────────────────────────────────────── */
+.cta-emphasis {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.cta-emphasis::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.42) 50%,
+    transparent 80%
+  );
+  width: 45%;
+  animation: cta-sheen 4.6s var(--ease-in-out-soft) infinite;
+}
+
+.cta-emphasis::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  border: 1.5px solid var(--color-accent);
+  animation: cta-ring 3.2s var(--ease-out-expo) infinite;
+}
+
+/* The ring reads as noise on a bordered secondary button, so it only ships on
+   the filled primary. The sheen still runs. */
+.cta-emphasis[data-variant="secondary"]::after {
+  content: none;
+}
+
+/* Both loops stop while the pointer is on the button. The animation exists to
+   attract attention; once it has it, it is a distraction competing with the
+   hover state. */
+.cta-emphasis:hover::before,
+.cta-emphasis:hover::after,
+.cta-emphasis:focus-visible::before,
+.cta-emphasis:focus-visible::after {
+  animation-play-state: paused;
+  opacity: 0;
+}
+
 /* Line reveal animation */
 @keyframes line-reveal {
   from {
@@ -107,8 +286,24 @@ html {
     scroll-behavior: auto;
   }
 
-  /* Decorative motion that carries no information is removed outright. */
-  .animate-marquee {
+  /* Decorative motion that carries no information is removed outright.
+     The blanket rule above collapses durations to 0.01ms, which is enough for
+     one-shot entrances but leaves infinite loops running at a flicker. Every
+     looping decoration therefore has to be named here explicitly. If you add a
+     new `infinite` animation anywhere, add it to this list in the same commit. */
+  .animate-marquee,
+  .anim-float,
+  .caret,
+  .cta-emphasis::before,
+  .cta-emphasis::after {
     animation: none !important;
+  }
+
+  /* The caret is a blinking bar with nothing to say once it stops blinking,
+     and the ring is a bare outline. Both are removed rather than frozen. */
+  .caret,
+  .cta-emphasis::before,
+  .cta-emphasis::after {
+    display: none !important;
   }
 }

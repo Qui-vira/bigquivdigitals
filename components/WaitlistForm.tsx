@@ -98,7 +98,18 @@ export function WaitlistForm({
         <button
           type="submit"
           disabled={state === "sending"}
-          className="shrink-0 cursor-pointer rounded-lg bg-accent px-7 py-3.5 text-base font-semibold tracking-wide text-[#0A0806] transition-colors hover:bg-accent-hover disabled:opacity-60"
+          data-variant="primary"
+          // cta-emphasis: sheen + ring, defined in globals.css. This is the
+          // single most important control on the site during the launch, and
+          // it is the one CTA that is not a MagneticButton, so it would
+          // otherwise have been the only unanimated one.
+          //
+          // The emphasis is dropped while sending. A button that keeps
+          // advertising itself after it has been pressed reads as though the
+          // press did not register.
+          className={`shrink-0 cursor-pointer rounded-lg bg-accent px-7 py-3.5 text-base font-semibold tracking-wide text-[#0A0806] transition-colors hover:bg-accent-hover disabled:opacity-60 ${
+            state === "sending" ? "" : "cta-emphasis"
+          }`}
         >
           {state === "sending" ? "Adding you…" : "Join the waitlist"}
         </button>
