@@ -44,3 +44,9 @@ next-env.d.ts
 
 # Dev-only render output from scripts/preview-sdf.mjs
 scripts/out/
+.env*.local
+
+# One-off scripts containing customer PII (hardcoded email lists)
+scripts/seed-resend-contacts.ts
+scripts/fix-resend-firstnames.ts
+scripts/send-reengagement.ts

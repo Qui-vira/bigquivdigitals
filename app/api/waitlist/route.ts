@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
+import { addToWaitlistSegment } from "@/lib/resend-contacts";
 
 /**
  * The Great Work waitlist capture.
@@ -48,6 +49,14 @@ export async function POST(req: NextRequest) {
         { error: "Could not save that. Try again in a moment." },
         { status: 500 }
       );
+    }
+
+    // Mirror into Resend so this address is reachable by a broadcast. Deliberately
+    // awaited but never allowed to fail the request: Supabase already has the
+    // address, and the backfill script picks up anything Resend missed.
+    const synced = await addToWaitlistSegment(email.toLowerCase());
+    if (!synced) {
+      console.warn(`[waitlist] ${email} saved to Supabase but not synced to Resend`);
     }
 
     return NextResponse.json({ ok: true });
