@@ -68,12 +68,12 @@ const PROMISES = [
   },
 ];
 
-export function WaitlistClient() {
+export function WaitlistClient({ roomUrl }: { roomUrl: string | null }) {
   const [joined, setJoined] = useState(false);
 
   return (
     <div className="mx-auto max-w-[720px] px-6 py-20 md:py-28">
-      {joined ? <Unlocked /> : <Pitch onJoined={() => setJoined(true)} />}
+      {joined ? <Unlocked roomUrl={roomUrl} /> : <Pitch onJoined={() => setJoined(true)} />}
     </div>
   );
 }
@@ -171,7 +171,8 @@ function Pitch({ onJoined }: { onJoined: () => void }) {
         <div className="mt-12">
           <WaitlistForm source="waitlist-page" onSuccess={onJoined} />
           <p className="mt-4 text-sm text-text-muted">
-            Email only. No spam, and you can leave whenever you want.
+            Email only. No spam, and you can leave whenever you want. The room opens
+            on the next screen.
           </p>
         </div>
       </div>
@@ -179,7 +180,7 @@ function Pitch({ onJoined }: { onJoined: () => void }) {
   );
 }
 
-function Unlocked() {
+function Unlocked({ roomUrl }: { roomUrl: string | null }) {
   return (
     <>
       {/* The confirmation types out. This is the one moment on the site where
@@ -217,6 +218,8 @@ function Unlocked() {
         ))}
       </ol>
 
+      {roomUrl ? <Room url={roomUrl} /> : null}
+
       <CopyBlock />
 
       <p className="mt-12 border-t border-border pt-10 leading-relaxed text-text-secondary">
@@ -224,6 +227,54 @@ function Unlocked() {
         what this is being built from.
       </p>
     </>
+  );
+}
+
+/**
+ * The room.
+ *
+ * Sits here rather than on the pitch, because the email is the thing the
+ * business owns and a group can be lost overnight — so the durable capture
+ * happens first and the room is what they walk into afterwards, at the moment
+ * they are most willing to act.
+ *
+ * Deliberately NOT sold as a fourth promise on the pitch. Three promises is the
+ * offer; this is the destination.
+ *
+ * THE ROOM IS LOCKED — announcements only, owner posts, members read. Copy here
+ * must match that, and it is written to sell the lock rather than apologise for
+ * it: the single biggest reason people refuse a WhatsApp group is the fear of
+ * 200 notifications a day, so "I post, you read" removes the main objection
+ * instead of creating one.
+ *
+ * It also means nothing here may invite a reply. An earlier draft asked people
+ * to post their Opportunity Map result in the room, which is impossible in a
+ * locked group and would have read as broken the moment they tried.
+ */
+function Room({ url }: { url: string }) {
+  return (
+    <div className="mt-10 rounded-lg border border-accent/30 bg-bg-secondary p-6">
+      <h2 className="font-display text-xl font-bold tracking-tight text-text-primary">
+        One more thing. Come into the room.
+      </h2>
+      <p className="mt-2 leading-relaxed text-text-secondary">
+        Everything lands there first. Updates before they go public, the parts I
+        am still figuring out, and launch day before anyone outside hears about
+        it.
+      </p>
+      <p className="mt-3 leading-relaxed text-text-secondary">
+        It is not a chat. I post, you read. No two hundred notifications a day.
+      </p>
+      <a
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="cta-emphasis group mt-5 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-accent px-7 py-3.5 text-base font-semibold tracking-wide text-[#0A0806] transition-colors hover:bg-accent-hover"
+        data-variant="primary"
+      >
+        <span className="relative z-10">Join the room on WhatsApp</span>
+      </a>
+    </div>
   );
 }
 

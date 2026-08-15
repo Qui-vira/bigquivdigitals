@@ -24,5 +24,25 @@ export const metadata: Metadata = {
 };
 
 export default function WaitlistPage() {
-  return <WaitlistClient />;
+  /**
+   * The WhatsApp room invite.
+   *
+   * Read server-side and passed down rather than inlined as NEXT_PUBLIC_*, so
+   * the link can be rotated from the Vercel dashboard without a code change —
+   * which matters because a WhatsApp invite can be revoked or reset at any
+   * time, and a dead invite on the success page is worse than no invite.
+   *
+   * Unset is a supported state: the room button simply does not render and the
+   * page still delivers the Opportunity Map. Nothing on the page promises the
+   * room, so nothing breaks by its absence.
+   */
+  const roomUrl = process.env.WHATSAPP_GROUP_URL?.trim() || null;
+
+  if (!roomUrl) {
+    console.warn(
+      "[waitlist] WHATSAPP_GROUP_URL not set — the room invite is hidden. Set it in Vercel to switch it on."
+    );
+  }
+
+  return <WaitlistClient roomUrl={roomUrl} />;
 }
