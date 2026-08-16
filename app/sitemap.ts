@@ -16,8 +16,13 @@ export const revalidate = 3600;
  *   - /portfolio      excluded, 308-redirects to /work — list the destination
  *   - /pricing        excluded, 308-redirects
  *   - /course         excluded, currently 404s (A6 not built)
- *   - /drone-signup   excluded, an unrelated project living in this codebase
  *   - /waitlist       excluded, a form endpoint rather than a page
+ *
+ * /drone-signup was removed entirely on 2026-08-16. It was Altara Aerial pilot
+ * recruitment living in the wrong codebase, and it belongs on that project's own
+ * site. Excluding it from the sitemap only hid it; it was still a live public
+ * route on bigquivdigitals.com. The drone_pilot_signups table is left in place
+ * and holds one row, which is the owner's own test entry.
  *
  * Article slugs come from Supabase. The fetch swallows its own errors and
  * returns [], so an unreachable backend degrades this to the static routes

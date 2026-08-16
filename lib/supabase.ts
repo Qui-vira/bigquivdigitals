@@ -1,10 +1,13 @@
 /**
  * supabase.ts — the content-engine course surfaces, now served by Neon.
  *
- * ⚠ THESE NO LONGER TALK TO SUPABASE. The names are kept so the nine call sites
+ * ⚠ THESE NO LONGER TALK TO SUPABASE. The names are kept so the call sites
  * (both payment webhooks, flutterwave verify, the Telegram course gate, waitlist,
- * drone signup, admin sweep, update-student, the students page) did not have to
- * change. Rewriting payment webhooks by hand is where money gets lost.
+ * admin sweep, update-student, the students page) did not have to change.
+ * Rewriting payment webhooks by hand is where money gets lost.
+ *
+ * There were nine. The ninth was /api/drone-signup, removed on 2026-08-16 —
+ * Altara Aerial pilot recruitment that had no business on this site.
  *
  * WHY: content-engine shares a Supabase org with the trading and scraper tables,
  * so its egress quota gets burned by unrelated work. When it trips, the REST API
