@@ -19,6 +19,11 @@ export const revalidate = 3600;
  *                     unlisted until launch day because a live priced page kills
  *                     the waitlist it exists to convert. It also sets
  *                     robots index:false. Add it here when the launch opens.
+ *   - /aimastery      excluded ON PURPOSE, same as above. Also BUILT. This one is
+ *                     a re-open rather than a launch — people have already bought
+ *                     the material — but it must not go live mid-way through The
+ *                     Great Work's 30-day arc. One launch at a time, one audience.
+ *                     ⚠ Its price is still a PLACEHOLDER. Set it before listing.
  *   - /waitlist       excluded, a form endpoint rather than a page
  *
  * /drone-signup was removed entirely on 2026-08-16. It was Altara Aerial pilot

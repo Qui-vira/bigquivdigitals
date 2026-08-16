@@ -6,8 +6,34 @@ import { SectionWrapper } from "@/components/SectionWrapper";
 import { RiseWords } from "@/components/TextMotion";
 import { PaymentModal } from "@/components/PaymentModal";
 
+/**
+ * The Great Work sales page.
+ *
+ * Section order follows 100launchscripts.com, which the owner picked as the
+ * reference: hero, authority, origin story, what changes, problem/solution,
+ * what makes it different, results, testimonials, bonus stack, who it is for,
+ * final pricing block, footer CTA. The CTA repeats six times.
+ *
+ * What is NOT copied from that page: the countdown timer and the aggregate
+ * revenue claims. A countdown implies a deadline that has not been set, and
+ * every number here has to be one somebody can check. The struck price carries
+ * the urgency instead, and it is real — ₦15,000 is a pre-sell price.
+ *
+ * Brand tokens only: bg-primary black, accent #E8A33D gold, text-primary warm
+ * off-white. No new colours.
+ */
+
 const PRICE = 15000;
 const WAS = 35000;
+
+const CHANGES = [
+  "You stop guessing which skill to push and know which one has the best odds right now.",
+  "You have something to show a client instead of describing what you can do.",
+  "You know where the people who pay actually are, and what to say to them.",
+  "You can ask for money without your voice shaking, because you have receipts.",
+  "One client going quiet stops being the end of your income.",
+  "You have a loop you can run again next month, and the month after.",
+];
 
 const MODULES = [
   {
@@ -68,7 +94,7 @@ const DELIVERABLES = [
   },
   {
     t: "Client Finder Toolkit",
-    d: "Where to look, what to say, and the follow-up when they don't reply. Because the most common sentence I heard this month was some version of where do I even find people who pay.",
+    d: "Where to look, what to say, and the follow-up for when they don't reply. The most common sentence I heard this month was some version of where do I even find people who pay.",
   },
   {
     t: "Proof Builders",
@@ -76,148 +102,309 @@ const DELIVERABLES = [
   },
   {
     t: "Confidence Through Receipts",
-    d: "One person told me he only believes a design is good when the client says so. That is not fixed by motivation. It is fixed by a real client saying it, so the system is built to get you that first.",
+    d: "Somebody told me he only believes a design is good once the client says so. That is not fixed by motivation. It is fixed by a real client saying it, so the system is built to get you that first.",
   },
   {
     t: "The Opportunity Engine",
-    d: "The loop you keep after everything else: find opportunity, package skill, show proof, close client, document result, find the next one.",
+    d: "The loop you keep after everything else. Find opportunity, package skill, show proof, close client, document result, find the next one.",
   },
+];
+
+const WHO_FOR = [
+  "You have a skill that works and it has never paid you properly.",
+  "You are good at the work and freeze the moment it is time to ask for money.",
+  "You believe you have no skill at all. You are usually wrong, and Module 1 exists for you.",
+  "You have one client and no idea where the second one comes from.",
+  "You have been paid before and still cannot say what you do in one sentence.",
+  "You own a business and want to run this system on it yourself.",
+];
+
+const NOT_FOR = [
+  "You want a certificate more than a client.",
+  "You want somebody else to do the work for you. That is a service, and it is sold separately.",
+  "You want a guaranteed number by a guaranteed date. Nobody honest can give you that.",
 ];
 
 export function CourseClient() {
   const [payOpen, setPayOpen] = useState(false);
+  const open = () => setPayOpen(true);
+
+  const cta = (label = `Get instant access · ₦${PRICE.toLocaleString()}`) => (
+    <div className="mt-10 flex flex-wrap items-center gap-4">
+      <MagneticButton onClick={open}>{label}</MagneticButton>
+      <span className="text-sm text-text-secondary">
+        <span className="line-through opacity-60">₦{WAS.toLocaleString()}</span>{" "}
+        <span className="font-semibold text-text-primary">₦{PRICE.toLocaleString()}</span> while
+        it is being built · lifetime access
+      </span>
+    </div>
+  );
 
   return (
     <div>
-      {/* ───────── HERO ───────── */}
-      <section className="px-6 pt-28 pb-12 md:pt-36">
+      {/* ───────── 1. HERO ───────── */}
+      <section className="px-6 pt-28 pb-16 md:pt-36">
         <div className="mx-auto max-w-[820px]">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
+            The Great Work
+          </p>
           <RiseWords
             as="h1"
-            className="text-4xl font-extrabold leading-[1.1] tracking-tight text-text-primary md:text-5xl"
+            className="mt-4 text-4xl font-extrabold leading-[1.1] tracking-tight text-text-primary md:text-6xl"
           >
             You have a skill. It is not paying you.
           </RiseWords>
 
-          <p className="mt-6 text-lg leading-relaxed text-text-secondary">
+          <p className="mt-6 text-lg leading-relaxed text-text-secondary md:text-xl">
             Everybody told you to learn a skill. Get the skill and you will be fine, they said.
             Nobody taught you the part after.
           </p>
 
-          <p className="mt-4 text-lg leading-relaxed text-text-secondary">
-            Where the people who pay actually are. What to say to them. How to show that you can
-            do the work before anybody has hired you. And what happens when your one client goes
+          <p className="mt-4 text-lg leading-relaxed text-text-secondary md:text-xl">
+            Where the people who pay actually are. What to say to them. How to show you can do
+            the work before anyone has hired you. And what happens when your one client goes
             quiet and your income goes quiet with him.
           </p>
 
-          <p className="mt-4 text-lg leading-relaxed text-text-secondary">
+          <p className="mt-4 text-lg font-semibold leading-relaxed text-text-primary md:text-xl">
             That is the part nobody built anything for. So I did.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center gap-4">
-            <MagneticButton onClick={() => setPayOpen(true)}>
-              Join for ₦{PRICE.toLocaleString()}
-            </MagneticButton>
-            <span className="text-sm text-text-secondary">
-              <span className="line-through opacity-60">₦{WAS.toLocaleString()}</span>{" "}
-              <span className="font-semibold text-text-primary">
-                ₦{PRICE.toLocaleString()}
-              </span>{" "}
-              while it is being built. Lifetime access, updates included.
-            </span>
-          </div>
+          {cta()}
         </div>
       </section>
 
-      {/* ───────── THE TRANSFORMATION ───────── */}
+      {/* ───────── 2. AUTHORITY ───────── */}
+      <SectionWrapper>
+        <section className="border-y border-border bg-bg-secondary px-6 py-16">
+          <div className="mx-auto max-w-[820px]">
+            <h2 className="text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
+              I have been teaching this a long time before it had a name
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-text-secondary">
+              I run Ophir Digital Education Foundation, registered in Nigeria as CAC 9071886.
+              Over two thousand people have come through what I teach. Before any of that I was a
+              microbiologist, then a sales boy on ₦10,000 a month, so I am not guessing about
+              what it feels like to have something in your hands and no way to turn it into
+              money.
+            </p>
+            <p className="mt-4 text-lg leading-relaxed text-text-secondary">
+              The Great Work is not new material. It is the thing I have been teaching for years,
+              finally packaged so you can run it without me standing over you.
+            </p>
+          </div>
+        </section>
+      </SectionWrapper>
+
+      {/* ───────── 3. THE TRANSFORMATION ───────── */}
       <SectionWrapper>
         <section className="px-6 py-16">
           <div className="mx-auto max-w-[820px]">
             <h2 className="text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
               The whole thing in one line
             </h2>
-            <p className="mt-6 text-xl font-semibold leading-relaxed text-text-primary md:text-2xl">
+            <p className="mt-8 text-xl font-extrabold leading-relaxed text-accent md:text-3xl">
               Confusion → Skill → Proof → Visibility → Money → Opportunities
             </p>
-            <p className="mt-6 text-lg leading-relaxed text-text-secondary">
+            <p className="mt-8 text-lg leading-relaxed text-text-secondary">
               Seven modules that move you along that line in order, because the order is the
               point. Proof before visibility. Visibility before money. Most people try to sell
-              from step one and wonder why nobody answers.
+              from step one and then wonder why nobody answers.
             </p>
           </div>
         </section>
       </SectionWrapper>
 
-      {/* ───────── WHO IT IS FOR ───────── */}
+      {/* ───────── 4. WHAT CHANGES FOR YOU ───────── */}
       <SectionWrapper>
         <section className="px-6 py-16">
           <div className="mx-auto max-w-[820px]">
             <h2 className="text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
-              Who this is for
+              What changes for you
             </h2>
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 p-6">
-                <h3 className="font-bold text-text-primary">You have a skill</h3>
-                <p className="mt-3 leading-relaxed text-text-secondary">
-                  Design, editing, code, writing, trading, marketing. It works. It just has not
-                  turned into money yet, or not into enough of it.
-                </p>
-              </div>
-              <div className="rounded-2xl border border-white/10 p-6">
-                <h3 className="font-bold text-text-primary">You think you have none</h3>
-                <p className="mt-3 leading-relaxed text-text-secondary">
-                  You are usually wrong. The most common version of this is somebody who has
-                  already been paid for a thing and does not count it, because nobody handed
-                  them a job title for it. Module 1 exists for you.
-                </p>
-              </div>
-            </div>
-            <p className="mt-6 leading-relaxed text-text-secondary">
-              It also runs for business owners who want the same system pointed at a company they
-              already own. Same seven modules, different worked example.
+            <ul className="mt-8 space-y-4">
+              {CHANGES.map((c) => (
+                <li key={c} className="flex gap-4 leading-relaxed text-text-secondary">
+                  <span aria-hidden className="mt-[2px] shrink-0 font-bold text-accent">
+                    →
+                  </span>
+                  <span>{c}</span>
+                </li>
+              ))}
+            </ul>
+            {cta()}
+          </div>
+        </section>
+      </SectionWrapper>
+
+      {/* ───────── 5. PROBLEM / SOLUTION ───────── */}
+      <SectionWrapper>
+        <section className="border-y border-border bg-bg-secondary px-6 py-16">
+          <div className="mx-auto max-w-[820px]">
+            <h2 className="text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
+              So do not go and learn another skill yet
+            </h2>
+            <p className="mt-6 text-lg leading-relaxed text-text-secondary">
+              This is what most people do. Learn a skill. Post about it. Wait.
+            </p>
+            <p className="mt-4 text-lg leading-relaxed text-text-secondary">
+              Then nothing happens, so they decide the problem was the skill, and go and learn
+              another one. Two years later they have four skills and the same bank balance.
+            </p>
+            <p className="mt-6 text-lg leading-relaxed text-text-primary">
+              The skill was never the problem.
+            </p>
+            <p className="mt-4 text-lg leading-relaxed text-text-secondary">
+              I spoke to a developer this month who has built a live tax system a company paid
+              him for every month, for five months. Real money, real product. When that one
+              client ran out of cash his income went to zero, because everything he had ever
+              built belonged to that one man. He does not need a fifth skill. He needs a second
+              buyer.
+            </p>
+            <p className="mt-4 text-lg leading-relaxed text-text-secondary">
+              That is the gap. Not talent, not effort, not information. Nobody ever handed you
+              the second half.
             </p>
           </div>
         </section>
       </SectionWrapper>
 
-      {/* ───────── MODULES ───────── */}
+      {/* ───────── 6. WHAT MAKES THIS DIFFERENT ───────── */}
       <SectionWrapper>
         <section className="px-6 py-16">
           <div className="mx-auto max-w-[820px]">
             <h2 className="text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
-              The seven modules
+              What makes this different
             </h2>
             <p className="mt-4 leading-relaxed text-text-secondary">
-              Each one teaches exactly one thing, and most of them hand you an instrument you
-              keep and reuse.
+              Seven modules. Each one teaches exactly one thing, and most of them hand you an
+              instrument you keep and reuse long after the module is finished.
             </p>
 
             <ol className="mt-10 space-y-8">
               {MODULES.map((m) => (
-                <li key={m.n} className="border-l-2 border-white/10 pl-6">
+                <li key={m.n} className="border-l-2 border-border pl-6">
                   <div className="flex items-baseline gap-3">
-                    <span className="font-mono text-sm text-text-secondary">{m.n}</span>
+                    <span className="font-mono text-sm text-accent">{m.n}</span>
                     <h3 className="text-lg font-bold text-text-primary">{m.t}</h3>
                   </div>
                   <p className="mt-2 leading-relaxed text-text-secondary">{m.one}</p>
                   <p className="mt-3 leading-relaxed text-text-primary">
-                    <span className="opacity-60">You walk out thinking: </span>
+                    <span className="text-text-muted">You walk out thinking: </span>
                     <em>{m.aha}</em>
                   </p>
                   {m.instrument && (
-                    <p className="mt-3 text-sm text-text-secondary">
-                      <span className="opacity-60">You leave with: </span>
-                      <span className="font-semibold text-text-primary">{m.instrument}</span>
+                    <p className="mt-3 text-sm">
+                      <span className="text-text-muted">You leave with: </span>
+                      <span className="font-semibold text-accent">{m.instrument}</span>
                     </p>
                   )}
                 </li>
               ))}
             </ol>
+            {cta()}
           </div>
         </section>
       </SectionWrapper>
 
-      {/* ───────── DELIVERABLES ───────── */}
+      {/* ───────── 7. RESULTS ───────── */}
+      <SectionWrapper>
+        <section className="border-y border-border bg-bg-secondary px-6 py-16">
+          <div className="mx-auto max-w-[820px]">
+            <h2 className="text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
+              What came out of it
+            </h2>
+            <p className="mt-4 leading-relaxed text-text-secondary">
+              These are people I taught. Their results, not a promise of yours. Every one of
+              these has been public since 2023 and you can go and check them.
+            </p>
+
+            <div className="mt-10 space-y-5">
+              {/*
+                Strongest first. This is the only claim on this site a stranger can
+                confirm against a third party's own records. Deliberately does NOT
+                claim the dollar split or "2nd of 350+ hackers from 56 countries" —
+                both are chat-only. See 12-Proof-Library/students/blocks.md.
+              */}
+              <div className="rounded-2xl border border-border p-6 transition-colors hover:border-border-hover">
+                <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+                  Verified by someone else
+                </p>
+                <p className="mt-3 text-lg leading-relaxed text-text-primary">
+                  Two of my students won the Flow bounty at LearnWeb3&rsquo;s Decentralized
+                  Intelligence hackathon, with an AI payroll app called SwiftPay.
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-text-secondary">
+                  You do not have to believe me. LearnWeb3 published it themselves, with both
+                  their names on it.{" "}
+                  <a
+                    href="https://learnweb3.io/hackathons/decentralized-intelligence-season-1/projects/39560768-5d7a-4417-b2eb-38f65a8fa0c7/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent underline underline-offset-4"
+                  >
+                    Go and read it
+                  </a>
+                  .
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-border p-6 transition-colors hover:border-border-hover">
+                <p className="text-lg leading-relaxed text-text-primary">
+                  A final-year student at Babcock was handed ₦800,000 for school fees and
+                  gambled ₦500,000 of it away.
+                </p>
+                <p className="mt-3 leading-relaxed text-text-secondary">
+                  He came in with ₦300,000 left and panicking. He made $500 back, then landed a
+                  $500 job editing smart contracts through the group. Last I heard he was
+                  covering his parents&rsquo; and siblings&rsquo; bills.
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-border p-6 transition-colors hover:border-border-hover">
+                <p className="text-lg leading-relaxed text-text-primary">
+                  One got liquidated on Binance and lost his savings.
+                </p>
+                <p className="mt-3 leading-relaxed text-text-secondary">
+                  Months later he messaged me at 10pm to say he had moved into a furnished
+                  apartment and upgraded his workstation.
+                </p>
+              </div>
+
+              <a
+                href="https://x.com/_Quivira/status/1722169180487840197"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-2xl border border-border p-6 transition-colors hover:border-border-hover"
+              >
+                <p className="text-lg leading-relaxed text-text-primary">
+                  A follower landed a $10,000 Web3 job with no skill, in three months.
+                </p>
+                <p className="mt-3 text-sm text-text-secondary">
+                  Posted 8 November 2023. 48,000 views, 377 likes, 116 reposts. Still up.
+                </p>
+              </a>
+
+              <a
+                href="https://x.com/_Quivira/status/1724710340754317664"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-2xl border border-border p-6 transition-colors hover:border-border-hover"
+              >
+                <p className="text-lg leading-relaxed text-text-primary">
+                  From not having $100 for a class to a $13,000 gig.
+                </p>
+                <p className="mt-3 text-sm text-text-secondary">
+                  Posted 15 November 2023. 36,000 views, 457 likes. The student is tagged in it
+                  and the payment screenshots are inside the post.
+                </p>
+              </a>
+            </div>
+          </div>
+        </section>
+      </SectionWrapper>
+
+      {/* ───────── 8. THE INSTRUMENTS (the stack) ───────── */}
       <SectionWrapper>
         <section className="px-6 py-16">
           <div className="mx-auto max-w-[820px]">
@@ -230,145 +417,56 @@ export function CourseClient() {
               that way.
             </p>
 
-            <div className="mt-10 space-y-6">
+            <div className="mt-10 space-y-5">
               {DELIVERABLES.map((d) => (
-                <div key={d.t} className="rounded-2xl border border-white/10 p-6">
-                  <h3 className="font-bold text-text-primary">{d.t}</h3>
+                <div
+                  key={d.t}
+                  className="rounded-2xl border border-border p-6 transition-colors hover:border-border-hover"
+                >
+                  <h3 className="font-bold text-accent">{d.t}</h3>
                   <p className="mt-3 leading-relaxed text-text-secondary">{d.d}</p>
                 </div>
               ))}
             </div>
+            {cta()}
           </div>
         </section>
       </SectionWrapper>
 
-      {/* ───────── PROOF ───────── */}
+      {/* ───────── 9. WHO IT IS FOR ───────── */}
       <SectionWrapper>
-        <section className="px-6 py-16">
+        <section className="border-y border-border bg-bg-secondary px-6 py-16">
           <div className="mx-auto max-w-[820px]">
             <h2 className="text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
-              This is not the first time I have taught it
+              Who this is for
             </h2>
-            <p className="mt-4 leading-relaxed text-text-secondary">
-              Two posts from November 2023. Both are still up. Click them and check the numbers
-              yourself, which is the only reason I am showing you posts instead of quotes.
-            </p>
+            <ul className="mt-8 space-y-4">
+              {WHO_FOR.map((w) => (
+                <li key={w} className="flex gap-4 leading-relaxed text-text-secondary">
+                  <span aria-hidden className="mt-[2px] shrink-0 font-bold text-accent">
+                    →
+                  </span>
+                  <span>{w}</span>
+                </li>
+              ))}
+            </ul>
 
-            <div className="mt-8 space-y-4">
-              <a
-                href="https://x.com/_Quivira/status/1722169180487840197"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block rounded-2xl border border-white/10 p-6 transition-colors hover:border-white/25"
-              >
-                <p className="font-bold text-text-primary">
-                  A follower landed a $10,000 Web3 job with no skill
-                </p>
-                <p className="mt-2 text-sm text-text-secondary">
-                  Posted 8 November 2023. 48,000 views, 377 likes, 116 reposts, 96 replies.
-                </p>
-              </a>
-
-              <a
-                href="https://x.com/_Quivira/status/1724710340754317664"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block rounded-2xl border border-white/10 p-6 transition-colors hover:border-white/25"
-              >
-                <p className="font-bold text-text-primary">
-                  From not having $100 for a class to a $13,000 gig
-                </p>
-                <p className="mt-2 text-sm text-text-secondary">
-                  Posted 15 November 2023. 36,000 views, 457 likes, 105 reposts. The student is
-                  tagged in it and the payment screenshots are in the post.
-                </p>
-              </a>
-            </div>
-
-            <p className="mt-6 text-sm leading-relaxed text-text-secondary">
-              Those are their results, not a promise of yours. What they show is that this way of
-              teaching has produced people who got paid.
-            </p>
-
-            <h3 className="mt-14 text-xl font-bold tracking-tight text-text-primary">
-              And it did not start there
-            </h3>
-            <p className="mt-4 leading-relaxed text-text-secondary">
-              I have been teaching for years before this had a name. Some of what came out of it:
-            </p>
-
-            <div className="mt-8 space-y-6">
-              {/*
-                S4. The strongest item in the whole library, because a stranger can
-                check it against somebody else's website. Deliberately does NOT
-                claim the $5,000 split or "2nd of 350+ hackers from 56 countries":
-                both are chat-only, and an unverifiable number does the most damage
-                sitting next to checkable ones. See students/blocks.md.
-              */}
-              <div className="rounded-2xl border border-white/10 p-6">
-                <p className="leading-relaxed text-text-primary">
-                  Two of my students won the <strong>Flow bounty</strong> at LearnWeb3&rsquo;s
-                  Decentralized Intelligence hackathon, with an AI payroll and invoicing app
-                  called SwiftPay.
-                </p>
-                <p className="mt-3 text-sm text-text-secondary">
-                  You do not have to take my word for it. LearnWeb3 published it themselves,
-                  with both their names on it.{" "}
-                  <a
-                    href="https://learnweb3.io/hackathons/decentralized-intelligence-season-1/projects/39560768-5d7a-4417-b2eb-38f65a8fa0c7/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="underline underline-offset-4 hover:text-text-primary"
-                  >
-                    Go and read it
-                  </a>
-                  .
-                </p>
-              </div>
-
-              {/*
-                S2. Quoted close to the receipt rather than the live /about line
-                ("tripled it"), which describes the outcome but not the mechanism.
-                The car in S1 and the placement in S4 are the kind of detail that
-                gets dropped here; this one loses nothing by being exact.
-              */}
-              <div className="rounded-2xl border border-white/10 p-6">
-                <p className="leading-relaxed text-text-primary">
-                  A final-year student at Babcock was handed ₦800,000 for school fees and
-                  gambled ₦500,000 of it away.
-                </p>
-                <p className="mt-3 leading-relaxed text-text-secondary">
-                  He came into the programme with ₦300,000 left and panicking. He made $500
-                  back, then landed a $500 job editing smart contracts through the group. Last
-                  I heard from him he was covering his parents&rsquo; and siblings&rsquo; bills.
-                </p>
-              </div>
-
-              {/*
-                S1. The apartment only. The chat shows the apartment; the car exists
-                in the tweet text and has no artifact behind it, so it is not here.
-              */}
-              <div className="rounded-2xl border border-white/10 p-6">
-                <p className="leading-relaxed text-text-primary">
-                  One got liquidated on Binance and lost his savings.
-                </p>
-                <p className="mt-3 leading-relaxed text-text-secondary">
-                  Months later he messaged me at 10pm to say he had moved into a furnished
-                  apartment and upgraded his workstation.
-                </p>
-              </div>
-            </div>
-
-            <p className="mt-6 text-sm leading-relaxed text-text-secondary">
-              Different people, different starting points, one thing in common. None of them
-              got there by learning one more thing. They got there by turning what they already
-              had into something somebody paid for.
-            </p>
+            <h3 className="mt-12 text-lg font-bold text-text-primary">And who it is not for</h3>
+            <ul className="mt-6 space-y-4">
+              {NOT_FOR.map((w) => (
+                <li key={w} className="flex gap-4 leading-relaxed text-text-muted">
+                  <span aria-hidden className="mt-[2px] shrink-0 font-bold">
+                    ✕
+                  </span>
+                  <span>{w}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       </SectionWrapper>
 
-      {/* ───────── HONESTY BLOCK ───────── */}
+      {/* ───────── 10. HONESTY ───────── */}
       <SectionWrapper>
         <section className="px-6 py-16">
           <div className="mx-auto max-w-[820px]">
@@ -376,38 +474,66 @@ export function CourseClient() {
               What you are actually buying today
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-text-secondary">
-              This is being built right now, and I am not going to pretend otherwise. The seven
+              This is being built right now and I am not going to pretend otherwise. The seven
               modules are written and the instruments exist. The rest is being built while people
               are already inside it, shaped by what they tell me they are stuck on.
             </p>
             <p className="mt-4 text-lg leading-relaxed text-text-secondary">
               That is why it is ₦{PRICE.toLocaleString()} instead of ₦{WAS.toLocaleString()}, and
-              why <span className="font-semibold text-text-primary">everything added later is
-              yours</span> at no extra cost. You are early. Early should be worth something.
+              why{" "}
+              <span className="font-semibold text-text-primary">
+                everything added later is yours
+              </span>{" "}
+              at no extra cost. You are early. Early should be worth something.
             </p>
           </div>
         </section>
       </SectionWrapper>
 
-      {/* ───────── CLOSE ───────── */}
+      {/* ───────── 11. FINAL PRICING ───────── */}
       <SectionWrapper>
         <section className="px-6 py-16 pb-28">
           <div className="mx-auto max-w-[820px]">
-            <h2 className="text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
-              You are not behind
-            </h2>
-            <p className="mt-6 text-lg leading-relaxed text-text-secondary">
-              You are sitting on something that already works and nobody ever showed you the
-              second half. That is a fixable problem, and it is the only thing this is for.
-            </p>
+            <div className="rounded-3xl border border-accent/40 bg-bg-secondary p-8 md:p-12">
+              <h2 className="text-2xl font-extrabold tracking-tight text-text-primary md:text-4xl">
+                You are not behind
+              </h2>
+              <p className="mt-6 text-lg leading-relaxed text-text-secondary">
+                You are sitting on something that already works, and nobody ever showed you the
+                second half. That is a fixable problem and it is the only thing this is for.
+              </p>
 
-            <div className="mt-10 flex flex-wrap items-center gap-4">
-              <MagneticButton onClick={() => setPayOpen(true)}>
-                Join for ₦{PRICE.toLocaleString()}
-              </MagneticButton>
-              <span className="text-sm text-text-secondary">
-                Lifetime access. Updates included.
-              </span>
+              <ul className="mt-8 space-y-3">
+                {[
+                  "Seven modules, in the order that actually works",
+                  "Six instruments you keep and reuse",
+                  "The five build-it-for-you kits",
+                  "Lifetime access, including everything added later",
+                ].map((f) => (
+                  <li key={f} className="flex gap-3 text-text-secondary">
+                    <span aria-hidden className="font-bold text-accent">
+                      ✓
+                    </span>
+                    <span>{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <p className="mt-10 text-sm uppercase tracking-widest text-text-muted">
+                While it is being built
+              </p>
+              <p className="mt-2 flex items-baseline gap-3">
+                <span className="text-2xl text-text-muted line-through">
+                  ₦{WAS.toLocaleString()}
+                </span>
+                <span className="text-5xl font-extrabold text-accent">
+                  ₦{PRICE.toLocaleString()}
+                </span>
+              </p>
+
+              <div className="mt-8">
+                <MagneticButton onClick={open}>Get instant access</MagneticButton>
+              </div>
             </div>
           </div>
         </section>
