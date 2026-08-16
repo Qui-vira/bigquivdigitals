@@ -21,6 +21,19 @@ import { PaymentModal } from "@/components/PaymentModal";
  *
  * Brand tokens only: bg-primary black, accent #E8A33D gold, text-primary warm
  * off-white. No new colours.
+ *
+ * ⚠ THIS IS A SYSTEM WITH LIVE WEEKLY SESSIONS, NOT A MODULE LIBRARY. Do not
+ * rewrite it back into "seven modules you watch". The outline's own first line
+ * is "The Great Work is not a course. It is a done-for-you system", and the
+ * audience voted 4-1 plus the Instagram poll majority for weekly calls over a
+ * done-for-you kit. Every live-support voter gave a reason; the kit voter did
+ * not. The seven parts are real and unchanged as the backbone — what changed is
+ * that they are built WITH people on calls rather than handed over.
+ *
+ * The single kit voter is answered on the page rather than ignored ("the
+ * templates still come, they come inside the calls"), which is a deliberate
+ * instruction in the research doc: acknowledging the dissenter teaches the
+ * audience that disagreeing still gets heard.
  */
 
 const PRICE = 15000;
@@ -113,7 +126,7 @@ const DELIVERABLES = [
 const WHO_FOR = [
   "You have a skill that works and it has never paid you properly.",
   "You are good at the work and freeze the moment it is time to ask for money.",
-  "You believe you have no skill at all. You are usually wrong, and Module 1 exists for you.",
+  "You believe you have no skill at all. You are usually wrong, and the first session exists for you.",
   "You have one client and no idea where the second one comes from.",
   "You have been paid before and still cannot say what you do in one sentence.",
   "You own a business and want to run this system on it yourself.",
@@ -167,7 +180,8 @@ export function CourseClient() {
           </p>
 
           <p className="mt-4 text-lg font-semibold leading-relaxed text-text-primary md:text-xl">
-            That is the part nobody built anything for. So I did.
+            That is the part nobody built anything for. So I did, and we build it together, live,
+            every week.
           </p>
 
           {cta()}
@@ -276,9 +290,57 @@ export function CourseClient() {
             <h2 className="text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
               What makes this different
             </h2>
+
+            {/*
+              This block leads, and the module list follows it. The audience voted
+              4-1 plus the Instagram poll majority for weekly calls over a
+              done-for-you kit, and every live-support voter volunteered a reason
+              while the single kit voter did not. Leading with a module list sells
+              them the passive-lessons format the research says they are done with.
+              See LAUNCH-DAY-01/DAY-01-RESEARCH.md, FINAL TALLY.
+            */}
+            <div className="mt-8 rounded-2xl border border-accent/40 bg-bg-tertiary p-6 md:p-8">
+              <p className="text-sm font-semibold uppercase tracking-widest text-accent">
+                You are not left alone with it
+              </p>
+              <p className="mt-4 text-lg leading-relaxed text-text-primary">
+                We meet every week and build it together, live.
+              </p>
+              <p className="mt-4 leading-relaxed text-text-secondary">
+                I asked people directly: a done-for-you kit, or live weekly sessions where we work
+                through it together. It was not close. One of them put it better than I could:{" "}
+                <em className="text-text-primary">
+                  &ldquo;weekly calls where we build it is better.&rdquo;
+                </em>{" "}
+                Another said it would be{" "}
+                <em className="text-text-primary">
+                  &ldquo;well tailored for those who need it, knowing what would really work or
+                  not.&rdquo;
+                </em>
+              </p>
+              <p className="mt-4 leading-relaxed text-text-secondary">
+                One person voted for the kit, and he was right about one thing, so let me say it
+                plainly:{" "}
+                <span className="text-text-primary">
+                  the templates still come. They just come inside the calls
+                </span>
+                , where I can see your actual skill and your actual situation instead of handing
+                you a blank worksheet and hoping.
+              </p>
+              <p className="mt-4 leading-relaxed text-text-secondary">
+                That last part is not a guess either. I sent the first tool to somebody who told me
+                she did not know what her skill was. She never filled it in. A blank worksheet is
+                exactly what that person cannot use.
+              </p>
+            </div>
+
+            <h3 className="mt-14 text-xl font-bold text-text-primary">
+              What we cover across the seven weeks
+            </h3>
             <p className="mt-4 leading-relaxed text-text-secondary">
-              Seven modules. Each one teaches exactly one thing, and most of them hand you an
-              instrument you keep and reuse long after the module is finished.
+              Seven parts, in this order, because the order is the point. Each one covers exactly
+              one thing, and most of them end with you holding an instrument you keep and reuse.
+              You do not watch these. We build them.
             </p>
 
             <ol className="mt-10 space-y-8">
@@ -412,9 +474,8 @@ export function CourseClient() {
               Things you use, not lessons you watch
             </h2>
             <p className="mt-4 leading-relaxed text-text-secondary">
-              I asked the people who are going to buy this what they actually wanted. They chose
-              being walked through it over being handed templates and left alone. So it is built
-              that way.
+              Every part of this ends with something in your hands rather than something in your
+              notes. You do not fill these in alone at midnight. We build them on the calls.
             </p>
 
             <div className="mt-10 space-y-5">
@@ -475,8 +536,9 @@ export function CourseClient() {
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-text-secondary">
               This is being built right now and I am not going to pretend otherwise. The seven
-              modules are written and the instruments exist. The rest is being built while people
-              are already inside it, shaped by what they tell me they are stuck on.
+              parts are written and the instruments exist. The rest gets built on the calls, with
+              the people who are already inside it, shaped by what they tell me they are stuck on.
+              That is not a shortcut. It is the reason it will fit you and not somebody else.
             </p>
             <p className="mt-4 text-lg leading-relaxed text-text-secondary">
               That is why it is ₦{PRICE.toLocaleString()} instead of ₦{WAS.toLocaleString()}, and
@@ -505,8 +567,9 @@ export function CourseClient() {
 
               <ul className="mt-8 space-y-3">
                 {[
-                  "Seven modules, in the order that actually works",
-                  "Six instruments you keep and reuse",
+                  "Live weekly sessions where we build it together",
+                  "Seven parts, in the order that actually works",
+                  "Six instruments you keep and reuse, built with you",
                   "The five build-it-for-you kits",
                   "Lifetime access, including everything added later",
                 ].map((f) => (
