@@ -12,6 +12,32 @@ interface PaymentModalProps {
   amount: number;
   currency?: string;
   calPaidUrl?: string;
+  /**
+   * The price in USD, for the crypto tab only.
+   *
+   * ⚠ THIS EXISTS BECAUSE THE CRYPTO RAIL IS USD-ONLY AND THIS MODAL WAS NOT.
+   * `BlockradarPayment` renders whatever number it is handed as `$N USDC`.
+   * Until 2026-08-16 the modal passed `amount` straight through regardless of
+   * `currency`, so the first non-USD product to use it — The Great Work at
+   * ₦15,000 — would have asked a crypto buyer for **15,000 USDC**, roughly a
+   * thousand times the price.
+   *
+   * So when `currency` is not USD, the crypto tab appears only if a real USD
+   * figure is supplied here. No figure, no crypto tab. It is never guessed and
+   * never converted at a rate baked into the code: NGN/USD moves, and a stale
+   * constant is how you undercharge for a year without noticing. Pull live FX,
+   * set the number, revisit when it drifts.
+   */
+  cryptoAmountUsd?: number;
+}
+
+/** Currency-aware price label. The header hardcoded `$` for every product. */
+function formatPrice(amount: number, currency: string): string {
+  const symbols: Record<string, string> = { USD: "$", NGN: "₦", GBP: "£", EUR: "€" };
+  const symbol = symbols[currency.toUpperCase()];
+  return symbol
+    ? `${symbol}${amount.toLocaleString()}`
+    : `${amount.toLocaleString()} ${currency.toUpperCase()}`;
 }
 
 export function PaymentModal({
@@ -21,6 +47,7 @@ export function PaymentModal({
   amount,
   currency = "USD",
   calPaidUrl,
+  cryptoAmountUsd,
 }: PaymentModalProps) {
   const [tab, setTab] = useState<"fiat" | "crypto">("fiat");
   const [email, setEmail] = useState("");
@@ -42,6 +69,12 @@ export function PaymentModal({
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+
+  // The crypto rail prices in USD only. Show it when the product is priced in
+  // USD, or when an explicit USD figure was supplied for it. Otherwise hide the
+  // tab entirely rather than show a wrong number.
+  const cryptoUsd = currency.toUpperCase() === "USD" ? amount : cryptoAmountUsd;
+  const cryptoAvailable = typeof cryptoUsd === "number" && cryptoUsd > 0;
 
   if (!isOpen) return null;
 
@@ -81,7 +114,7 @@ export function PaymentModal({
             <p className="text-xs font-medium uppercase tracking-widest text-[#666]">Complete your purchase</p>
             <h3 className="mt-1 text-base font-bold text-white">{serviceName}</h3>
             <p className="mt-1 text-3xl font-extrabold text-[#E63946]">
-              ${amount.toLocaleString()}
+              {formatPrice(amount, currency)}
             </p>
           </div>
           <button
@@ -136,21 +169,23 @@ export function PaymentModal({
               >
                 Card / Bank
               </button>
-              <button
-                type="button"
-                onClick={() => setTab("crypto")}
-                className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
-                  tab === "crypto"
-                    ? "bg-[#E63946] text-white"
-                    : "bg-[#1a1a1a] text-[#888] hover:text-white"
-                }`}
-              >
-                Crypto (USDC/BUSD)
-              </button>
+              {cryptoAvailable && (
+                <button
+                  type="button"
+                  onClick={() => setTab("crypto")}
+                  className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
+                    tab === "crypto"
+                      ? "bg-[#E63946] text-white"
+                      : "bg-[#1a1a1a] text-[#888] hover:text-white"
+                  }`}
+                >
+                  Crypto (USDC/BUSD)
+                </button>
+              )}
             </div>
 
             {/* Payment panel */}
-            {tab === "fiat" ? (
+            {tab === "fiat" || !cryptoAvailable ? (
               <FlutterwaveButton
                 email={email}
                 amount={amount}
@@ -160,9 +195,10 @@ export function PaymentModal({
                 onSuccess={handleSuccess}
               />
             ) : (
+              /* cryptoUsd, never `amount`. Blockradar prices in USD only. */
               <BlockradarPayment
                 serviceName={serviceName}
-                amount={amount}
+                amount={cryptoUsd as number}
                 onSuccess={handleSuccess}
               />
             )}

@@ -22,6 +22,14 @@ interface MagneticButtonProps {
    * template. One emphasised control per screenful is the intent.
    */
   emphasis?: boolean;
+  /**
+   * Click handler, for a control that opens something in place rather than
+   * navigating. This already rendered a real <button> whenever `href` was
+   * absent — it just had no way of being told what the button does. Added
+   * 2026-08-16 for the /course payment modal, the first in-page action on the
+   * site. Ignored when `href` is set, since that renders an <a>.
+   */
+  onClick?: () => void;
 }
 
 export function MagneticButton({
@@ -32,6 +40,7 @@ export function MagneticButton({
   showArrow = true,
   strength = 0.3,
   emphasis = true,
+  onClick,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -81,7 +90,16 @@ export function MagneticButton({
       // Scale only, so it cannot shift anything around it.
       whileTap={{ scale: 0.96 }}
     >
-      <Tag href={href} className={styles} data-variant={variant}>
+      {/* type="button" on the button branch, so a control sitting inside a form
+          can never submit it by accident. Harmless on the anchor branch, which
+          ignores it. */}
+      <Tag
+        href={href}
+        onClick={onClick}
+        type={href ? undefined : "button"}
+        className={styles}
+        data-variant={variant}
+      >
         <motion.span
           animate={{ x: position.x * 0.3, y: position.y * 0.3 }}
           transition={{ type: "spring", stiffness: 150, damping: 15 }}
