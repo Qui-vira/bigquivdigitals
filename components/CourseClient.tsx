@@ -163,7 +163,7 @@ const RECEIPTS = [
   {
     src: "/proof/students/dev-gig.jpg",
     alt: "Student message about landing a dev gig and buying a phone",
-    cap: "A dev gig off projects shared in the group, and the phone he bought with it.",
+    cap: "A $6,000 a month dev gig off projects shared in the group. He bought the phone with it.",
   },
   {
     src: "/proof/students/apartment.jpg",
