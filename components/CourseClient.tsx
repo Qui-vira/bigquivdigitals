@@ -289,6 +289,81 @@ export function CourseClient() {
               Those are their results, not a promise of yours. What they show is that this way of
               teaching has produced people who got paid.
             </p>
+
+            <h3 className="mt-14 text-xl font-bold tracking-tight text-text-primary">
+              And it did not start there
+            </h3>
+            <p className="mt-4 leading-relaxed text-text-secondary">
+              I have been teaching for years before this had a name. Some of what came out of it:
+            </p>
+
+            <div className="mt-8 space-y-6">
+              {/*
+                S4. The strongest item in the whole library, because a stranger can
+                check it against somebody else's website. Deliberately does NOT
+                claim the $5,000 split or "2nd of 350+ hackers from 56 countries":
+                both are chat-only, and an unverifiable number does the most damage
+                sitting next to checkable ones. See students/blocks.md.
+              */}
+              <div className="rounded-2xl border border-white/10 p-6">
+                <p className="leading-relaxed text-text-primary">
+                  Two of my students won the <strong>Flow bounty</strong> at LearnWeb3&rsquo;s
+                  Decentralized Intelligence hackathon, with an AI payroll and invoicing app
+                  called SwiftPay.
+                </p>
+                <p className="mt-3 text-sm text-text-secondary">
+                  You do not have to take my word for it. LearnWeb3 published it themselves,
+                  with both their names on it.{" "}
+                  <a
+                    href="https://learnweb3.io/hackathons/decentralized-intelligence-season-1/projects/39560768-5d7a-4417-b2eb-38f65a8fa0c7/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-4 hover:text-text-primary"
+                  >
+                    Go and read it
+                  </a>
+                  .
+                </p>
+              </div>
+
+              {/*
+                S2. Quoted close to the receipt rather than the live /about line
+                ("tripled it"), which describes the outcome but not the mechanism.
+                The car in S1 and the placement in S4 are the kind of detail that
+                gets dropped here; this one loses nothing by being exact.
+              */}
+              <div className="rounded-2xl border border-white/10 p-6">
+                <p className="leading-relaxed text-text-primary">
+                  A final-year student at Babcock was handed ₦800,000 for school fees and
+                  gambled ₦500,000 of it away.
+                </p>
+                <p className="mt-3 leading-relaxed text-text-secondary">
+                  He came into the programme with ₦300,000 left and panicking. He made $500
+                  back, then landed a $500 job editing smart contracts through the group. Last
+                  I heard from him he was covering his parents&rsquo; and siblings&rsquo; bills.
+                </p>
+              </div>
+
+              {/*
+                S1. The apartment only. The chat shows the apartment; the car exists
+                in the tweet text and has no artifact behind it, so it is not here.
+              */}
+              <div className="rounded-2xl border border-white/10 p-6">
+                <p className="leading-relaxed text-text-primary">
+                  One got liquidated on Binance and lost his savings.
+                </p>
+                <p className="mt-3 leading-relaxed text-text-secondary">
+                  Months later he messaged me at 10pm to say he had moved into a furnished
+                  apartment and upgraded his workstation.
+                </p>
+              </div>
+            </div>
+
+            <p className="mt-6 text-sm leading-relaxed text-text-secondary">
+              Different people, different starting points, one thing in common. None of them
+              got there by learning one more thing. They got there by turning what they already
+              had into something somebody paid for.
+            </p>
           </div>
         </section>
       </SectionWrapper>
