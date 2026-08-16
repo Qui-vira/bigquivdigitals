@@ -304,7 +304,8 @@ export function CourseClient() {
                 You are not left alone with it
               </p>
               <p className="mt-4 text-lg leading-relaxed text-text-primary">
-                We meet every week and build it together, live.
+                Seven parts. Seven weeks. One live session each, where we build that week&rsquo;s
+                piece together.
               </p>
               <p className="mt-4 leading-relaxed text-text-secondary">
                 I asked people directly: a done-for-you kit, or live weekly sessions where we work
@@ -335,19 +336,19 @@ export function CourseClient() {
             </div>
 
             <h3 className="mt-14 text-xl font-bold text-text-primary">
-              What we cover across the seven weeks
+              The seven weeks
             </h3>
             <p className="mt-4 leading-relaxed text-text-secondary">
-              Seven parts, in this order, because the order is the point. Each one covers exactly
-              one thing, and most of them end with you holding an instrument you keep and reuse.
-              You do not watch these. We build them.
+              Each one is a week, and each week is a session. In this order, because the order is
+              the point. Every session covers exactly one thing and most of them end with you
+              holding an instrument you keep. You do not watch these. We build them.
             </p>
 
             <ol className="mt-10 space-y-8">
               {MODULES.map((m) => (
                 <li key={m.n} className="border-l-2 border-border pl-6">
                   <div className="flex items-baseline gap-3">
-                    <span className="font-mono text-sm text-accent">{m.n}</span>
+                    <span className="font-mono text-sm text-accent">WEEK {m.n}</span>
                     <h3 className="text-lg font-bold text-text-primary">{m.t}</h3>
                   </div>
                   <p className="mt-2 leading-relaxed text-text-secondary">{m.one}</p>
@@ -568,7 +569,7 @@ export function CourseClient() {
               <ul className="mt-8 space-y-3">
                 {[
                   "Live weekly sessions where we build it together",
-                  "Seven parts, in the order that actually works",
+                  "Seven weekly sessions, in the order that actually works",
                   "Six instruments you keep and reuse, built with you",
                   "The five build-it-for-you kits",
                   "Lifetime access, including everything added later",
