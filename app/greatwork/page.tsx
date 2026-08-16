@@ -3,7 +3,7 @@ import { CourseClient } from "@/components/CourseClient";
 export const revalidate = 60;
 
 /**
- * /course — The Great Work.
+ * /greatwork — The Great Work.
  *
  * ⚠ BUILT UNLISTED, ON PURPOSE. Nothing links here: not the nav, not the footer,
  * not the sitemap, and `robots` below tells crawlers to stay out. The launch arc
@@ -11,7 +11,7 @@ export const revalidate = 60;
  * before then kills the waitlist it exists to convert — anyone who finds the full
  * offer has no reason to join a list to be told about it later.
  *
- * TO GO LIVE: delete the `robots` block, add /course to app/sitemap.ts, and link
+ * TO GO LIVE: delete the `robots` block, add /greatwork to app/sitemap.ts, and link
  * it from the nav. Nothing else needs to change.
  *
  * Copy lives in the client component rather than the database, matching /services
@@ -20,8 +20,8 @@ export const revalidate = 60;
  *
  * CLAIM DISCIPLINE. Everything on this page is either the product itself or a
  * public post with a live link. No testimonials — the one parked for this page
- * (testimonials id=3) credits the retired Ophir Dev Accelerator and has
- * consent_confirmed = 0. No win rates, no student counts, no earnings promises.
+ * (testimonials id=3) needs its attribution reframed off a retired product
+ * name first, and its consent flag is unresolved. No win rates, no student counts, no earnings promises.
  * The two student results are attributed to the posts that carried them, with
  * dates, metrics and URLs, so a stranger can check them in one click.
  *
@@ -32,7 +32,7 @@ export const metadata = {
   title: "The Great Work | BigQuiv Digitals",
   description:
     "Confusion to skill to proof to visibility to money. A seven-part system for turning what you already know into customers, deals and income.",
-  alternates: { canonical: "/course" },
+  alternates: { canonical: "/greatwork" },
   robots: { index: false, follow: false },
 };
 

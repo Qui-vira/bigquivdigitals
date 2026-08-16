@@ -15,7 +15,10 @@ export const revalidate = 3600;
  *   - /api/*          excluded, not pages
  *   - /portfolio      excluded, 308-redirects to /work — list the destination
  *   - /pricing        excluded, 308-redirects
- *   - /course         excluded, currently 404s (A6 not built)
+ *   - /greatwork      excluded ON PURPOSE. The page is BUILT and works; it is
+ *                     unlisted until launch day because a live priced page kills
+ *                     the waitlist it exists to convert. It also sets
+ *                     robots index:false. Add it here when the launch opens.
  *   - /waitlist       excluded, a form endpoint rather than a page
  *
  * /drone-signup was removed entirely on 2026-08-16. It was Altara Aerial pilot
