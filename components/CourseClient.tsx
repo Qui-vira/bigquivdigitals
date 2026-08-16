@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { MagneticButton } from "@/components/MagneticButton";
 import { SectionWrapper } from "@/components/SectionWrapper";
 import { RiseWords } from "@/components/TextMotion";
@@ -120,6 +121,69 @@ const DELIVERABLES = [
   {
     t: "The Opportunity Engine",
     d: "The loop you keep after everything else. Find opportunity, package skill, show proof, close client, document result, find the next one.",
+  },
+];
+
+
+/**
+ * The receipts, as images.
+ *
+ * These are the chat screenshots from 12-Proof-Library/students/ and
+ * .../content/. Every one is ALREADY PUBLIC: the same images are attached to
+ * tweets in the pinned "Untold Story" thread, which has had over a million views
+ * since Nov 2023. Putting them here is re-publication, not new exposure, and
+ * that folder's own header settles the consent question for the whole set.
+ *
+ * They are shown rather than described on purpose. A screenshot of somebody
+ * saying "I just got a new apartment" does work that a paragraph about it
+ * cannot, and the reference page the owner picked uses a grid of exactly these.
+ *
+ * The copy under each one stays under the image and stays modest: the image is
+ * the claim. Two figures are deliberately NOT asserted in text — Bernard's
+ * N500,000 and whether the dev gig was monthly — because those are still being
+ * confirmed. The screenshots say what they say without me putting a number in a
+ * headline.
+ */
+const RECEIPTS = [
+  {
+    src: "/proof/students/hackathon.jpg",
+    alt: "Student message about competing in the Flow hackathon on LearnWeb3",
+    cap: "Won the Flow bounty at LearnWeb3. Published on their site, with both names on it.",
+  },
+  {
+    src: "/proof/students/babcock-story.jpg",
+    alt: "Student message explaining he gambled part of his school fees and earned it back",
+    cap: "Gambled ₦500,000 of his school fees. Earned his way back to covering his family's bills.",
+  },
+  {
+    src: "/proof/students/babcock-job.jpg",
+    alt: "Follow-up message confirming the amount made and the smart contract job",
+    cap: "$500 from the trade, then a $500 job editing smart contracts.",
+  },
+  {
+    src: "/proof/students/dev-gig.jpg",
+    alt: "Student message about landing a dev gig and buying a phone",
+    cap: "A dev gig off projects shared in the group, and the phone he bought with it.",
+  },
+  {
+    src: "/proof/students/apartment.jpg",
+    alt: "Student message about a new apartment and upgraded workstation",
+    cap: "Liquidated on Binance. Later: a new apartment and an upgraded workstation.",
+  },
+  {
+    src: "/proof/students/bernard.jpg",
+    alt: "Congratulations exchange with a student about a job",
+    cap: "One job. Then he spent it kitting out a workspace.",
+  },
+  {
+    src: "/proof/students/deola.jpg",
+    alt: "Post about a follower landing a $10,000 Web3 job",
+    cap: "A follower landed a $10,000 Web3 job in three months. 48,000 views.",
+  },
+  {
+    src: "/proof/students/haleem.jpg",
+    alt: "Post about a student going from no money for a class to a $13,000 gig",
+    cap: "Could not afford a $100 class. Then a $13,000 gig. 36,000 views.",
   },
 ];
 
@@ -462,6 +526,36 @@ export function CourseClient() {
                   and the payment screenshots are inside the post.
                 </p>
               </a>
+            </div>
+
+            {/* The screenshots themselves. See the RECEIPTS note above. */}
+            <h3 className="mt-16 text-xl font-bold text-text-primary">
+              Their words, not mine
+            </h3>
+            <p className="mt-4 leading-relaxed text-text-secondary">
+              These are the actual messages. All of them have been public since 2023, attached to a
+              thread that has been seen over a million times.
+            </p>
+
+            <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {RECEIPTS.map((r) => (
+                <figure
+                  key={r.src}
+                  className="overflow-hidden rounded-2xl border border-border bg-bg-tertiary transition-colors hover:border-accent/40"
+                >
+                  <Image
+                    src={r.src}
+                    alt={r.alt}
+                    width={840}
+                    height={1280}
+                    sizes="(max-width: 640px) 100vw, 420px"
+                    className="h-auto w-full"
+                  />
+                  <figcaption className="border-t border-border p-4 text-sm leading-relaxed text-text-secondary">
+                    {r.cap}
+                  </figcaption>
+                </figure>
+              ))}
             </div>
           </div>
         </section>
