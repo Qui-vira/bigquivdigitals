@@ -10,12 +10,12 @@ import { useId, useRef, useState } from "react";
  *
  * This component makes no promise of its own about price, dates or refunds.
  * Where a promise is made it is made by the surrounding page, in copy, next to
- * the evidence for it — see app/waitlist. A promise baked in here would follow
+ * the evidence for it — see app/greatwork-waitlist. A promise baked in here would follow
  * the form onto every surface it is ever dropped into, including ones where it
  * is not true.
  *
  * `onSuccess` lets a host page take over after the signup lands, which is how
- * /waitlist swaps the form out for the Opportunity Map. When it is passed the
+ * /greatwork-waitlist swaps the form out for the Opportunity Map. When it is passed the
  * built-in confirmation line is skipped, because the host is showing its own.
  */
 type State = "idle" | "sending" | "done" | "error";

@@ -101,7 +101,7 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
             This was an inline email field until 2026-08-15. It posted straight
             to /api/waitlist, which meant a visitor could join here without ever
             seeing what joining gets them, and without receiving the Opportunity
-            Map that /waitlist hands over on signup. Two doors into one list,
+            Map that /greatwork-waitlist hands over on signup. Two doors into one list,
             and the shorter one delivered less. The control is now a link, so
             every signup goes through the page carrying the promises and the
             tool, and every signup is attributable to one source. */}
@@ -109,7 +109,7 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           <p className="mb-3 text-sm text-text-secondary">
             The Great Work opens soon. The list goes first.
           </p>
-          <MagneticButton href="/waitlist">Join the waitlist</MagneticButton>
+          <MagneticButton href="/greatwork-waitlist">Join the waitlist</MagneticButton>
           <a
             href={calendlyUrl}
             className="mt-4 block text-sm font-medium text-text-secondary underline decoration-border underline-offset-4 transition-colors hover:text-text-primary"
@@ -289,10 +289,10 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           </p>
 
           {/* Also a link rather than an inline field, for the same reason as
-              the hero: /waitlist is the only door onto the list, so nobody
+              the hero: /greatwork-waitlist is the only door onto the list, so nobody
               joins without the promises or the tool. */}
           <div className="mx-auto mt-10 flex max-w-xl flex-col items-center">
-            <MagneticButton href="/waitlist">Join the waitlist</MagneticButton>
+            <MagneticButton href="/greatwork-waitlist">Join the waitlist</MagneticButton>
           </div>
 
           {/* The consulting path is a button, not a buried inline link. Secondary

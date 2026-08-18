@@ -24,7 +24,7 @@ export const revalidate = 3600;
  *                     the material — but it must not go live mid-way through The
  *                     Great Work's 30-day arc. One launch at a time, one audience.
  *                     ⚠ Its price is still a PLACEHOLDER. Set it before listing.
- *   - /waitlist       excluded, a form endpoint rather than a page
+ *   - /greatwork-waitlist   and /aimastery-waitlist: excluded, form endpoints rather than pages
  *
  * /drone-signup was removed entirely on 2026-08-16. It was Altara Aerial pilot
  * recruitment living in the wrong codebase, and it belongs on that project's own

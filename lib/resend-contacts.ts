@@ -22,7 +22,34 @@ import { Resend } from "resend";
 const SEGMENT_ID = () => (process.env.RESEND_WAITLIST_SEGMENT_ID || "").trim();
 
 /**
- * Add someone to the waitlist segment.
+ * Two courses are sold, so there are two lists.
+ *
+ * Any source beginning `aimastery` goes to the AI Mastery segment. Everything
+ * else goes to the original segment, which is The Great Work's. Defaulting that
+ * way means an unrecognised source still lands somewhere reachable.
+ *
+ * If `RESEND_AIMASTERY_SEGMENT_ID` is unset, AI Mastery signups fall back to the
+ * Great Work segment rather than failing. A subscriber on the wrong list is
+ * recoverable — `course_waitlist.source` records which course they came for — and
+ * a lost subscriber is not. The fallback warns loudly so it cannot quietly become
+ * permanent.
+ */
+function segmentFor(source: string): string {
+  const greatWork = SEGMENT_ID();
+  if (!source.startsWith("aimastery")) return greatWork;   // covers aimastery, aimastery-pricing, aimastery-waitlist
+
+  const aiMastery = (process.env.RESEND_AIMASTERY_SEGMENT_ID || "").trim();
+  if (aiMastery) return aiMastery;
+
+  console.warn(
+    "[resend] RESEND_AIMASTERY_SEGMENT_ID not set — AI Mastery signup going to the Great Work segment. " +
+      "Separate them later with source='aimastery' in course_waitlist."
+  );
+  return greatWork;
+}
+
+/**
+ * Add someone to the waitlist segment for the course they signed up for.
  *
  * Never throws. A signup must succeed even if Resend is down — losing a
  * subscriber to a third-party outage is a far worse outcome than a contact
@@ -33,13 +60,14 @@ const SEGMENT_ID = () => (process.env.RESEND_WAITLIST_SEGMENT_ID || "").trim();
  */
 export async function addToWaitlistSegment(
   email: string,
-  firstName?: string
+  firstName?: string,
+  source = "homepage"
 ): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY?.trim();
-  const segmentId = SEGMENT_ID();
+  const segmentId = segmentFor(source);
 
   if (!apiKey || !segmentId) {
-    console.warn("[resend] RESEND_API_KEY or RESEND_WAITLIST_SEGMENT_ID not set — contact not synced");
+    console.warn("[resend] RESEND_API_KEY or a segment id is not set — contact not synced");
     return false;
   }
 

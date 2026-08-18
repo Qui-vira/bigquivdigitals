@@ -5,16 +5,26 @@ import { MagneticButton } from "@/components/MagneticButton";
 import { SectionWrapper } from "@/components/SectionWrapper";
 import { RiseWords } from "@/components/TextMotion";
 import { PaymentModal } from "@/components/PaymentModal";
+import { WaitlistForm } from "@/components/WaitlistForm";
 
 /**
  * AI Mastery sales page. Same section order as /greatwork, which follows the
  * reference page the owner chose (100launchscripts.com).
  *
- * ⚠⚠ PRICE IS A PLACEHOLDER. The owner has not set it. The April 2026 cohort ran
- * $15 / $30 / $50 tiers; that structure is stale and nothing replaced it. This
- * number is NOT a recommendation and NOT researched — it exists so the page
- * renders. Set it before this ever goes live. The page is unlisted and noindexed
- * in the meantime, so nobody can reach it and be misled.
+ * TWO MODES, set by `AIMASTERY_OPEN` in the environment.
+ *
+ *   closed (default) — every CTA is an email capture. No price is shown at all.
+ *   open             — every CTA is the purchase button and the price is shown.
+ *
+ * It is closed by default on purpose. The 60-day challenge that drives traffic
+ * here runs 24 Aug to 22 Oct 2026 and the class opens partway through it, around
+ * day 20 to 30. Until then the page's job is to collect the list, and the stake
+ * in the launch videos ("the first hundred people on my waitlist") depends on
+ * that list existing. A live price before then kills it.
+ *
+ * A price is never rendered in closed mode. Showing a number next to a form that
+ * cannot take payment is the fastest way to have people quote a price back at you
+ * that you have not committed to.
  *
  * The curriculum section describes WHAT YOU WILL BE ABLE TO MAKE, tied to real
  * published pieces, rather than a module list. That is deliberate: there is no
@@ -23,8 +33,21 @@ import { PaymentModal } from "@/components/PaymentModal";
  * exists, swap this section for it.
  */
 
-const PRICE_PLACEHOLDER = 25000;
-const WAS_PLACEHOLDER = 50000;
+/**
+ * ₦27,000 is $20 at the official NFEM rate of ₦1,354/$ on 2026-08-18, the day the
+ * owner set the price in dollars. Rounded down from ₦27,080.
+ *
+ * The price is denominated in naira because the buyers are Nigerian, so the
+ * dollar figure drifts with FX. Re-check it against a live rate before quoting
+ * $20 anywhere. The 60-day revenue model assumes $20.
+ *
+ * ⚠ WAS_PRICE IS STILL UNVERIFIED. The April 2026 cohort ran $15 / $30 / $50
+ * tiers, and ₦50,000 is roughly the $50 tier at an older rate, but nobody has
+ * confirmed a purchase at that price. A struck-through price nobody ever paid is
+ * a false claim. Verify it against a real receipt or delete the strikethrough.
+ */
+const PRICE_NGN = 27000;
+const WAS_PRICE_NGN = 50000;
 
 const CHANGES = [
   "You can make an ad for a product without hiring a camera, a crew or a location.",
@@ -73,22 +96,34 @@ const NOT_FOR = [
   "You want somebody to make the videos for you. That is a service, sold separately.",
 ];
 
-export function AiMasteryClient() {
+export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
   const [payOpen, setPayOpen] = useState(false);
   const open = () => setPayOpen(true);
 
-  const cta = () => (
-    <div className="mt-10 flex flex-wrap items-center gap-4">
-      <MagneticButton onClick={open}>Get instant access</MagneticButton>
-      <span className="text-sm text-text-secondary">
-        <span className="line-through opacity-60">₦{WAS_PLACEHOLDER.toLocaleString()}</span>{" "}
-        <span className="font-semibold text-text-primary">
-          ₦{PRICE_PLACEHOLDER.toLocaleString()}
-        </span>{" "}
-        · lifetime access
-      </span>
-    </div>
-  );
+  /**
+   * Rendered three times down the page. In closed mode every one of them is the
+   * same form posting the same source, which is intentional — `course_waitlist`
+   * has a unique index on lower(email) and the route treats a duplicate as
+   * success, so a visitor can submit from any of them without seeing an error.
+   */
+  const cta = () =>
+    isOpen ? (
+      <div className="mt-10 flex flex-wrap items-center gap-4">
+        <MagneticButton onClick={open}>Get instant access</MagneticButton>
+        <span className="text-sm text-text-secondary">
+          <span className="line-through opacity-60">₦{WAS_PRICE_NGN.toLocaleString()}</span>{" "}
+          <span className="font-semibold text-text-primary">₦{PRICE_NGN.toLocaleString()}</span>{" "}
+          · lifetime access
+        </span>
+      </div>
+    ) : (
+      <div className="mt-10">
+        <WaitlistForm source="aimastery" />
+        <p className="mt-3 text-sm text-text-secondary">
+          Not open yet. Join the list and you hear about it before anyone else.
+        </p>
+      </div>
+    );
 
   return (
     <div>
@@ -278,30 +313,47 @@ export function AiMasteryClient() {
                 ))}
               </ul>
 
-              <p className="mt-2 flex items-baseline gap-3 pt-10">
-                <span className="text-2xl text-text-muted line-through">
-                  ₦{WAS_PLACEHOLDER.toLocaleString()}
-                </span>
-                <span className="text-5xl font-extrabold text-accent">
-                  ₦{PRICE_PLACEHOLDER.toLocaleString()}
-                </span>
-              </p>
+              {isOpen ? (
+                <>
+                  <p className="mt-2 flex items-baseline gap-3 pt-10">
+                    <span className="text-2xl text-text-muted line-through">
+                      ₦{WAS_PRICE_NGN.toLocaleString()}
+                    </span>
+                    <span className="text-5xl font-extrabold text-accent">
+                      ₦{PRICE_NGN.toLocaleString()}
+                    </span>
+                  </p>
 
-              <div className="mt-8">
-                <MagneticButton onClick={open}>Get instant access</MagneticButton>
-              </div>
+                  <div className="mt-8">
+                    <MagneticButton onClick={open}>Get instant access</MagneticButton>
+                  </div>
+                </>
+              ) : (
+                <div className="pt-10">
+                  <WaitlistForm source="aimastery-pricing" />
+                  <p className="mt-3 text-sm text-text-secondary">
+                    Not open yet. Join the list and you hear about it before anyone else.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </section>
       </SectionWrapper>
 
-      <PaymentModal
-        isOpen={payOpen}
-        onClose={() => setPayOpen(false)}
-        serviceName="AI Mastery"
-        amount={PRICE_PLACEHOLDER}
-        currency="NGN"
-      />
+      {/*
+        Only mounted when the page is open. In closed mode there is no price on
+        the page, so a payment modal has no amount it could honestly charge.
+      */}
+      {isOpen ? (
+        <PaymentModal
+          isOpen={payOpen}
+          onClose={() => setPayOpen(false)}
+          serviceName="AI Mastery"
+          amount={PRICE_NGN}
+          currency="NGN"
+        />
+      ) : null}
     </div>
   );
 }

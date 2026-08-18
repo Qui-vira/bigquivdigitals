@@ -54,7 +54,12 @@ export async function POST(req: NextRequest) {
 
   // 1 · Resend. The only store that can actually reach this person, so it is
   //     what decides success. addToWaitlistSegment never throws.
-  const inResend = await addToWaitlistSegment(clean);
+  //
+  //     `source` selects the segment. Anything beginning `aimastery` goes to the
+  //     AI Mastery list, everything else to The Great Work's. Two courses are
+  //     sold through this one route, and a Great Work subscriber must never get
+  //     an AI Mastery broadcast just because both forms post here.
+  const inResend = await addToWaitlistSegment(clean, undefined, source);
 
   // 2 · Supabase, best-effort. Cannot fail the request on its own.
   //     Service-role, not anon: course_waitlist has RLS enabled with no

@@ -2,24 +2,30 @@ import type { Metadata } from "next";
 import { WaitlistClient } from "./WaitlistClient";
 
 /**
- * The link that goes in every bio, Story, Status and DM during the launch.
+ * The Great Work waitlist. The link that goes in every bio, Story, Status and DM
+ * during that launch.
  *
  * It exists as its own route rather than pointing at the homepage form because
  * the homepage opens on the agency argument and sells the Growth Operating
  * System underneath it. Someone arriving from a Story about a skill that is not
  * paying them lands on a case study about a pharmacy. Same form, wrong room.
+ *
+ * RENAMED 2026-08-18, from /waitlist. Two courses are sold and "waitlist" said
+ * nothing about which one, exactly as "/course" said nothing before it became
+ * /greatwork. The sibling route is /aimastery-waitlist. The old /waitlist path
+ * 308s here in next.config.ts so every link already in a bio keeps working.
  */
 export const metadata: Metadata = {
   title: "The Great Work waitlist | BigQuiv Digitals",
   description:
     "A small private list. First access, the founding price, and the Opportunity Map the moment you join.",
-  alternates: { canonical: "/waitlist" },
+  alternates: { canonical: "/greatwork-waitlist" },
   openGraph: {
     title: "The Great Work waitlist",
     description:
       "You already have the skill. Nobody showed you where the money is.",
     type: "website",
-    url: "/waitlist",
+    url: "/greatwork-waitlist",
   },
 };
 
