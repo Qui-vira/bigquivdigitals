@@ -13,18 +13,20 @@ import { WaitlistForm } from "@/components/WaitlistForm";
  *
  * TWO MODES, set by `AIMASTERY_OPEN` in the environment.
  *
- *   closed (default) — every CTA is an email capture. No price is shown at all.
- *   open             — every CTA is the purchase button and the price is shown.
+ *   open (default) — every CTA is the purchase button and the price is shown.
+ *   closed         — every CTA is an email capture and no price renders at all.
  *
- * It is closed by default on purpose. The 60-day challenge that drives traffic
- * here runs 24 Aug to 22 Oct 2026 and the class opens partway through it, around
- * day 20 to 30. Until then the page's job is to collect the list, and the stake
- * in the launch videos ("the first hundred people on my waitlist") depends on
- * that list existing. A live price before then kills it.
+ * Open is the default, owner's decision 2026-08-19. Roughly 40 people bought
+ * this material with no sales page in existence. Gating a finished page behind a
+ * waitlist turns those buyers away and gains nothing.
  *
  * A price is never rendered in closed mode. Showing a number next to a form that
  * cannot take payment is the fastest way to have people quote a price back at you
  * that you have not committed to.
+ *
+ * ⚠ NEVER LINK THIS PAGE TO /aimastery-waitlist and never repeat the waitlist's
+ * free-access promise here. That promise gives anyone who sees both pages a
+ * reason to wait 60 days rather than pay today.
  *
  * The curriculum section describes WHAT YOU WILL BE ABLE TO MAKE, tied to real
  * published pieces, rather than a module list. That is deliberate: there is no

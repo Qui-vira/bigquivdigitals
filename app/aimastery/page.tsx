@@ -22,20 +22,30 @@ export const revalidate = 60;
  *
  * OPEN OR CLOSED, decided by `AIMASTERY_OPEN`.
  *
- *   unset / anything but "true"  — closed. Every CTA is a waitlist form and no
- *                                  price is rendered anywhere on the page.
- *   "true"                       — open. CTAs sell and the price shows.
+ *   unset / anything but "false"  — OPEN. This is a sales page. Price shows,
+ *                                   CTAs sell, the payment modal is mounted.
+ *   "false"                       — closed. Every CTA becomes an email form and
+ *                                   no price renders anywhere.
  *
- * Closed is the default on purpose. The 60-day challenge driving traffic here
- * runs 24 Aug to 22 Oct 2026 and this opens partway through it, around day 20 to
- * 30. The stake in the launch videos is "the first hundred people on my waitlist
- * get the class free", so the list has to exist and be filling before any price
- * appears. Signups land in `course_waitlist` with source `aimastery`, and in
- * their own Resend segment so they never receive a Great Work broadcast.
+ * OPEN IS THE DEFAULT, owner's decision 2026-08-19: "aimastery should show
+ * pricing". Roughly 40 people bought this material with no sales page in
+ * existence, so gating a finished page behind a waitlist turns buyers away for
+ * no gain. Anyone who wants it now can have it now.
  *
- * TO OPEN IT: set AIMASTERY_OPEN=true in Vercel AND remove robots.index:false
- * below, in the same change. One without the other gives you either a sales page
- * nobody can find or a findable page that cannot sell.
+ * The waitlist still exists at /aimastery-waitlist for people who are not ready
+ * to buy. It is a different door for a different person, not a gate on this one.
+ *
+ * ⚠ THE TWO PAGES CONFLICT AND THE OWNER HAS BEEN TOLD. The waitlist promises
+ * free access to the first 100 if the 60-day target is missed. Anyone who sees
+ * both pages is better off joining the list and waiting than paying today. Do
+ * not link this page to the waitlist, and do not repeat the free-access promise
+ * here. If it ever needs resolving properly, the clean version is that buyers
+ * are refunded on a miss rather than non-buyers getting it free — that rewards
+ * buying instead of waiting.
+ *
+ * STILL UNLISTED. robots.index:false below, no nav, no footer, no sitemap. It
+ * sells to anyone handed the link; it is not yet competing in search. Remove
+ * that line when this is meant to be discoverable.
  *
  * CLAIM DISCIPLINE. Every piece of work referenced is a real published post with
  * a live link and a date. The spec ads are unofficial fan work — Gucci, Burger
@@ -53,11 +63,15 @@ export const metadata = {
 
 export default function AiMasteryPage() {
   /**
-   * Read server-side rather than as NEXT_PUBLIC_*, so opening the class is a
-   * dashboard toggle plus a redeploy and never a code change. Strict equality
-   * against "true" so a stray value cannot accidentally put a price on the page.
+   * Open unless explicitly closed. Read server-side rather than as
+   * NEXT_PUBLIC_*, so closing the class is a dashboard toggle plus a redeploy
+   * and never a code change.
+   *
+   * The comparison is against "false" rather than "true" so that an unset or
+   * mistyped variable leaves the page selling, which is the state the owner
+   * asked for. A typo should not silently take the price off a sales page.
    */
-  const isOpen = process.env.AIMASTERY_OPEN?.trim() === "true";
+  const isOpen = process.env.AIMASTERY_OPEN?.trim().toLowerCase() !== "false";
 
   return <AiMasteryClient isOpen={isOpen} />;
 }
