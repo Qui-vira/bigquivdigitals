@@ -1,11 +1,90 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { MagneticButton } from "@/components/MagneticButton";
 import { SectionWrapper } from "@/components/SectionWrapper";
 import { RiseWords } from "@/components/TextMotion";
 import { PaymentModal } from "@/components/PaymentModal";
 import { WaitlistForm } from "@/components/WaitlistForm";
+
+/**
+ * The proof films. One closes every section on this page.
+ *
+ * The reference the owner chose is 100launchscripts.com, where every section
+ * ends with a customer screenshot and then the price and the button again. Her
+ * proof is other people's results because she sells launch scripts. This product
+ * is a visual skill, so the proof is the work itself — a stranger can watch it
+ * and decide in four seconds, which no testimonial achieves.
+ *
+ * Every entry links to the live post. That is the whole point: the claim is
+ * checkable in one click, on a public timeline, with a date on it.
+ *
+ * Poster frames were pulled from the archive masters with ffmpeg, never at 0s
+ * because most of these open on a fade from black. Runtimes are read off the
+ * files, not off the captions.
+ *
+ * ⚠ The spec ads are unofficial. Gucci, Burger King, McDonald's, Nike and Lexus
+ * commissioned, approved and paid for none of it, and every card that shows one
+ * carries that line. Peaceway is the owner's father's pharmacy and is never
+ * described as paid client work.
+ */
+type Film = {
+  img: string;
+  title: string;
+  line: string;
+  runtime: string;
+  url: string;
+  note?: string;
+};
+
+const FILMS: Record<string, Film> = {
+  chike: {
+    img: "/proof/aimastery/chike.webp",
+    title: "What If Chike Wasn't Born",
+    line: "One character, held for three and a half minutes. Most people using these tools cannot hold a face across two shots.",
+    runtime: "3:26",
+    url: "https://x.com/_Quivira/status/2056757338996924676",
+  },
+  burgerking: {
+    img: "/proof/aimastery/burgerking.webp",
+    title: "The Heist",
+    line: "A Whopper locked in a vault like a ten million dollar diamond. Lasers, gloves, sirens, slow-motion escape.",
+    runtime: "0:30",
+    url: "https://x.com/_Quivira/status/2053547582912336233",
+    note: "Unofficial. Burger King commissioned, approved and paid for none of it.",
+  },
+  lexus: {
+    img: "/proof/aimastery/lexus.webp",
+    title: "The $2M Ad",
+    line: "Eighty seconds that looks like a budget nobody gave me.",
+    runtime: "1:19",
+    url: "https://x.com/_Quivira/status/2055375185889382870",
+    note: "Unofficial. Lexus commissioned, approved and paid for none of it.",
+  },
+  peaceway: {
+    img: "/proof/aimastery/peaceway.webp",
+    title: "Peaceway Pharmacy",
+    line: "My dad asked me to make an ad for his pharmacy, so I did. Symptom, hesitation, shopfront, pharmacist, branded bag.",
+    runtime: "0:16",
+    url: "https://x.com/_Quivira/status/2051236382689910875",
+    note: "My father's pharmacy. Never billed. The only one made to a real brief.",
+  },
+  lagos: {
+    img: "/proof/aimastery/lagos.webp",
+    title: "The Lagos Film",
+    line: "The same man followed from a Lagos street to a cockpit, across three parts.",
+    runtime: "2:42",
+    url: "https://x.com/_Quivira/status/2056297961617801722",
+  },
+  bridge: {
+    img: "/proof/aimastery/bridge.webp",
+    title: "Third Mainland Bridge",
+    line: "Three Nigerians, a door under the bridge, and a box that could set the country free.",
+    runtime: "2:59",
+    url: "https://x.com/_Quivira/status/2057144836604498108",
+  },
+};
 
 /**
  * AI Mastery sales page. Same section order as /greatwork, which follows the
@@ -108,6 +187,46 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
    * has a unique index on lower(email) and the route treats a duplicate as
    * success, so a visitor can submit from any of them without seeing an error.
    */
+  /**
+   * A proof card. Poster frame, one line, runtime, and a link to the live post.
+   *
+   * The whole card is the link, and it opens the real X post in a new tab. A
+   * claim a stranger can check in one click is worth more than any paragraph
+   * describing the same work, which is what this page used to do instead.
+   */
+  const film = (key: keyof typeof FILMS) => {
+    const f = FILMS[key];
+    return (
+      <a
+        href={f.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="group mt-10 block overflow-hidden rounded-2xl border border-border transition-colors hover:border-border-hover"
+      >
+        <div className="relative aspect-[16/9] w-full overflow-hidden bg-black">
+          <Image
+            src={f.img}
+            alt={f.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 820px"
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+          />
+          <span className="absolute bottom-3 right-3 rounded-full bg-black/75 px-3 py-1 text-xs font-medium text-white">
+            {f.runtime}
+          </span>
+        </div>
+        <div className="p-5">
+          <div className="flex items-baseline justify-between gap-4">
+            <h3 className="font-bold text-text-primary">{f.title}</h3>
+            <span className="shrink-0 text-sm text-accent group-hover:underline">Watch it →</span>
+          </div>
+          <p className="mt-2 leading-relaxed text-text-secondary">{f.line}</p>
+          {f.note && <p className="mt-3 text-sm text-text-muted">{f.note}</p>}
+        </div>
+      </a>
+    );
+  };
+
   const cta = () =>
     isOpen ? (
       <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -155,6 +274,7 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
             This is how it was done, start to finish.
           </p>
 
+          {film("chike")}
           {cta()}
         </div>
       </section>
@@ -196,6 +316,7 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
                 </li>
               ))}
             </ul>
+            {film("burgerking")}
             {cta()}
           </div>
         </section>
@@ -248,6 +369,10 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
                 </div>
               ))}
             </div>
+            {film("lexus")}
+            {film("lagos")}
+            {film("bridge")}
+            {film("peaceway")}
             {cta()}
           </div>
         </section>
