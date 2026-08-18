@@ -84,6 +84,36 @@ const FILMS: Record<string, Film> = {
     runtime: "2:59",
     url: "https://x.com/_Quivira/status/2057144836604498108",
   },
+  titan: {
+    img: "/proof/aimastery/titan.webp",
+    title: "Titan",
+    line: "A lone figure, a sea god, one final blast. My own face used as the reference to direct the whole sequence.",
+    runtime: "0:20",
+    url: "https://x.com/_Quivira/status/2051961250007994792",
+  },
+  gucci: {
+    img: "/proof/aimastery/gucci.webp",
+    title: "Metamorphosis",
+    line: "Leather becomes liquid gold. Gold becomes glass. Glass becomes birds. No talking, no product shot until the end.",
+    runtime: "0:25",
+    url: "https://x.com/_Quivira/status/2052822783231488379",
+    note: "Unofficial. Gucci commissioned, approved and paid for none of it.",
+  },
+  mcdonalds: {
+    img: "/proof/aimastery/mcdonalds.webp",
+    title: "The Last Fry",
+    line: "One fry, shot like it is the last one on earth.",
+    runtime: "0:15",
+    url: "https://x.com/_Quivira/status/2053878672726311130",
+    note: "Unofficial. McDonald's commissioned, approved and paid for none of it.",
+  },
+  amara: {
+    img: "/proof/aimastery/amara.webp",
+    title: "Amara Wasn't Lazy",
+    line: "A whole character carried through a story, on a laptop, with nobody in front of a camera.",
+    runtime: "1:43",
+    url: "https://x.com/_Quivira/status/2051712953322217553",
+  },
 };
 
 /**
@@ -295,6 +325,8 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
               People have already bought this material from me before this page existed. This is
               the first time it has been packaged properly.
             </p>
+            {film("titan")}
+            {cta()}
           </div>
         </section>
       </SectionWrapper>
@@ -341,6 +373,9 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
             <p className="mt-6 text-lg leading-relaxed text-text-primary">
               That is the part the tools cannot do for you, and it is most of what this teaches.
             </p>
+            {film("gucci")}
+            {film("mcdonalds")}
+            {cta()}
           </div>
         </section>
       </SectionWrapper>
@@ -371,7 +406,6 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
             </div>
             {film("lexus")}
             {film("lagos")}
-            {film("bridge")}
             {film("peaceway")}
             {cta()}
           </div>
@@ -407,6 +441,8 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
                 </li>
               ))}
             </ul>
+            {film("amara")}
+            {cta()}
           </div>
         </section>
       </SectionWrapper>
@@ -439,6 +475,8 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
                   </li>
                 ))}
               </ul>
+
+              {film("bridge")}
 
               {isOpen ? (
                 <>
