@@ -7,7 +7,7 @@ export const revalidate = 60;
  *
  * ⚠ BUILT UNLISTED, ON PURPOSE. Nothing links here: not the nav, not the footer,
  * not the sitemap, and `robots` below tells crawlers to stay out. The launch arc
- * runs 30 days and the "Available Now" beat is around Day 24. A live priced page
+ * runs 30 days and launch day is Day 26 (Day 25 is "24 hours to launch"). A live priced page
  * before then kills the waitlist it exists to convert — anyone who finds the full
  * offer has no reason to join a list to be told about it later.
  *
