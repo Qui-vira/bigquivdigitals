@@ -129,6 +129,42 @@ const FILMS: Record<string, Film> = {
 };
 
 /**
+ * ⚠ THE HERO IS A TRANSFORMATION, NOT A CAPABILITY. It used to open on
+ * "No camera. No crew. No budget", which describes what the tool does rather
+ * than what changes for the person reading. Owner, 2026-08-19: the page is
+ * meant to sell a transformation.
+ *
+ * ⚠ AND READ THIS BEFORE EDITING IT. An earlier draft of the transformation
+ * was "I made spec ads, so an exchange came to me." **That is false and it was
+ * caught by asking.** The spec ads are on @_Quivira. The exchange deal came
+ * through a separate faceless account whose SUBJECT was trading calls, and
+ * which merely used the same AI films as its format. Owner confirmed the
+ * distinction on 2026-08-19 after first answering the other way.
+ *
+ * So the two proofs are deliberately kept as two, joined by the mechanism and
+ * never by a "so" or a "then":
+ *
+ *   1. Forty people paid for this class between 26 Apr and 13 May 2026, with no
+ *      sales page in existence. Verified directly against `course_purchases`:
+ *      40 rows, all `ai-content-mastery`, all `confirmed`, first 2026-04-26,
+ *      last 2026-05-13. This is the strongest claim on the page because it is
+ *      about the product being sold and it sits in our own database.
+ *   2. A separate faceless account, different subject, same film format, got an
+ *      exchange affiliate deal. `12-Proof-Library/faceless-account/`.
+ *
+ * ⚠ The positioning doc says the earliest purchase was 2026-05-05. It was
+ * 2026-04-26. The database is right and the doc is being corrected.
+ *
+ * ⚠ NEVER NAME THE EXCHANGE. Owner decision, it undercuts the OKX drive in
+ * the 60-day campaign. And never pair the $7.4m referral volume with the
+ * commission figure on a public page without both in the same frame, per the
+ * warning filed in that folder. The volume is not on this page at all.
+ *
+ * ⚠ $2,070.61 IS CUMULATIVE OVER ROUGHLY FIVE AND A HALF MONTHS. Never write
+ * or imply "$2,000 a month". That division is the first thing a sceptic does.
+ */
+
+/**
  * AI Mastery sales page. Same section order as /greatwork, which follows the
  * reference page the owner chose (100launchscripts.com).
  *
@@ -275,22 +311,30 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
             as="h1"
             className="mt-4 text-4xl font-extrabold leading-[1.1] tracking-tight text-text-primary md:text-6xl"
           >
-            No camera. No crew. No budget. Make the ad anyway.
+            Nine ads in nine days. No brand paid me. Forty people did.
           </RiseWords>
 
           <p className="mt-6 text-lg leading-relaxed text-text-secondary md:text-xl">
-            I spent nine days making ads for brands that never hired me. Gucci. Burger King.
-            McDonald&rsquo;s. Nike. Lexus. Then short films with the same character running across
-            three minutes.
+            Gucci. Burger King. McDonald&rsquo;s. Nike. Lexus. Not one of them asked me for
+            anything. Not one of them paid me. I made the work on a laptop and I put it up
+            anyway.
           </p>
 
           <p className="mt-4 text-lg leading-relaxed text-text-secondary md:text-xl">
-            All of it on a laptop. No shoot, no location, no team. Every piece is still up and you
-            can go and watch it.
+            Between 26 April and 13 May, forty people paid me to teach them how. There was no
+            sales page. No launch. No email list. I never sent a single pitch.
+          </p>
+
+          <p className="mt-4 text-lg leading-relaxed text-text-secondary md:text-xl">
+            Then I did it again somewhere else. A second account, no face, no name, nobody on it
+            who knew me. Different subject entirely, made with the same films. Three months in,
+            an exchange came to me with a 70% deal. $2,070.61 in commission from 118 people I
+            have never met.
           </p>
 
           <p className="mt-4 text-lg font-semibold leading-relaxed text-text-primary md:text-xl">
-            This is how it was done, start to finish.
+            That is what the skill actually does. You stop chasing people. The work goes out and
+            it brings them back.
           </p>
 
           {film("chike")}
