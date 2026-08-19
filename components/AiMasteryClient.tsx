@@ -7,6 +7,7 @@ import { SectionWrapper } from "@/components/SectionWrapper";
 import { RiseWords } from "@/components/TextMotion";
 import { PaymentModal } from "@/components/PaymentModal";
 import { WaitlistForm } from "@/components/WaitlistForm";
+import { ProofFilm, type Film } from "@/components/ProofFilm";
 
 /**
  * The proof films. One closes every section on this page.
@@ -29,18 +30,11 @@ import { WaitlistForm } from "@/components/WaitlistForm";
  * carries that line. Peaceway is the owner's father's pharmacy and is never
  * described as paid client work.
  */
-type Film = {
-  img: string;
-  title: string;
-  line: string;
-  runtime: string;
-  url: string;
-  note?: string;
-};
-
 const FILMS: Record<string, Film> = {
   chike: {
     img: "/proof/aimastery/chike.webp",
+    file: "chike.mp4",
+    aspect: "scope",
     title: "What If Chike Wasn't Born",
     line: "One character, held for three and a half minutes. Most people using these tools cannot hold a face across two shots.",
     runtime: "3:26",
@@ -48,6 +42,8 @@ const FILMS: Record<string, Film> = {
   },
   burgerking: {
     img: "/proof/aimastery/burgerking.webp",
+    file: "burgerking.mp4",
+    aspect: "wide",
     title: "The Heist",
     line: "A Whopper locked in a vault like a ten million dollar diamond. Lasers, gloves, sirens, slow-motion escape.",
     runtime: "0:30",
@@ -56,6 +52,8 @@ const FILMS: Record<string, Film> = {
   },
   lexus: {
     img: "/proof/aimastery/lexus.webp",
+    file: "lexus.mp4",
+    aspect: "vertical",
     title: "The $2M Ad",
     line: "Eighty seconds that looks like a budget nobody gave me.",
     runtime: "1:19",
@@ -64,6 +62,8 @@ const FILMS: Record<string, Film> = {
   },
   peaceway: {
     img: "/proof/aimastery/peaceway.webp",
+    file: "peaceway.mp4",
+    aspect: "vertical",
     title: "Peaceway Pharmacy",
     line: "My dad asked me to make an ad for his pharmacy, so I did. Symptom, hesitation, shopfront, pharmacist, branded bag.",
     runtime: "0:16",
@@ -72,6 +72,8 @@ const FILMS: Record<string, Film> = {
   },
   lagos: {
     img: "/proof/aimastery/lagos.webp",
+    file: "lagos.mp4",
+    aspect: "vertical",
     title: "The Lagos Film",
     line: "The same man followed from a Lagos street to a cockpit, across three parts.",
     runtime: "2:42",
@@ -79,6 +81,8 @@ const FILMS: Record<string, Film> = {
   },
   bridge: {
     img: "/proof/aimastery/bridge.webp",
+    file: "bridge.mp4",
+    aspect: "scope",
     title: "Third Mainland Bridge",
     line: "Three Nigerians, a door under the bridge, and a box that could set the country free.",
     runtime: "2:59",
@@ -86,6 +90,8 @@ const FILMS: Record<string, Film> = {
   },
   titan: {
     img: "/proof/aimastery/titan.webp",
+    file: "titan.mp4",
+    aspect: "scope",
     title: "Titan",
     line: "A lone figure, a sea god, one final blast. My own face used as the reference to direct the whole sequence.",
     runtime: "0:20",
@@ -93,6 +99,8 @@ const FILMS: Record<string, Film> = {
   },
   gucci: {
     img: "/proof/aimastery/gucci.webp",
+    file: "gucci.mp4",
+    aspect: "scope",
     title: "Metamorphosis",
     line: "Leather becomes liquid gold. Gold becomes glass. Glass becomes birds. No talking, no product shot until the end.",
     runtime: "0:25",
@@ -101,6 +109,8 @@ const FILMS: Record<string, Film> = {
   },
   mcdonalds: {
     img: "/proof/aimastery/mcdonalds.webp",
+    file: "mcdonalds.mp4",
+    aspect: "wide",
     title: "The Last Fry",
     line: "One fry, shot like it is the last one on earth.",
     runtime: "0:15",
@@ -109,6 +119,8 @@ const FILMS: Record<string, Film> = {
   },
   amara: {
     img: "/proof/aimastery/amara.webp",
+    file: "amara.mp4",
+    aspect: "vertical",
     title: "Amara Wasn't Lazy",
     line: "A whole character carried through a story, on a laptop, with nobody in front of a camera.",
     runtime: "1:43",
@@ -152,10 +164,14 @@ const FILMS: Record<string, Film> = {
  * dollar figure drifts with FX. Re-check it against a live rate before quoting
  * $20 anywhere. The 60-day revenue model assumes $20.
  *
- * ⚠ WAS_PRICE IS STILL UNVERIFIED. The April 2026 cohort ran $15 / $30 / $50
- * tiers, and ₦50,000 is roughly the $50 tier at an older rate, but nobody has
- * confirmed a purchase at that price. A struck-through price nobody ever paid is
- * a false claim. Verify it against a real receipt or delete the strikethrough.
+ * ✅ WAS_PRICE STAYS. Owner ruling, 2026-08-19, asked directly and answered
+ * directly. The April 2026 cohort ran $15 / $30 / $50 tiers and ₦50,000 is
+ * roughly the $50 tier at an older rate.
+ *
+ * This was raised as a blocker in two consecutive handoffs and has now been
+ * decided by the person who ran the cohort. Do not re-open it, and do not
+ * re-file it as "unverified" in the next handoff. If it ever does need a
+ * receipt, that is his call to make, not a maintenance task.
  */
 const PRICE_NGN = 27000;
 const WAS_PRICE_NGN = 50000;
@@ -218,44 +234,17 @@ export function AiMasteryClient({ isOpen = false }: { isOpen?: boolean }) {
    * success, so a visitor can submit from any of them without seeing an error.
    */
   /**
-   * A proof card. Poster frame, one line, runtime, and a link to the live post.
+   * A proof card. Poster frame, one line, runtime, and the work itself.
    *
-   * The whole card is the link, and it opens the real X post in a new tab. A
-   * claim a stranger can check in one click is worth more than any paragraph
-   * describing the same work, which is what this page used to do instead.
+   * The card plays the film in place when a video bucket is configured, and
+   * falls back to opening the live X post when one is not. Both paths always
+   * expose the post link, because a claim a stranger can check in one click is
+   * worth more than any paragraph describing the same work.
+   *
+   * See `components/ProofFilm.tsx` for why nothing loads before the click and
+   * why the aspect ratio is per film rather than fixed.
    */
-  const film = (key: keyof typeof FILMS) => {
-    const f = FILMS[key];
-    return (
-      <a
-        href={f.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group mt-10 block overflow-hidden rounded-2xl border border-border transition-colors hover:border-border-hover"
-      >
-        <div className="relative aspect-[16/9] w-full overflow-hidden bg-black">
-          <Image
-            src={f.img}
-            alt={f.title}
-            fill
-            sizes="(max-width: 768px) 100vw, 820px"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-          />
-          <span className="absolute bottom-3 right-3 rounded-full bg-black/75 px-3 py-1 text-xs font-medium text-white">
-            {f.runtime}
-          </span>
-        </div>
-        <div className="p-5">
-          <div className="flex items-baseline justify-between gap-4">
-            <h3 className="font-bold text-text-primary">{f.title}</h3>
-            <span className="shrink-0 text-sm text-accent group-hover:underline">Watch it →</span>
-          </div>
-          <p className="mt-2 leading-relaxed text-text-secondary">{f.line}</p>
-          {f.note && <p className="mt-3 text-sm text-text-muted">{f.note}</p>}
-        </div>
-      </a>
-    );
-  };
+  const film = (key: keyof typeof FILMS) => <ProofFilm film={FILMS[key]} />;
 
   const cta = () =>
     isOpen ? (
