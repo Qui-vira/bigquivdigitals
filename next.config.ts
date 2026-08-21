@@ -25,15 +25,15 @@ const nextConfig: NextConfig = {
   //
   // /pricing and /portfolio were removed in the A4 rebuild.
   //
-  // /waitlist was renamed to /greatwork-waitlist on 2026-08-18, when a second
-  // course waitlist was added at /aimastery-waitlist. The old path is in bios,
-  // Stories and DMs already sent, so it has to keep resolving. It points at The
-  // Great Work because that is what it always was.
+  // /waitlist redirected to /greatwork-waitlist from 2026-08-18 to 2026-08-20.
+  // The owner killed that on challenge-launch night: two courses share the word
+  // "waitlist" and a silent redirect puts half the arrivals in the wrong room.
+  // /waitlist is now a real chooser page (app/waitlist/page.tsx) naming both.
+  // Old links in bios and DMs keep resolving — they just get the choice now.
   async redirects() {
     return [
       { source: "/pricing", destination: "/services", permanent: true },
       { source: "/portfolio", destination: "/", permanent: true },
-      { source: "/waitlist", destination: "/greatwork-waitlist", permanent: true },
     ];
   },
   experimental: {
