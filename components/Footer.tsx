@@ -5,6 +5,8 @@ const pageLinks = [
   { href: "/about", label: "About" },
   { href: "/#work", label: "Work" },
   { href: "/contact", label: "Contact" },
+  { href: "/greatwork-waitlist", label: "The Great Work Waitlist" },
+  { href: "/aimastery-waitlist", label: "AI Mastery Waitlist" },
 ];
 
 const socialLinks = [

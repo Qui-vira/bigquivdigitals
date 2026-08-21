@@ -23,15 +23,16 @@ import { AiMasteryWaitlistClient } from "./AiMasteryWaitlistClient";
  * SIGNUPS land in `course_waitlist` with source `aimastery-waitlist`, and in the
  * AI Mastery Resend segment rather than The Great Work's. See lib/resend-contacts.
  *
- * UNLISTED, like /aimastery and /greatwork. No nav, no footer, no sitemap,
- * robots index:false. It is reached by a link the owner hands out, not by search.
+ * VISIBLE since 2026-08-20 (owner's instruction, night the 60-day challenge
+ * teaser posted): indexed, in the sitemap, linked from the footer. The promise
+ * video's stake points people at "my waitlist" — this page has to be findable.
+ * The /aimastery SALES page stays unlisted; only the waitlist went public.
  */
 export const metadata: Metadata = {
   title: "AI Mastery waitlist | BigQuiv Digitals",
   description:
     "A small private list. First access when it opens, and free access to the first 100 if the 60-day target is missed.",
   alternates: { canonical: "/aimastery-waitlist" },
-  robots: { index: false, follow: false },
   openGraph: {
     title: "AI Mastery waitlist",
     description: "Make ads, films and content with AI. No camera, no crew, no budget.",

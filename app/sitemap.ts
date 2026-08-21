@@ -24,7 +24,11 @@ export const revalidate = 3600;
  *                     the material — but it must not go live mid-way through The
  *                     Great Work's 30-day arc. One launch at a time, one audience.
  *                     ⚠ Its price is still a PLACEHOLDER. Set it before listing.
- *   - /greatwork-waitlist   and /aimastery-waitlist: excluded, form endpoints rather than pages
+ *   - /greatwork-waitlist and /aimastery-waitlist: LISTED since 2026-08-20
+ *                     (owner's instruction, launch night). The 60-day challenge
+ *                     and the Great Work arc both send people to "my waitlist";
+ *                     the waitlist pages are public even while the two priced
+ *                     sales pages above stay unlisted.
  *
  * /drone-signup was removed entirely on 2026-08-16. It was Altara Aerial pilot
  * recruitment living in the wrong codebase, and it belongs on that project's own
@@ -46,6 +50,8 @@ const STATIC_ROUTES: Array<{ path: string; priority: number; changeFrequency: Me
   { path: "/about", priority: 0.7, changeFrequency: "monthly" },
   { path: "/articles", priority: 0.7, changeFrequency: "weekly" },
   { path: "/contact", priority: 0.6, changeFrequency: "yearly" },
+  { path: "/greatwork-waitlist", priority: 0.8, changeFrequency: "weekly" },
+  { path: "/aimastery-waitlist", priority: 0.8, changeFrequency: "weekly" },
 ];
 
 async function articleSlugs(): Promise<Array<{ slug: string; updated: Date }>> {
