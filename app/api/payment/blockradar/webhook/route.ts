@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac } from "crypto";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getNeonAdmin } from "@/lib/neon";
 import { sendPurchaseConfirmation } from "@/lib/send-purchase-email";
 
 // Blockradar pings this with GET to validate the URL
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         timestamp: new Date().toISOString(),
       });
 
-      const supabase = getSupabaseAdmin();
+      const supabase = getNeonAdmin();
 
       if (email) {
         // Record purchase

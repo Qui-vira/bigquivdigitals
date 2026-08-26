@@ -37,7 +37,7 @@ function client(): LooseClient {
   return _client;
 }
 
-export function getSupabase(): LooseClient {
+export function getNeon(): LooseClient {
   return client();
 }
 
@@ -46,6 +46,6 @@ export function getSupabase(): LooseClient {
  * but both reach the same Neon connection — Postgres does not split credentials
  * by role the way Supabase anon/service keys do.
  */
-export function getSupabaseAdmin(): LooseClient {
+export function getNeonAdmin(): LooseClient {
   return client();
 }

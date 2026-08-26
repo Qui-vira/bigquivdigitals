@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getNeonAdmin } from "@/lib/neon";
 
 export async function PATCH(req: NextRequest) {
   const session = await verifySession();
@@ -28,7 +28,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
     }
 
-    const supabase = getSupabaseAdmin();
+    const supabase = getNeonAdmin();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase.from("course_purchases") as any)

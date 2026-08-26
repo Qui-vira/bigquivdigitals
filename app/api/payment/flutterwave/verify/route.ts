@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getNeonAdmin } from "@/lib/neon";
 import { sendPurchaseConfirmation } from "@/lib/send-purchase-email";
 
 export async function POST(req: NextRequest) {
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       const txRef = data.data.tx_ref || String(transaction_id);
 
       if (email) {
-        const supabase = getSupabaseAdmin();
+        const supabase = getNeonAdmin();
 
         // Record purchase
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

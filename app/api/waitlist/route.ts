@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getNeonAdmin } from "@/lib/neon";
 import { addToWaitlistSegment } from "@/lib/resend-contacts";
 
 /**
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
   //     policies, so the anon key cannot insert. This route is server-only.
   let inSupabase = false;
   try {
-    const supabase = getSupabaseAdmin();
+    const supabase = getNeonAdmin();
     const { error } = await supabase
       .from("course_waitlist")
       .insert({ email: clean, source });

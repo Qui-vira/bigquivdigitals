@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession } from "@/lib/auth";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getNeonAdmin } from "@/lib/neon";
 import { sendPurchaseConfirmation } from "@/lib/send-purchase-email";
 
 const BOT_TOKEN = process.env.COURSE_BOT_TOKEN || "";
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   }
 
   const { phase } = await req.json();
-  const supabase = getSupabaseAdmin();
+  const supabase = getNeonAdmin();
 
   // PHASE 1: Announce — post verification message, reset sweep timestamps
   if (phase === "announce") {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getNeonAdmin } from "@/lib/neon";
 
 const BOT_TOKEN = process.env.COURSE_BOT_TOKEN || "";
 const CHANNEL_ID = process.env.COURSE_CHANNEL_ID || "";
@@ -65,7 +65,7 @@ async function handleDirectMessage(message: Record<string, unknown>) {
 
   // Handle /verify — re-verification during sweep
   if (text === "/verify") {
-    const supabase = getSupabaseAdmin();
+    const supabase = getNeonAdmin();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await (supabase.from("course_purchases") as any)
       .select("id, first_name")
@@ -100,7 +100,7 @@ async function handleDirectMessage(message: Record<string, unknown>) {
   }
 
   const email = emailMatch[0].toLowerCase().trim();
-  const supabase = getSupabaseAdmin();
+  const supabase = getNeonAdmin();
 
   // Look up purchase by email
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -165,7 +165,7 @@ async function handleChatMember(update: Record<string, unknown>) {
 
   const userId = user.id as number;
   const username = (user.username as string) || null;
-  const supabase = getSupabaseAdmin();
+  const supabase = getNeonAdmin();
 
   let found = false;
 

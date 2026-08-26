@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSupabaseAdmin } from "@/lib/supabase";
+import { getNeonAdmin } from "@/lib/neon";
 import { sendPurchaseConfirmation } from "@/lib/send-purchase-email";
 
 export async function POST(req: NextRequest) {
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         timestamp: new Date().toISOString(),
       });
 
-      const supabase = getSupabaseAdmin();
+      const supabase = getNeonAdmin();
 
       // Record purchase (ignore conflict if already exists)
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
