@@ -34,6 +34,25 @@ const nextConfig: NextConfig = {
     return [
       { source: "/pricing", destination: "/services", permanent: true },
       { source: "/portfolio", destination: "/", permanent: true },
+      // /okx is the bio link for the 60-day challenge. It is spoken aloud in
+      // the episodes as "my OKX link in bio", so the path can never change —
+      // only where it points.
+      //
+      // permanent: false is deliberate. A 308 is cached by the browser and the
+      // CDN, so when Golden Fall closes, everyone who already tapped it would
+      // keep landing on a dead campaign with no way to clear it. 307 leaves the
+      // destination swappable for everyone.
+      //
+      // Golden Fall registration closes ~19 Sep 2026, Day 27 of the 60. On
+      // 17 Sep swap the destination to the evergreen referral link:
+      //   https://www.okx.com/join/27163950
+      // channelId=27163950 is the affiliate credit and must survive any edit.
+      {
+        source: "/okx",
+        destination:
+          "https://okx.com/campaigns/golden-fall?channelId=27163950&navigationBarHidden=1&utm_campaign=11304",
+        permanent: false,
+      },
     ];
   },
   experimental: {
