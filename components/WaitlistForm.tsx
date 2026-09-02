@@ -20,6 +20,40 @@ import { useId, useRef, useState } from "react";
  */
 type State = "idle" | "sending" | "done" | "error";
 
+/**
+ * Channel tag, read off `?src=` at submit time.
+ *
+ * WHY THIS EXISTS
+ * Every Great Work signup in the database says `waitlist-page`, and every AI class
+ * one says `aimastery-waitlist`. Those are the page they landed on, not where they
+ * came from — Instagram, WhatsApp, TikTok and X all wrote the same value. So on
+ * 2026-09-02 the question "did WhatsApp Status convert better than the reel" could
+ * only be answered by lining signup timestamps up against posting times by hand.
+ *
+ * Read at submit rather than on mount, so there is no hydration mismatch and no
+ * effect to run.
+ *
+ * The result is `base:channel`, e.g. `waitlist-page:whatsapp`. The base is kept in
+ * front on purpose: the API routes to the right Resend segment with
+ * `source.startsWith("aimastery")`, and the reporting queries use
+ * `source ILIKE 'aimastery%'`. Both keep working untouched, and rows written before
+ * today stay directly comparable.
+ *
+ * Sanitised hard, because this string is written to the database: lowercase, only
+ * letters, digits and hyphens, 24 characters max. Anything else is dropped and the
+ * signup still saves — a lost tag is a nuisance, a lost signup is not.
+ */
+function channelTag(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const raw = new URLSearchParams(window.location.search).get("src") ?? "";
+    const clean = raw.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 24);
+    return clean ? `:${clean}` : "";
+  } catch {
+    return "";
+  }
+}
+
 export function WaitlistForm({
   source = "homepage",
   className = "",
@@ -45,7 +79,7 @@ export function WaitlistForm({
       const r = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, source }),
+        body: JSON.stringify({ email, source: source + channelTag() }),
       });
       const data = await r.json().catch(() => ({}));
       if (!r.ok) {
