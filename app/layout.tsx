@@ -69,10 +69,16 @@ export const metadata: Metadata = {
       },
     ],
   },
+  // X reads twitter:* before og:*, and a child page inherits whatever this block
+  // sets. Hardcoding a title and description here meant EVERY page shared on X
+  // rendered the homepage card: the Great Work waitlist link posted on 2026-09-03
+  // showed "Growth systems that turn attention into revenue" instead of the page's
+  // own copy. Leaving title and description out lets Next fall back to each page's
+  // own title/description, so a page only needs its normal metadata to card
+  // correctly. Set twitter.title on a page only to say something different there
+  // than in its og tags.
   twitter: {
     card: "summary_large_image",
-    title: "BigQuiv Digitals | Growth systems that turn attention into revenue",
-    description: "Website, AI content, community infrastructure, strategy and reporting, built as one system. Three live builds you can go and check.",
     images: ["/og-image.webp"],
   },
   icons: {
