@@ -63,6 +63,10 @@ const PROMISES = [
     body: "What the list pays is the lowest this will ever cost. It does not go up on you later.",
   },
   {
+    title: "Launch bonuses",
+    body: "Buying at launch comes with extras. The list sees them first.",
+  },
+  {
     title: "The Opportunity Map, today",
     body: "The tool that finds the skill you are not counting. You get it on this page the second you join, not someday.",
   },

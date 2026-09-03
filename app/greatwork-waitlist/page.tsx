@@ -18,7 +18,7 @@ import { WaitlistClient } from "./WaitlistClient";
 export const metadata: Metadata = {
   title: "The Great Work waitlist | BigQuiv Digitals",
   description:
-    "A small private list. First access, the founding price, and the Opportunity Map the moment you join.",
+    "A small private list. First access, the founding price, launch bonuses, and the Opportunity Map the moment you join.",
   alternates: { canonical: "/greatwork-waitlist" },
   openGraph: {
     title: "The Great Work waitlist",
