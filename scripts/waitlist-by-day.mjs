@@ -43,7 +43,7 @@ console.log("date         GreatWork  AIclass   arc day");
 console.log("-".repeat(56));
 let gwRun = 0, aiRun = 0;
 const days = [...byDay.keys()].sort();
-const first = new Date(days[0]), last = new Date("2026-09-01");
+const first = new Date(days[0]), last = new Date(days[days.length - 1]);
 for (let d = new Date(first); d <= last; d.setDate(d.getDate() + 1)) {
   const key = d.toISOString().slice(0, 10);
   const v = byDay.get(key) || { gw: 0, ai: 0 };

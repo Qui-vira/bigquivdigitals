@@ -655,7 +655,22 @@ export async function exportRunProfilesCsv(runId: string) {
     .eq("id", runId)
     .maybeSingle();
 
-  const rows = (profiles || []).map((p) => ({
+  // Exactly the columns the select above asks for. Not GraphRunProfile: that is
+  // the whole row and this is a subset, so naming the full type would claim
+  // fields that were never fetched.
+  type ExportRow = {
+    username: string;
+    display_name: string | null;
+    bio: string | null;
+    status: string;
+    match_keywords: string[] | null;
+    match_reason: string | null;
+    seed_username: string | null;
+    relationship_type: string | null;
+    created_at: string;
+  };
+
+  const rows = (profiles || []).map((p: ExportRow) => ({
     username: p.username,
     display_name: p.display_name || "",
     bio: p.bio || "",

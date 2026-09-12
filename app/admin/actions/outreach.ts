@@ -1,77 +1,78 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+/**
+ * Outreach draft approval. Moved off Supabase to Neon on 2026-09-08.
+ *
+ * ⚠ This file called the Supabase REST endpoint directly with fetch, which is
+ * why it survived the first sweep of the migration: it never imported
+ * getOutreachSupabase, so grepping for that name did not find it. Its twin is
+ * app/api/telegram/webhook/route.ts, which approved the same rows the same way.
+ * Leaving either behind would have meant approvals writing to Supabase while
+ * /admin/outreach read Neon, and a draft looking pending forever.
+ *
+ * It also depended on OUTREACH_SUPABASE_ANON_KEY, which is blank in .env.local
+ * and is what made `npm run build` fail on this route.
+ */
 
-const SUPABASE_URL = process.env.OUTREACH_SUPABASE_URL || "";
-const SUPABASE_KEY = process.env.OUTREACH_SUPABASE_ANON_KEY || "";
+import { revalidatePath } from "next/cache";
+import { getOutreachSupabase } from "@/lib/supabase-outreach";
 
 const TABLES: Record<string, string> = {
   altara: "altara_outreach_drafts",
   kol: "kol_outreach_drafts",
 };
 
-function headers() {
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-    Prefer: "return=minimal",
-  };
+function fail(e: unknown) {
+  return `Error: ${e instanceof Error ? e.message : String(e)}`;
 }
 
 export async function approveDraft(pipeline: string, draftId: string) {
   const table = TABLES[pipeline];
   if (!table) return "Invalid pipeline";
 
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/${table}?id=eq.${draftId}`,
-    {
-      method: "PATCH",
-      headers: headers(),
-      body: JSON.stringify({
-        status: "approved",
-        approved_at: new Date().toISOString(),
-      }),
-    }
-  );
+  try {
+    await getOutreachSupabase()
+      .from(table)
+      .update({ status: "approved", approved_at: new Date().toISOString() })
+      .eq("id", draftId);
+  } catch (e) {
+    return fail(e);
+  }
 
   revalidatePath("/admin/outreach");
-  return res.ok ? "Approved" : `Error: ${res.status}`;
+  return "Approved";
 }
 
 export async function rejectDraft(pipeline: string, draftId: string) {
   const table = TABLES[pipeline];
   if (!table) return "Invalid pipeline";
 
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/${table}?id=eq.${draftId}`,
-    {
-      method: "PATCH",
-      headers: headers(),
-      body: JSON.stringify({ status: "rejected" }),
-    }
-  );
+  try {
+    await getOutreachSupabase()
+      .from(table)
+      .update({ status: "rejected" })
+      .eq("id", draftId);
+  } catch (e) {
+    return fail(e);
+  }
 
   revalidatePath("/admin/outreach");
-  return res.ok ? "Rejected" : `Error: ${res.status}`;
+  return "Rejected";
 }
 
 export async function approveAll(pipeline: string) {
   const table = TABLES[pipeline];
   if (!table) return "Invalid pipeline";
 
-  const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/${table}?status=eq.pending`,
-    {
-      method: "PATCH",
-      headers: headers(),
-      body: JSON.stringify({
-        status: "approved",
-        approved_at: new Date().toISOString(),
-      }),
-    }
-  );
+  try {
+    await getOutreachSupabase()
+      .from(table)
+      .update({ status: "approved", approved_at: new Date().toISOString() })
+      .eq("status", "pending");
+  } catch (e) {
+    return fail(e);
+  }
 
   revalidatePath("/admin/outreach");
-  return res.ok ? "All approved" : `Error: ${res.status}`;
+  return "All approved";
 }

@@ -160,6 +160,13 @@ export type GraphScanRun = {
   actual_cost_usd?: number;
   error_log: { at?: string; message: string }[];
   stopped_reason: string;
+  /**
+   * Which trigger started the run: "daily_cron", "weekly_cron", or manual.
+   * A real text column on graph_scan_runs, read by the scan page to work out
+   * when the crons last fired. It was missing from this type until 2026-09-08 —
+   * Supabase's untyped client hid the gap, and moving to Neon surfaced it.
+   */
+  run_source?: string;
   started_at: string | null;
   completed_at: string | null;
   created_at: string;

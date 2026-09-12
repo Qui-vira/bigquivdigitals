@@ -2,8 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 const BOT_TOKEN = process.env.OUTREACH_BOT_TOKEN || "";
 const WEBHOOK_SECRET = process.env.TELEGRAM_WEBHOOK_SECRET || "";
-const SUPABASE_URL = process.env.OUTREACH_SUPABASE_URL || "";
-const SUPABASE_KEY = process.env.OUTREACH_SUPABASE_ANON_KEY || "";
+// Moved off Supabase to Neon on 2026-09-08. This file talked to the Supabase
+// REST endpoint directly with fetch, so it never imported getOutreachSupabase
+// and a grep for that name missed it in the first sweep. Its twin is
+// app/admin/actions/outreach.ts. Both approve the same rows, so both had to move
+// together: had this one been left, an approval from Telegram would have landed
+// in Supabase while /admin/outreach read Neon, and the draft would sit pending.
+import { getOutreachSupabase } from "@/lib/supabase-outreach";
 
 const TABLES: Record<string, string> = {
   al: "altara_outreach_drafts",
@@ -14,15 +19,6 @@ const PIPELINE_LABELS: Record<string, string> = {
   al: "Altara",
   kl: "KOL",
 };
-
-function sbHeaders() {
-  return {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json",
-    Prefer: "return=representation",
-  };
-}
 
 async function answerCallback(callbackId: string, text: string) {
   try {
@@ -88,8 +84,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true });
   }
 
-  if (!SUPABASE_URL || !SUPABASE_KEY) {
-    await answerCallback(callback.id, "Supabase not configured");
+  if (!process.env.DATABASE_URL) {
+    await answerCallback(callback.id, "Database not configured");
     return NextResponse.json({ ok: true });
   }
 
@@ -97,16 +93,14 @@ export async function POST(req: NextRequest) {
   let existing: { status: string; lead_name: string; subject: string } | null =
     null;
   try {
-    const checkRes = await fetch(
-      `${SUPABASE_URL}/rest/v1/${table}?id=eq.${draftId}&select=status,lead_name,subject`,
-      { headers: sbHeaders() }
-    );
-    const rows = await checkRes.json();
-    if (Array.isArray(rows) && rows.length > 0) {
-      existing = rows[0];
-    }
+    const { data } = await getOutreachSupabase()
+      .from(table)
+      .select("status,lead_name,subject")
+      .eq("id", draftId)
+      .maybeSingle();
+    if (data) existing = data;
   } catch {
-    await answerCallback(callback.id, "Supabase error");
+    await answerCallback(callback.id, "Database error");
     return NextResponse.json({ ok: true });
   }
 
@@ -128,14 +122,10 @@ export async function POST(req: NextRequest) {
 
   if (action === "a") {
     // Approve
-    await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${draftId}`, {
-      method: "PATCH",
-      headers: sbHeaders(),
-      body: JSON.stringify({
-        status: "approved",
-        approved_at: new Date().toISOString(),
-      }),
-    });
+    await getOutreachSupabase()
+      .from(table)
+      .update({ status: "approved", approved_at: new Date().toISOString() })
+      .eq("id", draftId);
 
     await answerCallback(callback.id, `Approved: ${leadName}`);
     if (chatId && msgId) {
@@ -147,11 +137,10 @@ export async function POST(req: NextRequest) {
     }
   } else if (action === "r") {
     // Reject
-    await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${draftId}`, {
-      method: "PATCH",
-      headers: sbHeaders(),
-      body: JSON.stringify({ status: "rejected" }),
-    });
+    await getOutreachSupabase()
+      .from(table)
+      .update({ status: "rejected" })
+      .eq("id", draftId);
 
     await answerCallback(callback.id, `Rejected: ${leadName}`);
     if (chatId && msgId) {

@@ -5,6 +5,7 @@ import type {
   GraphCronStatus,
   GraphJobControls,
   GraphScanFilterPreset,
+  GraphScanRun,
   GraphSeedAccount,
 } from "@/lib/graph-types";
 import { nextDailyRunUtc, nextWeeklyRunUtc, sumCostsSince } from "@/lib/graph-cron-utils";
@@ -117,7 +118,7 @@ export default async function GraphScanPage() {
     .order("created_at", { ascending: false })
     .limit(100);
 
-  const runs = recentRuns || [];
+  const runs = (recentRuns || []) as GraphScanRun[];
   const now = new Date();
   const dayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   const weekStart = new Date(dayStart);

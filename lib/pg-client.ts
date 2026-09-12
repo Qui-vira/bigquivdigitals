@@ -93,6 +93,14 @@ class Builder implements PromiseLike<Result> {
     this.filters.push({ sql: `${ident(col)} IS ${v === null ? "NULL" : v ? "TRUE" : "FALSE"}`, params: [] });
     return this;
   }
+  // Range comparisons. Only .gte() is currently called (graph/scan counts the
+  // last 7 days of runs), but a missing operator here throws at request time in
+  // production, and all four are the same one line, so they go in together.
+  gt(col: string, v: unknown)  { this.filters.push({ sql: `${ident(col)} > ?`,  params: [v] }); return this; }
+  gte(col: string, v: unknown) { this.filters.push({ sql: `${ident(col)} >= ?`, params: [v] }); return this; }
+  lt(col: string, v: unknown)  { this.filters.push({ sql: `${ident(col)} < ?`,  params: [v] }); return this; }
+  lte(col: string, v: unknown) { this.filters.push({ sql: `${ident(col)} <= ?`, params: [v] }); return this; }
+
   /** Supabase's .not(col, 'is', null) — the only negation form used here. */
   not(col: string, operator: string, v: null | boolean) {
     if (operator !== "is") throw new Error(`pg-client: .not() supports only 'is', got '${operator}'`);
