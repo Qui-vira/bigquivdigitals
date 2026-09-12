@@ -40,6 +40,12 @@ export type Film = {
   line: string;
   runtime: string;
   url: string;
+  /**
+   * Who the film is for, shown above the title in grid mode. Added 2026-09-12
+   * for the portfolio reel, which labels brand first the way a buyer scans:
+   * they look for a name they recognise before they read a title.
+   */
+  brand?: string;
   /** Filename inside the video bucket. No leading slash. */
   file: string;
   /** Off the real file dimensions, not guessed. */
@@ -69,12 +75,21 @@ const BOX: Record<FilmAspect, string> = {
   scope: "aspect-[1920/822] w-full",
 };
 
-export function ProofFilm({ film }: { film: Film }) {
+/**
+ * `inGrid` is the portfolio reel variant. It drops the top margin and the
+ * vertical cap, because a grid column is already narrow and the cap was sized
+ * for an 820px single-column page. Everything else, including the click-to-play
+ * behaviour and the link fallback, is shared. Default is the /aimastery layout,
+ * so that page renders exactly as it did before this prop existed.
+ */
+export function ProofFilm({ film, inGrid = false }: { film: Film; inGrid?: boolean }) {
   const [playing, setPlaying] = useState(false);
   const src = VIDEO_BASE ? `${VIDEO_BASE}/${film.file}` : null;
 
+  const box = inGrid && film.aspect === "vertical" ? "aspect-[9/16] w-full" : BOX[film.aspect];
+
   const frame = (
-    <div className={`relative overflow-hidden bg-black ${BOX[film.aspect]}`}>
+    <div className={`relative overflow-hidden bg-black ${box}`}>
       {playing && src ? (
         <video
           src={src}
@@ -112,7 +127,11 @@ export function ProofFilm({ film }: { film: Film }) {
   );
 
   return (
-    <div className="group mt-10 overflow-hidden rounded-2xl border border-border transition-colors hover:border-border-hover">
+    <div
+      className={`group overflow-hidden rounded-2xl border border-border transition-colors hover:border-border-hover ${
+        inGrid ? "flex h-full flex-col" : "mt-10"
+      }`}
+    >
       {src ? (
         /* A button, not a link. It plays in place and never leaves the page —
            losing a buyer to x.com halfway down a sales page is the whole reason
@@ -131,7 +150,12 @@ export function ProofFilm({ film }: { film: Film }) {
         </a>
       )}
 
-      <div className="p-5">
+      <div className={inGrid ? "flex flex-1 flex-col p-5" : "p-5"}>
+        {film.brand && (
+          <p className="mb-1 text-xs font-medium uppercase tracking-[0.18em] text-accent">
+            {film.brand}
+          </p>
+        )}
         <div className="flex items-baseline justify-between gap-4">
           <h3 className="font-bold text-text-primary">{film.title}</h3>
           {/* Always present, even once the film plays inline. It is the only

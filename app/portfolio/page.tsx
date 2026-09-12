@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PortfolioShowcase } from "@/components/PortfolioShowcase";
+import { FilmReel } from "@/components/FilmReel";
 
 export const metadata: Metadata = {
   title: "Proof of Work | BigQuiv Digitals",
   description:
-    "Five public, checkable projects across AI engineering, AI video, automation and software. Empty disciplines stay marked coming soon until the proof exists.",
+    "Four public, checkable engineering projects and six films that play in the page. Empty disciplines stay marked coming soon until the proof exists.",
   alternates: { canonical: "/portfolio" },
 };
 
@@ -14,15 +15,16 @@ export default function PortfolioPage() {
   return (
     <div className="px-6 pb-28 pt-28 md:pt-40">
       <header className="mx-auto max-w-[1200px] border-b border-border pb-14 md:pb-20">
-        <p className="text-sm font-semibold text-accent">Proof of Work / 05 projects</p>
+        <p className="text-sm font-semibold text-accent">Proof of Work / 04 builds / 06 films</p>
         <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
           <h1 className="max-w-[850px] text-5xl font-bold leading-[0.95] tracking-[-0.045em] text-text-primary md:text-7xl lg:text-[5.5rem]">
             Work a buyer can inspect before the call.
           </h1>
           <div className="max-w-[560px] lg:pb-2">
             <p className="text-lg leading-relaxed text-text-secondary">
-              Five projects selected for public proof and commercial usefulness—not because they
-              are my favourites. If a discipline has no qualifying case yet, it says coming soon.
+              Four builds selected for public proof and commercial usefulness, not because they
+              are my favourites, and six films you can watch without leaving this page. If a
+              discipline has no qualifying case yet, it says coming soon.
             </p>
             <p className="mt-4 text-sm leading-relaxed text-text-muted">
               Spec work and family work are labeled plainly. Nothing here is presented as paid
@@ -34,6 +36,13 @@ export default function PortfolioPage() {
 
       <section className="mx-auto max-w-[1200px] py-14 md:py-20" aria-label="Portfolio projects">
         <PortfolioShowcase />
+      </section>
+
+      <section
+        className="mx-auto max-w-[1200px] border-t border-border py-16 md:py-20"
+        aria-label="Film reel"
+      >
+        <FilmReel />
       </section>
 
       <section className="mx-auto max-w-[1200px] border-t border-border pt-16 md:pt-20">

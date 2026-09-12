@@ -62,20 +62,6 @@ const PROJECTS: Project[] = [
     external: true,
   },
   {
-    title: "The Lagos Film",
-    category: "ai-video",
-    eyebrow: "Character-consistent AI film",
-    description:
-      "The same character moves from a Lagos street to a cockpit across a 162-second, three-part story. It proves continuity, direction and narrative control beyond a twelve-second generation.",
-    proof: "The finished 2:42 film is published on a dated public timeline.",
-    image: "/proof/aimastery/lagos.webp",
-    imageAlt:
-      "Poster frame from The Lagos Film showing the central character in a cinematic scene.",
-    href: "https://x.com/_Quivira/status/2056297961617801722",
-    external: true,
-    disclosure: "Original portfolio film. Not commissioned client work.",
-  },
-  {
     title: "Peaceway Online",
     category: "automation",
     eyebrow: "Pharmacy commerce and ordering",
