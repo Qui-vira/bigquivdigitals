@@ -4,8 +4,10 @@ import { db } from "@/lib/db";
 import { clientLogos } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function upsertClientLogo(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const name = formData.get("name") as string;
   const image = (formData.get("image") as string)?.trim() || "";
@@ -21,6 +23,7 @@ export async function upsertClientLogo(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteClientLogo(id: number) {
+  await requireAdmin();
   await db.delete(clientLogos).where(eq(clientLogos.id, id));
   revalidatePath("/", "layout");
 }

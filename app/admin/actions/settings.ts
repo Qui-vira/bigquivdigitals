@@ -4,8 +4,10 @@ import { db } from "@/lib/db";
 import { settings, socialLinks } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function updateSetting(key: string, value: string) {
+  await requireAdmin();
   await db
     .insert(settings)
     .values({ key, value })
@@ -14,6 +16,7 @@ export async function updateSetting(key: string, value: string) {
 }
 
 export async function updateSettings(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const entries = Array.from(formData.entries());
   for (const [key, value] of entries) {
     if (key.startsWith("setting_")) {
@@ -25,6 +28,7 @@ export async function updateSettings(_prev: unknown, formData: FormData) {
 }
 
 export async function upsertSocialLink(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const name = formData.get("name") as string;
   const href = formData.get("href") as string;
@@ -40,6 +44,7 @@ export async function upsertSocialLink(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteSocialLink(id: number) {
+  await requireAdmin();
   await db.delete(socialLinks).where(eq(socialLinks.id, id));
   revalidatePath("/", "layout");
 }

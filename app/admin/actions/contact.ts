@@ -4,8 +4,10 @@ import { db } from "@/lib/db";
 import { contactOptions, serviceOptions } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function upsertContactOption(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const icon = formData.get("icon") as string;
   const title = formData.get("title") as string;
@@ -23,11 +25,13 @@ export async function upsertContactOption(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteContactOption(id: number) {
+  await requireAdmin();
   await db.delete(contactOptions).where(eq(contactOptions.id, id));
   revalidatePath("/", "layout");
 }
 
 export async function upsertServiceOption(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const name = formData.get("name") as string;
   const sortOrder = parseInt(formData.get("sortOrder") as string) || 0;
@@ -42,6 +46,7 @@ export async function upsertServiceOption(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteServiceOption(id: number) {
+  await requireAdmin();
   await db.delete(serviceOptions).where(eq(serviceOptions.id, id));
   revalidatePath("/", "layout");
 }

@@ -4,8 +4,10 @@ import { db } from "@/lib/db";
 import { stats, testimonials } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function upsertStat(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const page = formData.get("page") as string;
   const label = formData.get("label") as string;
@@ -23,11 +25,13 @@ export async function upsertStat(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteStat(id: number) {
+  await requireAdmin();
   await db.delete(stats).where(eq(stats.id, id));
   revalidatePath("/", "layout");
 }
 
 export async function upsertTestimonial(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const page = formData.get("page") as string;
   const quote = formData.get("quote") as string;
@@ -67,6 +71,7 @@ export async function upsertTestimonial(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteTestimonial(id: number) {
+  await requireAdmin();
   await db.delete(testimonials).where(eq(testimonials.id, id));
   revalidatePath("/", "layout");
 }

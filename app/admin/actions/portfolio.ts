@@ -4,8 +4,10 @@ import { db } from "@/lib/db";
 import { caseStudies, caseStudyStats } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function upsertCaseStudy(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const title = formData.get("title") as string;
   const sortOrder = parseInt(formData.get("sortOrder") as string) || 0;
@@ -56,6 +58,7 @@ export async function upsertCaseStudy(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteCaseStudy(id: number) {
+  await requireAdmin();
   await db.delete(caseStudyStats).where(eq(caseStudyStats.caseStudyId, id));
   await db.delete(caseStudies).where(eq(caseStudies.id, id));
   revalidatePath("/", "layout");

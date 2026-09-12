@@ -16,6 +16,7 @@
 
 import { revalidatePath } from "next/cache";
 import { getOutreachSupabase } from "@/lib/supabase-outreach";
+import { requireAdmin } from "@/lib/require-admin";
 
 const TABLES: Record<string, string> = {
   altara: "altara_outreach_drafts",
@@ -27,6 +28,7 @@ function fail(e: unknown) {
 }
 
 export async function approveDraft(pipeline: string, draftId: string) {
+  await requireAdmin();
   const table = TABLES[pipeline];
   if (!table) return "Invalid pipeline";
 
@@ -44,6 +46,7 @@ export async function approveDraft(pipeline: string, draftId: string) {
 }
 
 export async function rejectDraft(pipeline: string, draftId: string) {
+  await requireAdmin();
   const table = TABLES[pipeline];
   if (!table) return "Invalid pipeline";
 
@@ -61,6 +64,7 @@ export async function rejectDraft(pipeline: string, draftId: string) {
 }
 
 export async function approveAll(pipeline: string) {
+  await requireAdmin();
   const table = TABLES[pipeline];
   if (!table) return "Invalid pipeline";
 

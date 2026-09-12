@@ -4,8 +4,10 @@ import { db } from "@/lib/db";
 import { aboutValues, aboutEcosystem, aboutContent } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function upsertAboutValue(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const icon = formData.get("icon") as string;
   const title = formData.get("title") as string;
@@ -22,11 +24,13 @@ export async function upsertAboutValue(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteAboutValue(id: number) {
+  await requireAdmin();
   await db.delete(aboutValues).where(eq(aboutValues.id, id));
   revalidatePath("/", "layout");
 }
 
 export async function upsertEcosystem(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const name = formData.get("name") as string;
   const role = formData.get("role") as string;
@@ -43,11 +47,13 @@ export async function upsertEcosystem(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteEcosystem(id: number) {
+  await requireAdmin();
   await db.delete(aboutEcosystem).where(eq(aboutEcosystem.id, id));
   revalidatePath("/", "layout");
 }
 
 export async function updateAboutContent(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const entries = Array.from(formData.entries());
   for (const [key, value] of entries) {
     if (key.startsWith("content_")) {

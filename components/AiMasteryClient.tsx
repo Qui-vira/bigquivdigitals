@@ -9,6 +9,7 @@ import { PaymentModal } from "@/components/PaymentModal";
 import { WaitlistForm } from "@/components/WaitlistForm";
 import { ProofFilm } from "@/components/ProofFilm";
 import { FILMS } from "@/lib/films";
+import { AI_MASTERY_PRICE_NGN } from "@/lib/course-prices";
 
 /**
  * The proof films. One closes every section on this page.
@@ -113,7 +114,13 @@ import { FILMS } from "@/lib/films";
  * re-file it as "unverified" in the next handoff. If it ever does need a
  * receipt, that is his call to make, not a maintenance task.
  */
-const PRICE_NGN = 27000;
+/**
+ * Imported, not declared. The server decides what counts as paid
+ * (lib/course-prices.ts), and a page that hardcodes its own number can drift
+ * away from the minimum the payment routes enforce, which would take real
+ * buyers' money and then refuse to confirm them.
+ */
+const PRICE_NGN = AI_MASTERY_PRICE_NGN;
 const WAS_PRICE_NGN = 50000;
 
 const CHANGES = [

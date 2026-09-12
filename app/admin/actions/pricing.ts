@@ -4,8 +4,10 @@ import { db } from "@/lib/db";
 import { pricingTiers, pricingFeatures, faqItems, personalServices } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function upsertPricingTier(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const product = formData.get("product") as string;
   const productTitle = formData.get("productTitle") as string;
@@ -25,11 +27,13 @@ export async function upsertPricingTier(_prev: unknown, formData: FormData) {
 }
 
 export async function deletePricingTier(id: number) {
+  await requireAdmin();
   await db.delete(pricingTiers).where(eq(pricingTiers.id, id));
   revalidatePath("/", "layout");
 }
 
 export async function upsertPricingFeature(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const product = formData.get("product") as string;
   const featureName = formData.get("featureName") as string;
@@ -48,11 +52,13 @@ export async function upsertPricingFeature(_prev: unknown, formData: FormData) {
 }
 
 export async function deletePricingFeature(id: number) {
+  await requireAdmin();
   await db.delete(pricingFeatures).where(eq(pricingFeatures.id, id));
   revalidatePath("/", "layout");
 }
 
 export async function upsertFaqItem(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const question = formData.get("question") as string;
   const answer = formData.get("answer") as string;
@@ -68,11 +74,13 @@ export async function upsertFaqItem(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteFaqItem(id: number) {
+  await requireAdmin();
   await db.delete(faqItems).where(eq(faqItems.id, id));
   revalidatePath("/", "layout");
 }
 
 export async function upsertPersonalService(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const name = formData.get("name") as string;
   const price = formData.get("price") as string;
@@ -91,6 +99,7 @@ export async function upsertPersonalService(_prev: unknown, formData: FormData) 
 }
 
 export async function deletePersonalService(id: number) {
+  await requireAdmin();
   await db.delete(personalServices).where(eq(personalServices.id, id));
   revalidatePath("/", "layout");
 }

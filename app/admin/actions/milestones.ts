@@ -4,8 +4,10 @@ import { db } from "@/lib/db";
 import { milestones } from "@/lib/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/require-admin";
 
 export async function upsertMilestone(_prev: unknown, formData: FormData) {
+  await requireAdmin();
   const id = formData.get("id") as string;
   const year = formData.get("year") as string;
   const title = formData.get("title") as string;
@@ -40,6 +42,7 @@ export async function upsertMilestone(_prev: unknown, formData: FormData) {
 }
 
 export async function deleteMilestone(id: number) {
+  await requireAdmin();
   await db.delete(milestones).where(eq(milestones.id, id));
   revalidatePath("/", "layout");
 }

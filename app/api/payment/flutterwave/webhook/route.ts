@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getNeonAdmin } from "@/lib/neon";
 import { sendPurchaseConfirmation } from "@/lib/send-purchase-email";
+import { assertPaidEnough } from "@/lib/course-prices";
+
+const COURSE_SLUG = "ai-content-mastery";
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,7 +11,10 @@ export async function POST(req: NextRequest) {
     const signature = req.headers.get("verif-hash");
     const secretHash = process.env.FLW_SECRET_HASH;
 
-    if (secretHash && signature !== secretHash) {
+    // Unconditional. This read `if (secretHash && ...)`, so an empty
+    // FLW_SECRET_HASH turned the only authentication on a purchase-granting
+    // endpoint into a no-op. Same shape that left the Telegram webhooks open.
+    if (!secretHash || signature !== secretHash) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
     }
 
@@ -23,6 +29,15 @@ export async function POST(req: NextRequest) {
       const currency = data.currency as string || "NGN";
       const txRef = data.tx_ref as string;
       const customerName = customer.name as string || "";
+
+      // The same rule as the verify route: successful is not sufficient. A
+      // webhook carrying a real signature still reports whatever amount was
+      // charged, and the amount originated in the browser.
+      const priced = assertPaidEnough(COURSE_SLUG, amount, currency);
+      if (!priced.ok) {
+        console.error(`[Flutterwave] Webhook rejected, tx ${txRef}: ${priced.reason}`);
+        return NextResponse.json({ received: true, recorded: false });
+      }
 
       console.log("[Flutterwave] Payment confirmed:", {
         txRef,
@@ -41,7 +56,7 @@ export async function POST(req: NextRequest) {
         {
           email,
           first_name: customerName.split(" ")[0] || null,
-          course_slug: "ai-content-mastery",
+          course_slug: COURSE_SLUG,
           amount,
           currency,
           payment_method: "flutterwave",

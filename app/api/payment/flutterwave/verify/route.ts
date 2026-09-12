@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { getNeonAdmin } from "@/lib/neon";
 import { sendPurchaseConfirmation } from "@/lib/send-purchase-email";
+import { assertPaidEnough } from "@/lib/course-prices";
+
+const COURSE_SLUG = "ai-content-mastery";
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,9 +17,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Origin check — only allow requests from our own domain
-    const origin = req.headers.get("origin") || req.headers.get("referer") || "";
-    if (origin && !origin.includes("bigquivdigitals.com") && !origin.includes("localhost")) {
+    // Origin check. Unconditional, and host-exact.
+    //
+    // This read `if (origin && ...)` with `.includes("bigquivdigitals.com")`,
+    // which failed twice over: omitting the Origin and Referer headers skipped
+    // it entirely, and "bigquivdigitals.com.attacker.tld" passed the substring
+    // test. It is defence in depth, not the real control (the amount check
+    // below is), but a check that any curl can walk past is worse than none
+    // because it reads as protection.
+    const ALLOWED_HOSTS = new Set(["bigquivdigitals.com", "www.bigquivdigitals.com", "localhost"]);
+    const originHeader = req.headers.get("origin") || req.headers.get("referer") || "";
+    let originHost = "";
+    try {
+      originHost = new URL(originHeader).hostname;
+    } catch {
+      originHost = "";
+    }
+    if (!ALLOWED_HOSTS.has(originHost)) {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
@@ -51,6 +68,20 @@ export async function POST(req: NextRequest) {
       const currency = data.data.currency || "NGN";
       const txRef = data.data.tx_ref || String(transaction_id);
 
+      // 🛑 A SUCCESSFUL PAYMENT IS NOT A SUFFICIENT PAYMENT.
+      // Flutterwave confirms that money moved, never that the right amount did.
+      // The amount was set in the browser, so without this a ₦100 charge became
+      // a confirmed seat plus a Telegram invite. Never write the purchase row
+      // before this passes.
+      const priced = assertPaidEnough(COURSE_SLUG, amount, currency);
+      if (!priced.ok) {
+        console.error(`[Flutterwave] Underpaid or unpriced purchase rejected, tx ${txRef}: ${priced.reason}`);
+        return NextResponse.json(
+          { success: false, error: "Payment amount does not match the course price" },
+          { status: 400 }
+        );
+      }
+
       if (email) {
         const supabase = getNeonAdmin();
 
@@ -60,7 +91,7 @@ export async function POST(req: NextRequest) {
           {
             email,
             first_name: customerName.split(" ")[0] || null,
-            course_slug: "ai-content-mastery",
+            course_slug: COURSE_SLUG,
             amount,
             currency,
             payment_method: "flutterwave",
@@ -92,12 +123,10 @@ export async function POST(req: NextRequest) {
         }
       }
 
-      return NextResponse.json({
-        success: true,
-        email,
-        amount,
-        currency,
-      });
+      // Deliberately returns nothing about the buyer. This endpoint takes a
+      // transaction id and nothing else, so echoing email and amount turned any
+      // guessed or observed id into a lookup for someone else's address.
+      return NextResponse.json({ success: true });
     }
 
     return NextResponse.json({ success: false, error: "Payment not verified" }, { status: 400 });
