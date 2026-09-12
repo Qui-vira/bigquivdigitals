@@ -73,9 +73,13 @@ const CATEGORIES: Category[] = [
  * medband.webp and pharmaos.webp are real 1440x900 captures of the live sites,
  * taken 2026-09-12. Peaceway uses its own real capture and always has.
  *
- * ⛔ altara-energy.png IS STILL CLIPART. Altara Energy Network has no deployment
- * and no images in its repo, so there was nothing real to capture. Deploy it or
- * drop the card; do not leave a drawing standing in for a product.
+ * ⛔ ALTARA ENERGY NETWORK WAS REMOVED, 2026-09-12, owner's decision. It has no
+ * deployment and no images in its repo, so the only image available was clipart,
+ * and a drawing standing in for a product is what made this page read as bland.
+ * The repo is real and the card can come back the moment the app is deployed and
+ * can be captured like the other two. Do not restore it with an illustration.
+ *
+ * ⚠ NOT altaraerial.com. That is the drone business, a different product.
  */
 const PROJECTS: Project[] = [
   {
@@ -115,19 +119,6 @@ const PROJECTS: Project[] = [
     imageAlt:
       "The PharmaOS sign-in: AI-powered inventory, smart ordering, patient reminders and real-time analytics, built for Nigerian pharmacies.",
     href: "https://pharmaos-frontend.vercel.app",
-    external: true,
-  },
-  {
-    title: "Altara Energy Network",
-    category: "software",
-    eyebrow: "Solar project management",
-    description:
-      "Everything between a solar site visit and a signed quote, in one place. Photos of the site, the load each appliance draws, then the quote and the pro-forma invoice come out the other end.",
-    proof: "Public TypeScript. The whole workflow is there to read.",
-    image: "/proof/portfolio/altara-energy.png",
-    imageAlt:
-      "Illustration of a solar installation workflow with panels, project data and a generated quote.",
-    href: "https://github.com/Qui-vira/altara-energy-network",
     external: true,
   },
 ];
