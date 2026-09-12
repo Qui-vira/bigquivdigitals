@@ -4,16 +4,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowUpRight, CheckCircle2, Clock3 } from "lucide-react";
+import { FilmReel, FILM_COUNT } from "@/components/FilmReel";
 
 /**
- * ⚠ NO "ai-video" HERE ON PURPOSE. The films are not project cards, they are the
- * reel in components/FilmReel.tsx further down the page, which carries its own
- * "AI Video Producer" heading. When the films were also a filter tab, selecting
- * it rendered the empty state — "No borrowed credibility" — directly above six
- * of his films. Re-adding the tab without moving the films back recreates that.
+ * ⚠ "ai-video" HAS NO ENTRY IN PROJECTS AND THAT IS CORRECT. Its six items are
+ * films, rendered by FilmReel, not project cards. The tab is still real: it
+ * counts the films and selecting it shows the reel.
+ *
+ * It was briefly deleted from this list, which was wrong twice over. AI video is
+ * his strongest discipline, so a filter row that does not mention it tells a
+ * visitor he does not do it. His words on seeing that row: "why is the ai video
+ * producer not here?". Do not remove it again. If it ever renders the empty
+ * state, the bug is in the count or the branch below, not in the tab existing.
  */
 type CategoryId =
   | "all"
+  | "ai-video"
   | "ai-engineer"
   | "automation"
   | "software"
@@ -40,6 +46,7 @@ interface Project {
 
 const CATEGORIES: Category[] = [
   { id: "all", label: "All work" },
+  { id: "ai-video", label: "AI Video Producer" },
   { id: "ai-engineer", label: "AI Engineer" },
   { id: "automation", label: "Automation Engineer" },
   { id: "software", label: "Software Engineer" },
@@ -57,6 +64,19 @@ const CATEGORIES: Category[] = [
  * the person has to be in the sentence. Short sentences, say what he did, and
  * own the unpaid and family parts rather than dressing them up.
  */
+/**
+ * ⚠ THE CARD IMAGES MUST BE THE REAL PRODUCT, NOT AN ILLUSTRATION. They shipped
+ * as generated line-art clipart and his reaction on 2026-09-12 was "why is just
+ * bland cards". A drawing of a mortar and pestle proves nothing; a screenshot of
+ * the thing running is the whole point of the page.
+ *
+ * medband.webp and pharmaos.webp are real 1440x900 captures of the live sites,
+ * taken 2026-09-12. Peaceway uses its own real capture and always has.
+ *
+ * ⛔ altara-energy.png IS STILL CLIPART. Altara Energy Network has no deployment
+ * and no images in its repo, so there was nothing real to capture. Deploy it or
+ * drop the card; do not leave a drawing standing in for a product.
+ */
 const PROJECTS: Project[] = [
   {
     title: "MedBand",
@@ -64,11 +84,11 @@ const PROJECTS: Project[] = [
     eyebrow: "Multi-agent healthcare",
     description:
       "I built a set of agents that take a patient through intake, check the medication and find a pharmacy that actually has it. A licensed person signs off on every answer, and I put that gate in the code itself rather than in a prompt, so it cannot be talked around.",
-    proof: "The Python is public. Read the approval step yourself.",
-    image: "/proof/portfolio/medband-agents.png",
+    proof: "It is live, and the Python is public. Built for the Band of Agents hackathon, track 3.",
+    image: "/proof/portfolio/medband.webp",
     imageAlt:
-      "Illustration of connected AI agents passing healthcare work through a human approval checkpoint.",
-    href: "https://github.com/Qui-vira/Tbr-Medband",
+      "The MedBand site: Getting people to the right care, faster, with the live pharmacy workflow and coordinated agent roles.",
+    href: "https://medband-landing.vercel.app",
     external: true,
   },
   {
@@ -90,11 +110,11 @@ const PROJECTS: Project[] = [
     eyebrow: "Pharmacy operations platform",
     description:
       "The part a customer never sees. Stock, ordering and the daily running of a pharmacy, as a Python backend with a Next.js dashboard on top. I kept the two apart so the shop's internal work can never leak out to the people buying.",
-    proof: "Both halves are public. You can read them separately.",
-    image: "/proof/portfolio/pharmaos.png",
+    proof: "The app is live and both halves of the code are public.",
+    image: "/proof/portfolio/pharmaos.webp",
     imageAlt:
-      "Illustration of a pharmacy operations dashboard connected to inventory and ordering services.",
-    href: "https://github.com/Qui-vira/pharmaos-backend",
+      "The PharmaOS sign-in: AI-powered inventory, smart ordering, patient reminders and real-time analytics, built for Nigerian pharmacies.",
+    href: "https://pharmaos-frontend.vercel.app",
     external: true,
   },
   {
@@ -177,6 +197,8 @@ function ProjectCard({ project }: { project: Project }) {
 
 export function PortfolioShowcase() {
   const [active, setActive] = useState<CategoryId>("all");
+  /** The films are not in PROJECTS, so this tab renders the reel instead of cards. */
+  const showFilmsOnly = active === "ai-video";
   const visibleProjects =
     active === "all" ? PROJECTS : PROJECTS.filter((project) => project.category === active);
   const activeLabel = CATEGORIES.find((category) => category.id === active)?.label ?? "Work";
@@ -192,8 +214,10 @@ export function PortfolioShowcase() {
           const selected = active === category.id;
           const count =
             category.id === "all"
-              ? PROJECTS.length
-              : PROJECTS.filter((project) => project.category === category.id).length;
+              ? PROJECTS.length + FILM_COUNT
+              : category.id === "ai-video"
+                ? FILM_COUNT
+                : PROJECTS.filter((project) => project.category === category.id).length;
 
           return (
             <button
@@ -218,12 +242,18 @@ export function PortfolioShowcase() {
       </div>
 
       <p className="mt-5 text-sm text-text-muted" aria-live="polite">
-        {visibleProjects.length > 0
-          ? `${visibleProjects.length} ${visibleProjects.length === 1 ? "project" : "projects"} in ${activeLabel}`
-          : `${activeLabel}: proof-of-work build in progress`}
+        {showFilmsOnly
+          ? `${FILM_COUNT} films in ${activeLabel}`
+          : visibleProjects.length > 0
+            ? `${visibleProjects.length} ${visibleProjects.length === 1 ? "project" : "projects"} in ${activeLabel}`
+            : `${activeLabel}: proof-of-work build in progress`}
       </p>
 
-      {visibleProjects.length > 0 ? (
+      {showFilmsOnly ? (
+        <div className="mt-10">
+          <FilmReel headless />
+        </div>
+      ) : visibleProjects.length > 0 ? (
         <div className="mt-8 grid gap-7 md:grid-cols-2">
           {visibleProjects.map((project) => (
             <ProjectCard key={project.title} project={project} />
@@ -245,6 +275,15 @@ export function PortfolioShowcase() {
               can open.
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Under "All work" the films sit below the builds with their own heading.
+          On a discipline tab they are either the whole answer (ai-video, handled
+          above) or irrelevant, so they do not render at all. */}
+      {active === "all" && (
+        <div className="mt-20 border-t border-border pt-16 md:mt-24 md:pt-20">
+          <FilmReel />
         </div>
       )}
     </div>

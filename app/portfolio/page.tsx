@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PortfolioShowcase } from "@/components/PortfolioShowcase";
-import { FilmReel } from "@/components/FilmReel";
 
 export const metadata: Metadata = {
   title: "Proof of Work | BigQuiv Digitals",
@@ -16,33 +15,23 @@ export default function PortfolioPage() {
     <div className="px-6 pb-28 pt-28 md:pt-40">
       <header className="mx-auto max-w-[1200px] border-b border-border pb-14 md:pb-20">
         <p className="text-sm font-semibold text-accent">Proof of Work / 04 builds / 06 films</p>
-        <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
-          <h1 className="max-w-[850px] text-5xl font-bold leading-[0.95] tracking-[-0.045em] text-text-primary md:text-7xl lg:text-[5.5rem]">
-            I built these. Open any one of them.
-          </h1>
-          <div className="max-w-[560px] lg:pb-2">
-            <p className="text-lg leading-relaxed text-text-secondary">
-              Four are software that runs: my father&rsquo;s pharmacy, a healthcare tool that checks
-              medication, the system behind a pharmacy&rsquo;s stock, a solar quoting app. Six are
-              films I made on a laptop for brands that never hired me.
-            </p>
-            <p className="mt-4 text-sm leading-relaxed text-text-muted">
-              Nothing here is a mockup and nothing is behind a login. Where I have not built
-              something worth showing you yet, it says so.
-            </p>
-          </div>
-        </div>
+        {/*
+          ⚠ NO EXPLAINER PARAGRAPH HERE. One listed the four builds and the six
+          films, which the cards directly below already show, and a second
+          described the page's own standards. His ruling on both, 2026-09-12:
+          "this is not needed". The headline carries it and the work answers it.
+
+          The cut line also claimed "nothing is behind a login", which stopped
+          being true the moment the PharmaOS card started pointing at its
+          sign-in screen. Do not reinstate that sentence.
+        */}
+        <h1 className="mt-7 max-w-[900px] text-5xl font-bold leading-[0.95] tracking-[-0.045em] text-text-primary md:text-7xl lg:text-[5.5rem]">
+          I built these. Open any one of them.
+        </h1>
       </header>
 
       <section className="mx-auto max-w-[1200px] py-14 md:py-20" aria-label="Portfolio projects">
         <PortfolioShowcase />
-      </section>
-
-      <section
-        className="mx-auto max-w-[1200px] border-t border-border py-16 md:py-20"
-        aria-label="Film reel"
-      >
-        <FilmReel />
       </section>
 
       <section className="mx-auto max-w-[1200px] border-t border-border pt-16 md:pt-20">

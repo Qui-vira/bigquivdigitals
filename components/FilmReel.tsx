@@ -25,10 +25,17 @@ import { FILMS } from "@/lib/films";
  */
 const REEL = ["lagos", "gucci", "burgerking", "lexus", "mcdonalds", "peaceway"] as const;
 
-export function FilmReel() {
+/** Single source for the AI Video Producer tab count in PortfolioShowcase. */
+export const FILM_COUNT = REEL.length;
+
+/**
+ * `headless` drops the heading block. The AI Video Producer filter tab already
+ * names the discipline above the grid, so repeating it there reads as a bug.
+ */
+export function FilmReel({ headless = false }: { headless?: boolean }) {
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-between gap-6">
+      <div className={`flex flex-wrap items-end justify-between gap-6 ${headless ? "hidden" : ""}`}>
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
             AI Video Producer
@@ -49,7 +56,7 @@ export function FilmReel() {
         instead of stretching the short ones to match the tall ones, which is
         what made the earlier fixed-ratio version crop the verticals.
       */}
-      <div className="mt-12 grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className={`grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3 ${headless ? "" : "mt-12"}`}>
         {REEL.map((key) => (
           <ProofFilm key={key} film={FILMS[key]} inGrid />
         ))}
