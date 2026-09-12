@@ -8,9 +8,8 @@ import { SITE_URL } from "@/lib/site";
  * is behind an auth guard and the API returns JSON. Note this is a crawl hint,
  * not a security control — the auth guard is what protects /admin.
  *
- * `/portfolio` and `/pricing` 308-redirect and are deliberately not listed:
- * a redirect is the correct signal and blocking them would stop a crawler ever
- * following it to the live page.
+ * `/pricing` redirects to services. `/portfolio` is a public page and is
+ * included in the sitemap.
  */
 export default function robots(): MetadataRoute.Robots {
   return {

@@ -13,7 +13,7 @@ export const revalidate = 3600;
  *
  *   - /admin/*        excluded, auth-guarded
  *   - /api/*          excluded, not pages
- *   - /portfolio      excluded, 308-redirects to /work — list the destination
+ *   - /portfolio      public proof-of-work index
  *   - /pricing        excluded, 308-redirects
  *   - /greatwork      excluded ON PURPOSE. The page is BUILT and works; it is
  *                     unlisted until launch day because a live priced page kills
@@ -44,6 +44,7 @@ export const revalidate = 3600;
 const STATIC_ROUTES: Array<{ path: string; priority: number; changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"] }> = [
   { path: "", priority: 1.0, changeFrequency: "weekly" },
   { path: "/services", priority: 0.9, changeFrequency: "monthly" },
+  { path: "/portfolio", priority: 0.9, changeFrequency: "monthly" },
   { path: "/work/peaceway", priority: 0.8, changeFrequency: "monthly" },
   { path: "/work/alpha-plays", priority: 0.8, changeFrequency: "monthly" },
   { path: "/work/content-engine", priority: 0.8, changeFrequency: "monthly" },

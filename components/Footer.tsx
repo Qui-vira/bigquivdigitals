@@ -3,7 +3,7 @@ import Link from "next/link";
 const pageLinks = [
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
-  { href: "/#work", label: "Work" },
+  { href: "/portfolio", label: "Work" },
   { href: "/contact", label: "Contact" },
   { href: "/greatwork-waitlist", label: "The Great Work Waitlist" },
   { href: "/aimastery-waitlist", label: "AI Mastery Waitlist" },

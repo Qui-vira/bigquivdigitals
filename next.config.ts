@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
   },
   // 308 so inbound links and the old nav keep working instead of 404ing.
   //
-  // /pricing and /portfolio were removed in the A4 rebuild.
+  // /pricing was removed in the A4 rebuild. /portfolio is a real route again.
   //
   // /waitlist redirected to /greatwork-waitlist from 2026-08-18 to 2026-08-20.
   // The owner killed that on challenge-launch night: two courses share the word
@@ -33,7 +33,6 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/pricing", destination: "/services", permanent: true },
-      { source: "/portfolio", destination: "/", permanent: true },
       // /okx is the bio link for the 60-day challenge. It is spoken aloud in
       // the episodes as "my OKX link in bio", so the path can never change —
       // only where it points.
