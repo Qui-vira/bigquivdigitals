@@ -5,10 +5,16 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowUpRight, CheckCircle2, Clock3 } from "lucide-react";
 
+/**
+ * ⚠ NO "ai-video" HERE ON PURPOSE. The films are not project cards, they are the
+ * reel in components/FilmReel.tsx further down the page, which carries its own
+ * "AI Video Producer" heading. When the films were also a filter tab, selecting
+ * it rendered the empty state — "No borrowed credibility" — directly above six
+ * of his films. Re-adding the tab without moving the films back recreates that.
+ */
 type CategoryId =
   | "all"
   | "ai-engineer"
-  | "ai-video"
   | "automation"
   | "software"
   | "data-engineer"
@@ -35,7 +41,6 @@ interface Project {
 const CATEGORIES: Category[] = [
   { id: "all", label: "All work" },
   { id: "ai-engineer", label: "AI Engineer" },
-  { id: "ai-video", label: "AI Video Producer" },
   { id: "automation", label: "Automation Engineer" },
   { id: "software", label: "Software Engineer" },
   { id: "data-engineer", label: "Data Engineer" },
