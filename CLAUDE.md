@@ -2,14 +2,14 @@
 
 # bigquivdigitals — databases, read this before touching data code
 
-There are **four** databases here. Getting this wrong is the most likely way to break the site.
+There are **three** databases here. Getting this wrong is the most likely way to break the site.
 
 | Where | What it holds | Client |
 |---|---|---|
 | **Neon** (`DATABASE_URL`) | course purchases, waitlist, prospects, drone signups | `lib/pg-client.ts` via `lib/supabase.ts` |
+| **Neon** (`DATABASE_URL`) | the graph, leads, prospecting | `lib/pg-client.ts` via `lib/supabase-outreach.ts` |
 | **Turso** (`TURSO_DATABASE_URL`) | site content: services, case studies, testimonials, stats | `lib/db.ts` (drizzle) |
 | **Supabase — bots** | the `cta_documents` articles, mirrored to Neon | `lib/articles-db.ts` |
-| **Supabase — outreach** (`OUTREACH_SUPABASE_*`) | the graph, leads, prospecting | `lib/supabase-outreach.ts` |
 
 ## ⚠ `lib/supabase.ts` does not talk to Supabase
 
@@ -25,8 +25,8 @@ surface fails at once — and because a blocked read and an empty table look ide
 `data ?? []`, it fails silently.
 
 `lib/pg-client.ts` implements only the query shapes those files use (`eq neq is not ilike in
-order limit single maybeSingle`, and `insert update upsert delete`). **If you need an operator it
-does not have, add it there** — it throws rather than silently doing the wrong thing.
+gt gte lt lte order limit single maybeSingle`, and `insert update upsert delete`). **If you need an
+operator it does not have, add it there** — it throws rather than silently doing the wrong thing.
 
 **Rollback is one file:** restore `lib/supabase.ts` from git.
 
@@ -37,11 +37,32 @@ course access on a repeat webhook). A real test purchase is still outstanding.
 ⚠ **Manual data fixes must be applied to BOTH Neon and Supabase** until Supabase is retired. Neon
 is what the site reads; Supabase still holds the legacy copy.
 
-## Two environment traps
+## ⚠ `lib/supabase-outreach.ts` does not talk to Supabase either
 
-**The local build fails and it is not your code.** `OUTREACH_SUPABASE_ANON_KEY` in `.env.local` is
-a 2-character stub, so `/admin/outreach` dies at prerender. Production has the real value. Build
-with `OUTREACH_SUPABASE_ANON_KEY="stub" npm run build`.
+**Since 2026-09-08 it returns the same Neon-backed client.** Same reasoning as above: the name and
+the `getOutreachSupabase()` / `getOutreachSupabaseAdmin()` exports were kept so the 11 call sites,
+the `/admin/graph` pages, `/admin/outreach`, and `app/admin/actions/graph.ts`, did not have to
+change. 18 objects and 4,363 rows were copied and row-count verified.
+
+Postgres does not split credentials by role the way Supabase's anon and service keys did, so both
+exports reach the same connection. **The admin/anon distinction survives only in the names.**
+
+⚠ **Two files called the Supabase REST endpoint directly with `fetch`**, so they do not appear in a
+grep for `getOutreachSupabase`: `app/admin/actions/outreach.ts` and `app/api/telegram/webhook/route.ts`.
+Both approve the same rows. Had either been left behind, a Telegram approval would have written to
+Supabase while `/admin/outreach` read Neon, and the draft would sit pending forever.
+
+⚠ **The repo's `scripts/*_schema.sql` files are OLDER than the tables were.** The first copy silently
+dropped 16 columns, 13 of them on `graph_leads` including email, full_name, website and raw_json.
+**Do not trust those files as the schema of record.**
+
+**Rollback is two files:** restore `lib/supabase-outreach.ts` and `lib/supabase-outreach-admin.ts`
+from git. Nothing was deleted from Supabase.
+
+⛔ **The migration is not finished.** `DATABASE_URL` still needs setting on the `graph-worker`
+Railway service, which is blocked on `railway login`. Until then the worker still writes to Supabase.
+
+## One environment trap
 
 **`vercel whoami` reports `Logged out` while valid credentials exist.** The CLI does not read its
 own store when invoked from Git Bash. Read the token from
