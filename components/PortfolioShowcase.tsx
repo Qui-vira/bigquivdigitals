@@ -48,9 +48,14 @@ const CATEGORIES: Category[] = [
 ];
 
 /**
- * Five projects, selected by two rules: the work is publicly checkable and a
- * buyer can understand what they would be paying for. This intentionally does
- * not turn every repository or experiment into a portfolio card.
+ * Four builds. The films are not here, they are the reel in FilmReel.tsx.
+ *
+ * WRITE THESE IN HIS VOICE, FIRST PERSON. They shipped in third-person brochure
+ * voice ("Agents handle intake", "The operations layer behind") and his reaction
+ * on 2026-09-12 was that the page read like "someone is advising me or someone
+ * wrote it for me". A buyer is being shown work by the person who made it, so
+ * the person has to be in the sentence. Short sentences, say what he did, and
+ * own the unpaid and family parts rather than dressing them up.
  */
 const PROJECTS: Project[] = [
   {
@@ -58,8 +63,8 @@ const PROJECTS: Project[] = [
     category: "ai-engineer",
     eyebrow: "Multi-agent healthcare",
     description:
-      "Agents handle intake, medication checks and pharmacy availability. A licensed person approves every output, and that gate lives in the state machine—not in a prompt.",
-    proof: "Public Python repository. The approval workflow is open to inspect.",
+      "I built a set of agents that take a patient through intake, check the medication and find a pharmacy that actually has it. A licensed person signs off on every answer, and I put that gate in the code itself rather than in a prompt, so it cannot be talked around.",
+    proof: "The Python is public. Read the approval step yourself.",
     image: "/proof/portfolio/medband-agents.png",
     imageAlt:
       "Illustration of connected AI agents passing healthcare work through a human approval checkpoint.",
@@ -71,21 +76,21 @@ const PROJECTS: Project[] = [
     category: "automation",
     eyebrow: "Pharmacy commerce and ordering",
     description:
-      "A live pharmacy platform with customer, staff and supplier portals, medicine requests, medication reminders, and a Telegram bot that carries an order from search to an itemised confirmation.",
-    proof: "Live website, public code and a documented ₦1,055 test order.",
+      "My father's pharmacy had no website, so I built him one. Customers, staff and suppliers each get their own way in, people can request medicine and set reminders, and a Telegram bot carries an order from the first search to an itemised confirmation.",
+    proof: "The site is live, the code is public, and there is a real ₦1,055 order on the record.",
     image: "/proof/peaceway/00-homepage-hero.webp",
     imageAlt:
       "Peaceway Online homepage with routes to order on Telegram or check medicine availability.",
     href: "/work/peaceway",
-    disclosure: "Built for my father's pharmacy and never billed as paid client work.",
+    disclosure: "My father's pharmacy. I never billed him for it.",
   },
   {
     title: "PharmaOS",
     category: "software",
     eyebrow: "Pharmacy operations platform",
     description:
-      "The operations layer behind pharmacy inventory and ordering: a Python backend paired with a Next.js dashboard, separated so the customer experience never has to expose internal pharmacy work.",
-    proof: "Frontend and backend are both public and separately inspectable.",
+      "The part a customer never sees. Stock, ordering and the daily running of a pharmacy, as a Python backend with a Next.js dashboard on top. I kept the two apart so the shop's internal work can never leak out to the people buying.",
+    proof: "Both halves are public. You can read them separately.",
     image: "/proof/portfolio/pharmaos.png",
     imageAlt:
       "Illustration of a pharmacy operations dashboard connected to inventory and ordering services.",
@@ -97,8 +102,8 @@ const PROJECTS: Project[] = [
     category: "software",
     eyebrow: "Solar project management",
     description:
-      "A solar workflow that moves from site-readiness photos and appliance load calculations to quote building and pro-forma invoices in one application.",
-    proof: "Public TypeScript repository with the complete workflow available to inspect.",
+      "Everything between a solar site visit and a signed quote, in one place. Photos of the site, the load each appliance draws, then the quote and the pro-forma invoice come out the other end.",
+    proof: "Public TypeScript. The whole workflow is there to read.",
     image: "/proof/portfolio/altara-energy.png",
     imageAlt:
       "Illustration of a solar installation workflow with panels, project data and a generated quote.",
@@ -232,12 +237,12 @@ export function PortfolioShowcase() {
               Coming soon
             </p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
-              No borrowed credibility.
+              I have not built one of these yet.
             </h2>
             <p className="mt-5 text-base leading-relaxed text-text-secondary md:text-lg">
-              I can do this work, but this page only publishes finished work with a public link or a
-              result you can inspect. The first qualifying {activeLabel.toLowerCase()} case study
-              will appear here when that proof exists.
+              I can do the work. I have not shipped a {activeLabel.toLowerCase()} project I would
+              put in front of you, so there is nothing here. When I have, it goes up with a link you
+              can open.
             </p>
           </div>
         </div>

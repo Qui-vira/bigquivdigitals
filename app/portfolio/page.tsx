@@ -7,7 +7,7 @@ import { FilmReel } from "@/components/FilmReel";
 export const metadata: Metadata = {
   title: "Proof of Work | BigQuiv Digitals",
   description:
-    "Four public, checkable engineering projects and six films that play in the page. Empty disciplines stay marked coming soon until the proof exists.",
+    "Four things I built and six films I made. Every one has a public link you can open, and the films play here without leaving the page.",
   alternates: { canonical: "/portfolio" },
 };
 
@@ -18,17 +18,17 @@ export default function PortfolioPage() {
         <p className="text-sm font-semibold text-accent">Proof of Work / 04 builds / 06 films</p>
         <div className="mt-7 grid gap-8 lg:grid-cols-[1fr_0.72fr] lg:items-end">
           <h1 className="max-w-[850px] text-5xl font-bold leading-[0.95] tracking-[-0.045em] text-text-primary md:text-7xl lg:text-[5.5rem]">
-            Work a buyer can inspect before the call.
+            I built these. Open any one of them.
           </h1>
           <div className="max-w-[560px] lg:pb-2">
             <p className="text-lg leading-relaxed text-text-secondary">
-              Four builds selected for public proof and commercial usefulness, not because they
-              are my favourites, and six films you can watch without leaving this page. If a
-              discipline has no qualifying case yet, it says coming soon.
+              Four are software that runs: my father&rsquo;s pharmacy, a healthcare tool that checks
+              medication, the system behind a pharmacy&rsquo;s stock, a solar quoting app. Six are
+              films I made on a laptop for brands that never hired me.
             </p>
             <p className="mt-4 text-sm leading-relaxed text-text-muted">
-              Spec work and family work are labeled plainly. Nothing here is presented as paid
-              client work unless it was.
+              Nothing here is a mockup and nothing is behind a login. Where I have not built
+              something worth showing you yet, it says so.
             </p>
           </div>
         </div>
