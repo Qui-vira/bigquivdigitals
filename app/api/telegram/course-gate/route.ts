@@ -208,8 +208,39 @@ async function handleChatMember(update: Record<string, unknown>) {
   }
 }
 
+/**
+ * ⚠ THIS ROUTE HAD NO AUTHENTICATION AT ALL UNTIL 2026-09-12, and it was live.
+ *
+ * Everything it acts on comes from the request body: the Telegram user id, the
+ * chat id and the message text. With no check, anyone on the internet could
+ *
+ *   1. POST a buyer's email and have their paid seat re-linked to their own
+ *      Telegram id, sweep-verified and unbanned, locking the real buyer out via
+ *      the duplicate-claim branch,
+ *   2. use the attacker-chosen chat id to read the reply, turning
+ *      "No purchase found" vs "Verified!" into a yes/no oracle on whether any
+ *      given email belongs to a paying student,
+ *   3. forge a chat_member update and get real students banned from the channel.
+ *
+ * `proxy.ts` only matches /admin/:path*, so nothing upstream covered this.
+ *
+ * 🛑 THE CHECK IS UNCONDITIONAL ON PURPOSE. Do not rewrite it as
+ * `if (SECRET && header !== SECRET)`. That is the shape the outreach webhook
+ * used, and because its secret was never set in production the guard silently
+ * did nothing. A missing secret must fail closed, never open.
+ *
+ * The value is registered with Telegram via setWebhook's `secret_token`, so
+ * Telegram sends it on every delivery. If you rotate it, set it on BOTH sides:
+ * call setWebhook again first, then update the env var, or the bot goes deaf.
+ */
+const GATE_SECRET = process.env.COURSE_GATE_WEBHOOK_SECRET || "";
+
 export async function POST(req: NextRequest) {
   try {
+    if (!GATE_SECRET || req.headers.get("x-telegram-bot-api-secret-token") !== GATE_SECRET) {
+      return NextResponse.json({ ok: false }, { status: 403 });
+    }
+
     const body = await req.json();
 
     // DM to bot

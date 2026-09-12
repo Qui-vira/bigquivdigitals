@@ -54,7 +54,10 @@ async function editMessage(chatId: number, messageId: number, text: string) {
 
 export async function POST(req: NextRequest) {
   const secret = req.headers.get("x-telegram-bot-api-secret-token");
-  if (WEBHOOK_SECRET && secret !== WEBHOOK_SECRET) {
+  // Unconditional: an unset secret must reject, not wave everything through.
+  // This read `if (WEBHOOK_SECRET && ...)` until 2026-09-12, and the secret was
+  // never set in production, so the guard did nothing at all.
+  if (!WEBHOOK_SECRET || secret !== WEBHOOK_SECRET) {
     return NextResponse.json({ ok: false }, { status: 403 });
   }
 
