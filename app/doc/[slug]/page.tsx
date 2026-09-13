@@ -39,14 +39,15 @@ export default async function DocPage({
 }) {
   const { slug } = await params;
 
-  // Supabase first, Neon mirror if it will not answer. See lib/articles-db.ts:
-  // this page used to 404 whenever Supabase was rate limited, which made an
-  // outage look exactly like a deleted article.
+  // Neon, the source of truth since 2026-09-13. See lib/articles-db.ts.
+  // This page used to 404 whenever the database would not answer, which made an
+  // outage look exactly like a deleted article — hence `source`: a clean miss
+  // 404s, a failed read does not.
   const { article, source } = await getArticle(slug);
 
   if (!article) notFound();
-  if (source === "mirror") {
-    console.warn(`[doc] "${slug}" served from the Neon mirror`);
+  if (source === "none") {
+    console.error(`[doc] read of "${slug}" failed — this is an outage, not a missing article`);
   }
 
   const bodyHtml = mdToHtml(article.content);

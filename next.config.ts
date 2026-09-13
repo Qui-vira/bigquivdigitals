@@ -14,8 +14,12 @@ const nextConfig: NextConfig = {
     // Explicit allowlist. This was previously hostname "**", which let the
     // image optimizer fetch and resize from any host on the internet and
     // turned the deployment into an open image proxy billed to this account.
+    //
+    // The Supabase host was removed 2026-09-13. The 12 article assets that
+    // lived there (11 in the Lexus workflow, 1 in the comic template) were
+    // copied to Vercel Blob and the article bodies in Neon rewritten to point
+    // at the new URLs, so nothing on the site depends on Supabase storage.
     remotePatterns: [
-      { protocol: "https", hostname: "bnoqtghdptobbtrssmdj.supabase.co" },
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
       { protocol: "https", hostname: "api.qrserver.com" },
       { protocol: "https", hostname: "bigquivdigitals.com" },

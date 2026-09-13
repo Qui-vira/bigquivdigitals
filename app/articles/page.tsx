@@ -17,7 +17,7 @@ export default async function ArticlesPage() {
   const { articles, source } = await listArticles();
 
   if (source === "none") {
-    console.error("[articles] BOTH Supabase and the Neon mirror failed");
+    console.error("[articles] Neon read failed — the list is empty because of an outage");
   }
 
   return <ArticlesClient articles={articles} />;

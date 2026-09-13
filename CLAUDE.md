@@ -2,14 +2,34 @@
 
 # bigquivdigitals — databases, read this before touching data code
 
-There are **three** databases here. Getting this wrong is the most likely way to break the site.
+There are **two** databases here. Getting this wrong is the most likely way to break the site.
 
 | Where | What it holds | Client |
 |---|---|---|
 | **Neon** (`DATABASE_URL`) | course purchases, waitlist, prospects, drone signups | `lib/pg-client.ts` via `lib/supabase.ts` |
 | **Neon** (`DATABASE_URL`) | the graph, leads, prospecting | `lib/pg-client.ts` via `lib/supabase-outreach.ts` |
+| **Neon** (`DATABASE_URL`) | the `cta_documents` articles | `lib/articles-db.ts` |
 | **Turso** (`TURSO_DATABASE_URL`) | site content: services, case studies, testimonials, stats | `lib/db.ts` (drizzle) |
-| **Supabase — bots** | the `cta_documents` articles, mirrored to Neon | `lib/articles-db.ts` |
+
+## ✅ Supabase is gone
+
+**Owner's decision, 2026-09-13: "i am not using supabase again".** Nothing in this repo connects
+to Supabase any more, and `@supabase/supabase-js` has been removed from `package.json`.
+
+The three files that still carry the word are named that way on purpose, so their call sites did
+not have to be rewritten: `lib/supabase.ts`, `lib/supabase-outreach.ts` and
+`lib/supabase-outreach-admin.ts` all return the Neon client. **The name is a scar, not a
+dependency.**
+
+⚠ **`cta_documents` last published on 2026-05-19.** The writer that produced those articles lives
+outside this repo and wrote to Supabase. It has been silent about four months, which is why the
+cutover was safe. **If it is ever restarted, point it at Neon** — otherwise it writes somewhere the
+site no longer reads and the new article never appears, silently, because an unseen article and no
+article look identical from here.
+
+⚠ **12 article assets moved to Vercel Blob** (11 in the Lexus workflow, 1 in the comic template).
+The bodies in Neon were rewritten to the new URLs and the Supabase host was dropped from
+`next.config.ts`. **Supabase storage can now be deleted without breaking a page.**
 
 ## ⚠ `lib/supabase.ts` does not talk to Supabase
 
@@ -59,8 +79,9 @@ dropped 16 columns, 13 of them on `graph_leads` including email, full_name, webs
 **Rollback is two files:** restore `lib/supabase-outreach.ts` and `lib/supabase-outreach-admin.ts`
 from git. Nothing was deleted from Supabase.
 
-⛔ **The migration is not finished.** `DATABASE_URL` still needs setting on the `graph-worker`
-Railway service, which is blocked on `railway login`. Until then the worker still writes to Supabase.
+⛔ **One piece is outside this repo.** The `graph-worker` Railway service still needs
+`DATABASE_URL` set, which needs `railway login` and his browser session. Until then that worker
+writes to Supabase while the site reads Neon, so graph rows it produces will not appear.
 
 ## One environment trap
 

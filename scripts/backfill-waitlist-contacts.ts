@@ -13,22 +13,24 @@
  * Idempotent: Resend treats a repeat email as an update, so re-running is safe
  * and is the intended way to catch anything the live signup path missed.
  *
+ * Neon since 2026-09-13, when Supabase was dropped entirely.
+ *
  * Run: npx tsx --env-file=.env.local scripts/backfill-waitlist-contacts.ts
  *      npx tsx --env-file=.env.local scripts/backfill-waitlist-contacts.ts --dry
  */
-import { createClient } from "@supabase/supabase-js";
+import { neon } from "@neondatabase/serverless";
 import { Resend } from "resend";
 
 const DRY = process.argv.includes("--dry");
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Neon since 2026-09-13. Both tables moved off Supabase; the owner is no
+// longer using Supabase at all.
+const DATABASE_URL = process.env.DATABASE_URL;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const SEGMENT_ID = process.env.RESEND_WAITLIST_SEGMENT_ID;
 
 for (const [name, value] of Object.entries({
-  SUPABASE_URL,
-  SUPABASE_SERVICE_ROLE_KEY: SUPABASE_KEY,
+  DATABASE_URL,
   RESEND_API_KEY,
   RESEND_WAITLIST_SEGMENT_ID: SEGMENT_ID,
 })) {
@@ -38,7 +40,7 @@ for (const [name, value] of Object.entries({
   }
 }
 
-const supabase = createClient(SUPABASE_URL!, SUPABASE_KEY!);
+const sql = neon(DATABASE_URL!);
 const resend = new Resend(RESEND_API_KEY!);
 
 type Row = { email: string; source: "waitlist" | "purchase"; firstName?: string };
@@ -46,23 +48,19 @@ type Row = { email: string; source: "waitlist" | "purchase"; firstName?: string 
 async function collect(): Promise<Row[]> {
   const rows = new Map<string, Row>();
 
-  const { data: waitlist, error: wErr } = await supabase
-    .from("course_waitlist")
-    .select("email");
-  if (wErr) throw new Error(`course_waitlist read failed: ${wErr.message}`);
+  // A thrown query propagates deliberately. This script pushes people into a
+  // mailing segment, so a half-read list is worse than no run at all.
+  const waitlist = await sql`select email from course_waitlist`;
 
-  for (const r of waitlist ?? []) {
+  for (const r of waitlist) {
     const email = String(r.email || "").trim().toLowerCase();
     if (email) rows.set(email, { email, source: "waitlist" });
   }
 
-  const { data: buyers, error: bErr } = await supabase
-    .from("course_purchases")
-    .select("email, first_name, status")
-    .eq("status", "confirmed");
-  if (bErr) throw new Error(`course_purchases read failed: ${bErr.message}`);
+  const buyers = await sql`
+    select email, first_name from course_purchases where status = 'confirmed'`;
 
-  for (const r of buyers ?? []) {
+  for (const r of buyers) {
     const email = String(r.email || "").trim().toLowerCase();
     if (!email) continue;
     // Someone on both lists stays a waitlist contact — the softer of the two.

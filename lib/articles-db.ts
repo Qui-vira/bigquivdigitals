@@ -1,53 +1,46 @@
-import { createClient } from "@supabase/supabase-js";
 import { neon } from "@neondatabase/serverless";
 
 /**
- * Articles for /articles, /doc/[slug] and the sitemap.
+ * Articles for /articles, /doc/[slug] and the sitemap. Neon only.
  *
- * ── WHY THERE ARE TWO DATABASES ─────────────────────────────────────────────
+ * ⚠ SUPABASE IS GONE FROM THIS FILE. Owner's decision, 2026-09-13: "i am not
+ * using supabase again". This was the last thing in the repo still reading it.
  *
- * Supabase project `bnoqtghdptobbtrssmdj` (the bots project) is the SOURCE OF
- * TRUTH. Whatever publishes these articles writes there and lives outside this
- * repo, so this file must never stop reading it or new articles would silently
- * never appear.
+ * Until now Supabase project `bnoqtghdptobbtrssmdj` was the source of truth and
+ * Neon was a read-only mirror kept fresh opportunistically. **Neon is now the
+ * source of truth.** Verified before the switch: 25 articles on both sides,
+ * identical newest timestamp, no slug present on one side and missing from the
+ * other. Nothing was lost in the cutover.
  *
- * Neon is a READ-ONLY MIRROR, used only when Supabase will not answer.
+ * ⚠ NOTHING HAS PUBLISHED SINCE 2026-05-19. The writer that produced these
+ * articles lives outside this repo and wrote to Supabase. It has been silent for
+ * roughly four months, which is why cutting the read over is safe today. **If
+ * that publisher is ever restarted it must be pointed at Neon**, or it will
+ * write somewhere this site no longer reads and the new article will never
+ * appear — with no error, because an unseen article and no article look the
+ * same from here.
  *
- * On 2026-08-14 Supabase started returning:
+ * ── WHY THE ERROR HANDLING LOOKS PARANOID ───────────────────────────────────
  *
- *   HTTP 402 — Service for this project is restricted due to the following
- *   violations: exceed_egress_quota
+ * On 2026-08-14 Supabase began returning HTTP 402 (egress quota, burned by
+ * unrelated trading and scraper tables on the same org). Every article page
+ * still returned HTTP 200 with an empty body, because the old code did
+ * `const { data } = await ...` then `data ?? []`, discarding the error. All 25
+ * articles went dark for days and nothing alerted, because a silent empty list
+ * is indistinguishable from "there are no articles".
  *
- * The quota is ORG level, so both Supabase projects fail together, and it was
- * burned by trading and scraper tables unrelated to the website. Every article
- * page kept returning HTTP 200 with an empty body, because the old code did
- * `const { data } = await ...` and then `data ?? []`, discarding the error. All
- * 25 articles — including the 30 Free Ads series, which are lead magnets with
- * CTA keywords attached — were dark, and nothing alerted, because a silent
- * empty list is indistinguishable from "there are no articles".
+ * 🛑 SO: A FAILED READ IS NEVER QUIETLY TURNED INTO AN EMPTY LIST. It is logged
+ * and reported through `source`, so a caller can tell "nothing published" apart
+ * from "could not reach the database". Keep that property in any rewrite.
  *
- * Two rules follow, and both matter more than the fallback itself:
- *
- *   1. A failed read is never quietly turned into an empty list. It is logged
- *      as an error and reported through `source`, so a caller can tell
- *      "nothing published" apart from "could not reach the database".
- *   2. The mirror is refreshed opportunistically from live Supabase reads, so
- *      it cannot rot into serving year-old copies.
- *
- * To force a full refresh: node scripts/mirror-articles-to-neon.mjs
+ * ⚠ `access_code` IS DELIBERATELY NOT SELECTED. `getArticle` used `select("*")`,
+ * which pulled that column into a page component for all 25 articles even though
+ * nothing renders it. Flagged in the 2026-09-12 security audit. Ask for columns
+ * by name; do not reintroduce a star select.
  */
 
-const SUPABASE_URL = "https://bnoqtghdptobbtrssmdj.supabase.co";
-/** Anon key. Public by design, and already in the client bundle. */
-const SUPABASE_ANON =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJub3F0Z2hkcHRvYmJ0cnNzbWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1OTYwMjQsImV4cCI6MjA4OTE3MjAyNH0.-Jl2_r83rEmKiyWAJOY5MCqPIiateTYYWlcW8bvYTLY";
-
-export const articlesDb = createClient(SUPABASE_URL, SUPABASE_ANON);
-
-/** Null when DATABASE_URL is absent, so a missing mirror degrades rather than throws. */
-const mirror = process.env.DATABASE_URL
-  ? neon(process.env.DATABASE_URL)
-  : null;
+/** Null when DATABASE_URL is absent, so a missing database degrades rather than throws. */
+const sql = process.env.DATABASE_URL ? neon(process.env.DATABASE_URL) : null;
 
 export type ArticleSummary = {
   slug: string;
@@ -60,142 +53,58 @@ export type ArticleSummary = {
 
 export type Article = ArticleSummary & {
   content: string;
-  access_code: string | null;
 };
 
-/** Where the data actually came from. `none` means BOTH stores failed. */
-export type Source = "supabase" | "mirror" | "none";
-
-const LIST_COLUMNS = "slug, title, cta_keyword, video_title, views, created_at";
-
-/* ──────────────────────────────────────────────────────────────────────────
-   Listing
-   ────────────────────────────────────────────────────────────────────────── */
+/**
+ * Where the data came from. `none` means the read failed.
+ *
+ * `"mirror"` is kept as the success value rather than renamed to `"neon"` so
+ * the two call sites that branch on it keep compiling and keep meaning the same
+ * thing: you got articles. Only `"none"` signals trouble.
+ */
+export type Source = "mirror" | "none";
 
 export async function listArticles(): Promise<{
   articles: ArticleSummary[];
   source: Source;
 }> {
-  try {
-    const { data, error } = await articlesDb
-      .from("cta_documents")
-      .select(LIST_COLUMNS)
-      .order("created_at", { ascending: false });
-
-    if (!error && data) {
-      // Metadata only — the list query does not fetch `content`, so this
-      // refreshes titles and view counts without touching article bodies.
-      void refreshMirrorMetadata(data as ArticleSummary[]);
-      return { articles: data as ArticleSummary[], source: "supabase" };
-    }
-    console.error(
-      `[articles] supabase list failed: ${error?.message ?? "no data"} — falling back to mirror`
-    );
-  } catch (e) {
-    console.error("[articles] supabase list threw, falling back to mirror:", e);
-  }
-
-  if (!mirror) {
-    console.error("[articles] NO MIRROR: DATABASE_URL is not set. Serving nothing.");
+  if (!sql) {
+    console.error("[articles] DATABASE_URL is not set. Serving nothing.");
     return { articles: [], source: "none" };
   }
 
   try {
-    const rows = await mirror`
+    const rows = await sql`
       select slug, title, cta_keyword, video_title, views, created_at
       from cta_documents
       order by created_at desc`;
-    console.warn(`[articles] served ${rows.length} articles from the Neon mirror`);
     return { articles: rows as ArticleSummary[], source: "mirror" };
   } catch (e) {
-    console.error("[articles] MIRROR ALSO FAILED:", e);
+    // Logged, never swallowed into an empty list. See the note above.
+    console.error("[articles] NEON LIST FAILED:", e);
     return { articles: [], source: "none" };
   }
 }
-
-/* ──────────────────────────────────────────────────────────────────────────
-   Single article
-   ────────────────────────────────────────────────────────────────────────── */
 
 export async function getArticle(
   slug: string
 ): Promise<{ article: Article | null; source: Source }> {
-  try {
-    const { data, error } = await articlesDb
-      .from("cta_documents")
-      .select("*")
-      .eq("slug", slug)
-      .maybeSingle();
-
-    if (!error) {
-      // A clean "no such slug" is a real answer, not a failure. Return it
-      // rather than falling through, so a deleted article 404s instead of
-      // being resurrected from the mirror forever.
-      if (data) void refreshMirrorArticle(data as Article);
-      return { article: (data as Article) ?? null, source: "supabase" };
-    }
-    console.error(
-      `[articles] supabase read of "${slug}" failed: ${error.message} — falling back to mirror`
-    );
-  } catch (e) {
-    console.error(`[articles] supabase read of "${slug}" threw:`, e);
-  }
-
-  if (!mirror) {
-    console.error("[articles] NO MIRROR: DATABASE_URL is not set.");
+  if (!sql) {
+    console.error("[articles] DATABASE_URL is not set.");
     return { article: null, source: "none" };
   }
 
   try {
-    const rows = await mirror`select * from cta_documents where slug = ${slug} limit 1`;
-    if (rows.length) console.warn(`[articles] served "${slug}" from the Neon mirror`);
+    const rows = await sql`
+      select slug, title, content, cta_keyword, video_title, views, created_at
+      from cta_documents
+      where slug = ${slug}
+      limit 1`;
+    // A clean miss is a real answer: the caller 404s. Only a thrown query is a
+    // failure, and that is the one case that must not look like "no such slug".
     return { article: (rows[0] as Article) ?? null, source: "mirror" };
   } catch (e) {
-    console.error(`[articles] MIRROR ALSO FAILED for "${slug}":`, e);
+    console.error(`[articles] NEON READ FAILED for "${slug}":`, e);
     return { article: null, source: "none" };
-  }
-}
-
-/* ──────────────────────────────────────────────────────────────────────────
-   Mirror upkeep. Never throws, never blocks a response.
-   ────────────────────────────────────────────────────────────────────────── */
-
-async function refreshMirrorMetadata(rows: ArticleSummary[]) {
-  if (!mirror || rows.length === 0) return;
-  try {
-    for (const r of rows) {
-      await mirror`
-        update cta_documents
-        set title = ${r.title},
-            cta_keyword = ${r.cta_keyword},
-            video_title = ${r.video_title},
-            views = ${r.views}
-        where slug = ${r.slug}`;
-    }
-  } catch {
-    // A stale mirror is survivable; a request that fails because the mirror
-    // could not be updated is not.
-  }
-}
-
-async function refreshMirrorArticle(a: Article) {
-  if (!mirror) return;
-  try {
-    await mirror`
-      insert into cta_documents
-        (slug, title, content, cta_keyword, video_title, views, created_at, updated_at, access_code)
-      values
-        (${a.slug}, ${a.title}, ${a.content}, ${a.cta_keyword}, ${a.video_title},
-         ${a.views}, ${a.created_at}, now(), ${a.access_code})
-      on conflict (slug) do update set
-        title = excluded.title,
-        content = excluded.content,
-        cta_keyword = excluded.cta_keyword,
-        video_title = excluded.video_title,
-        views = excluded.views,
-        updated_at = excluded.updated_at,
-        access_code = excluded.access_code`;
-  } catch {
-    /* see above */
   }
 }
