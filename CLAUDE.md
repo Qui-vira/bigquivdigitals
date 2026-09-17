@@ -96,6 +96,44 @@ The project is git-connected (`Qui-vira/bigquivdigitals`, Vercel project **websi
 push — do not `vercel --prod` from local files.** A direct deploy works once and then silently
 reverts the next time anything rebuilds from git.
 
+## Adding a case study to /work
+
+Four builds live at `/work/<slug>`: peaceway, alpha-plays, content-engine and
+nigeria-business-costs. **Project data is hardcoded TypeScript, not the database.** The
+`case_studies` table in Turso exists but nothing on these pages reads it.
+
+Adding one touches six places. Miss any and the page is live but unreachable:
+
+| File | What to add |
+|---|---|
+| `app/work/<slug>/page.mdx` | The case study. `export const metadata`, an accent kicker `<p>`, then `# headline` |
+| `components/HomeClient.tsx` | An entry in `CASE_STUDIES` — the home grid |
+| `components/PortfolioShowcase.tsx` | An entry in `PROJECTS` — the `/portfolio` grid, with a `category` |
+| `app/sitemap.ts` | The route, priority 0.8 |
+| `app/not-found.tsx` | The route, in the recovery link list |
+| `app/portfolio/page.tsx` | The "NN builds" count in the header |
+
+**`mdx-components.tsx` styles every heading, paragraph and list globally**, so an MDX file
+inherits the whole design system and needs no imports and no CSS. `app/work/layout.tsx`
+supplies the back link, the 760px column and the closing CTA.
+
+**`<Evidence>` is available in every MDX file without an import.** It is the unit the site
+argues from: a claim and the screenshot proving it, rendered together and never separable.
+It takes `src`, `alt`, `claim`, `tier` and an optional `href`. **Do not add a variant that
+renders a claim without its image.** Where a caption line would otherwise sit under an
+image as a paragraph, make it the figure's `claim` instead — otherwise the same sentence
+appears twice.
+
+Screenshots go in `public/proof/<slug>/NN-name.webp`, numbered, real captures of the real
+thing. ⚠ **Crop application chrome out before saving.** A window capture of Excel carries
+the owner's account name in the title bar, and a Document Recovery pane will happily list
+unrelated private filenames.
+
+**A project can answer more than one discipline tab.** `PortfolioShowcase` has an optional
+`alsoIn` array beside `category`. NBCI is both data engineering and data analysis and
+appears under both; without it the Data Engineer tab rendered "I have not shipped one of
+these yet", which had stopped being true.
+
 ## Not built yet
 
 **`/course`** does not exist. Only `app/api/course-access` (the Telegram gate for existing buyers).
