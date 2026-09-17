@@ -1,166 +1,485 @@
 export const metadata = {
   title: "Nigeria Business Cost Intelligence | BigQuiv Digitals",
   description:
-    "Eight official government datasets, one honest picture of what it costs to run a business in Nigeria. A PostgreSQL model, an Excel workbook and a Power BI report, with every number checked.",
+    "Eight scattered government sources brought together to show how major external business costs are changing across Nigeria, where they differ, and which ones a business may need to watch.",
 };
 
 <p className="text-xs font-medium uppercase tracking-widest text-accent">Data analysis and data engineering</p>
 
 # Nobody publishes what it costs to run a business in Nigeria. So I built it.
 
-Eight government agencies publish what things cost here. None of them publish it together. I did, and then spent most of the project making sure it was honest.
+Running a business gets more expensive, but knowing exactly **what changed, where, and by how much** is surprisingly difficult.
+
+The data exists.
+
+Diesel. Petrol. Cooking gas. Transport fares. Food. Electricity. Inflation.
+
+But it is scattered across eight different government sources, published in different formats, at different times, and at different levels of geography.
+
+So I brought it together.
+
+Not to calculate the total cost of running a business in Nigeria. The available data cannot honestly do that.
+
+The goal was simpler:
+
+**Show how major external business costs are changing, where they differ, and which ones a business may need to pay attention to.**
 
 ## The problem
 
-Your costs went up. Which ones, and by how much?
+Your costs went up.
 
-Almost no business in Nigeria can answer that. The prices are public. Diesel, petrol, cooking gas, bus fares, food, electricity, inflation. But eight different agencies publish them, in eight different formats, on eight different dates, and nobody puts them in one place.
+But which ones?
 
-So you feel the squeeze without ever seeing where it came from. Diesel more than doubled in eight months. Most owners never saw that number.
+And by how much?
 
-## What it does
+Maybe diesel became more expensive. Maybe transport did. Maybe electricity, petrol, food or cooking gas moved enough to affect what you spend every month.
 
-It puts all eight in one place and answers three questions.
+The problem is that seeing those changes together is difficult.
+
+The numbers are public, but they live in separate reports from different agencies, using different structures and release schedules.
+
+That leaves business owners feeling the increase without having a clear picture of where it came from.
+
+One example is diesel.
+
+From its low point in September 2025 to May 2026, the median increase across Nigeria's 36 states and the Federal Capital Territory was **158.2%**.
+
+That is the kind of change a business should be able to see clearly.
+
+## So I built one place to see it
+
+Nigeria Business Cost Intelligence brings these datasets together and tries to answer three practical questions:
 
 **What went up, and by how much?**
 
-**Does it depend on where you are?**
+**Does the answer change depending on where you are?**
 
-**Should a business like mine care?**
+**Is this a cost a business like mine should pay attention to?**
 
-Nine costs, month by month, across all 36 states and the Federal Capital Territory.
+The project tracks nine major cost categories over time across all 36 states and the Federal Capital Territory where state-level data actually exists.
 
 <Evidence
   src="/proof/nbci/05-excel-what-is-changing.webp"
   alt="The first sheet of the Excel workbook. Headline reads What is changing in the costs businesses pay, with five figures across the top: diesel trough to latest +158.2%, petrol +65.3%, 37 jurisdictions covered, 13 costs tracked, 110 validation checks. Below it a block headed READ THIS FIRST explains what the workbook does and does not measure."
-  claim="The workbook opens with what it measures and what it does not, before a single chart."
+  claim="The workbook tells you what it measures and what it does not before showing a single chart."
   tier="Personal"
 />
 
-## Where the numbers come from
+But putting the data together turned out to be the easy part.
 
-The obvious way to build this is to download all eight, line them up by state and month, and put a dashboard on top. It looks convincing and part of it is invented, because **three of the eight never publish state-by-state figures at all.** Food comes by region. Electricity comes by supply company. The exchange rate is one national number. Forcing those into a table with a row per state means inventing the gaps.
+The harder part was making sure the result did not quietly say things the original data never said.
 
-So I only combined the figures that genuinely match, left the rest at the level it was published, and labelled every number with which level it came from.
+## The data does not all fit together
 
-**342 source files, 1.6 GB, every one checked by hash** when it was downloaded and again after every step. Straight from the agencies, no mirrors. Where a file was never published, the gap stays a gap.
+The obvious approach would be to download every dataset, match everything by state and month, and build a dashboard.
 
-I read all 219 spreadsheets and 173 PDFs before writing a line of code, because the traps do not announce themselves:
+That would look clean.
 
-- **Headings move.** The same monthly report puts its column names on row 1, row 3 or row 16 depending on the month. Code that assumes row 1 reads a sentence as a column name and carries on.
-- **The petrol sheet is two tables side by side.** One is states, the other is regions, and nothing on the page says so.
-- **One transport file labels two columns with the same month.** The second is really the month after. I proved it by checking 33 states' values against the next release.
+It would also be wrong.
 
-Miss any of them and the numbers come out wrong while the dashboard still looks fine.
+Three of the eight sources do not publish state-level figures at all.
 
-## The data model
+Food is published by region.
 
-Everything goes into **PostgreSQL**: 29,032 rows of figures across 12 tables, with 30 ready-made views on top for reporting.
+Electricity is published by electricity supply area.
 
-The **four levels of geography stay apart** instead of being flattened into one state table: state, region, national, and electricity supply area. Every figure carries a label saying which level it came from, so a chart can never show detail the source never had.
+The exchange rate is national.
 
-Some rules are built into the database rather than written down in a guide and hoped for. The statistics bureau prints a warning inside its own spreadsheet: its state price indexes must not be used to rank states, because every state's shopping basket is different. That warning rides on all 6,512 of those rows, and neither dashboard can break it. Excel leaves those two figures out of its data entirely. Power BI returns a blank instead of a number.
+If I forced those numbers into a table containing one row for every state, I would be creating geographic detail that never existed in the source.
 
-In Power BI, six links between tables are **missing on purpose.** Food has no state-level prices, so the link that would let someone chart food by state does not exist to be misused.
+So I did not.
 
-## The Excel workbook
+Each figure stays at the level at which it was actually published: **state, region, national, or electricity supply area.**
 
-Seven sheets, each named for the question it answers rather than for the dataset behind it. What is changing · Fuel and power · Moving people and goods · Where costs differ · Is this month's price move unusual · Who this matters more for · Can I trust this.
+Nothing is pushed down to a lower level simply because it makes the dashboard easier to build.
 
-Every sheet leads with the conclusion in plain English, then shows the chart underneath as evidence, then states what the data cannot tell you.
+That same rule applies to missing data.
+
+The project contains **342 raw source files, roughly 1.6 GB in total**. Every file is verified using SHA-256 hashing when it is downloaded and again after processing.
+
+The sources come directly from the original publishers. No Kaggle copies. No mirrors. No aggregators.
+
+And when an official file is missing, the project records the gap instead of filling it with an invented value.
+
+## Then came the messy part
+
+Before writing the transformation pipelines, I profiled **219 spreadsheet sheets and 173 PDFs**.
+
+That exposed problems that would be easy to miss if the files were simply loaded automatically.
+
+NBS header rows, for example, are not consistently placed. Across different releases, they appear on rows 1, 2, 3, 4, 15 and 16.
+
+A script that assumes the first row contains the column names works for some files and quietly breaks others.
+
+Petrol has another problem.
+
+One worksheet contains two different tables side by side. Columns 1 to 4 contain state data, while columns 6 and 7 contain zones with completely different meanings.
+
+Diesel mixes states, zones and the national total inside one unnamed column.
+
+Cooking gas contains separate tables for 5 kg and 12.5 kg cylinders using identical column names. The only reliable way to distinguish them is their position in the sheet, and even those positions changed in 2026.
+
+One transport file labels two columns with the same period even though the second column actually belongs to the following March. I verified that by comparing values across 33 states with the next month's official release.
+
+Any one of these problems could quietly corrupt an automated pipeline.
+
+So the system was designed around the source files as they actually exist, not around how convenient I wanted them to be.
+
+## The database keeps those differences intact
+
+Once cleaned, the data lands in **PostgreSQL**.
+
+The database contains **29,032 fact rows across 12 core fact tables**, with 30 analytical mart objects built on top.
+
+The important part is not the row count.
+
+It is what the model refuses to combine.
+
+State data stays state data.
+
+Regional data stays regional.
+
+National data stays national.
+
+Electricity supply areas stay electricity supply areas.
+
+Every figure carries its geographic level with it.
+
+That prevents a chart from implying more detail than the source actually provides.
+
+Some restrictions go even further.
+
+The national statistics source explicitly warns that its state price indexes should not be used to rank states by cost because each state's basket is different.
+
+That warning is attached to all **6,512 relevant rows**.
+
+The dashboards are also prevented from violating it.
+
+Those index measures are excluded from the Excel data layer completely. In Power BI, the corresponding measure returns blank instead of allowing an invalid comparison.
+
+The model even contains **six missing relationships on purpose**.
+
+For example, food has no state-level prices, so the relationship that would allow someone to chart food by state simply does not exist.
+
+The model cannot accidentally answer a question the source data cannot support.
+
+## Then I built the Excel workbook
+
+The workbook contains seven sheets.
+
+Instead of naming them after datasets, each one is named after the question someone using the data is actually trying to answer:
+
+**What is changing**
+
+**Fuel and power**
+
+**Moving people and goods**
+
+**Where costs differ**
+
+**Is this month's price move unusual**
+
+**Who this matters more for**
+
+**Can I trust this**
+
+Every sheet follows the same pattern.
+
+First, it states the finding in plain English.
+
+Then it shows the chart or figures behind that finding.
+
+Then it explains what the data cannot tell you.
 
 <Evidence
   src="/proof/nbci/06-excel-can-and-cannot.webp"
   alt="The Can I trust this sheet, showing a table titled WHAT THIS CAN AND CANNOT TELL YOU TODAY. Seven rows marked CAN do today, including tracking cost pressures and identifying which types of business a cost is likely to matter more for. Six rows marked CANNOT do today, including determining whether a specific company is profitable and identifying the universally best jurisdiction to operate in."
-  claim="Seven things it can do and six it cannot, held as data in both tools, so neither half can quietly grow."
+  claim="Seven things it can do today. Six it cannot."
   tier="Personal"
 />
 
-## The Power BI report
+Those limits are not just explanatory text.
 
-A Power BI **project**, not a single binary file: the model is TMDL and the report is PBIR, so both are plain text and show up properly in a code review. Seven pages, 98 visuals, 37 tables, 47 measures and 24 relationships.
+The workbook contains seven things the project can do and six things it cannot do, stored as structured data so those claims stay consistent throughout the project.
+
+## The same logic carries into Power BI
+
+The Power BI report is built as a **project**, not a single binary file.
+
+The semantic model uses TMDL and the report uses PBIR, which means both exist as plain-text project files that can be inspected properly in version control and code review.
+
+The finished report contains **seven pages, 98 visuals, 37 tables, 47 measures and 24 relationships.**
+
+But the first page does not open with a giant KPI.
+
+It opens by explaining the boundary of the analysis.
 
 <Evidence
   src="/proof/nbci/01-powerbi-what-is-changing.webp"
   alt="The opening page of the Power BI report. Two columns headed WHAT THIS MEASURES and WHAT IT DOES NOT MEASURE, then WHAT THIS CAN TELL YOU TODAY listing seven capabilities against WHAT IT CANNOT TELL YOU TODAY listing six limits, then a table of the four things that decide whether a location suits a business and whether each one is in the dataset."
-  claim="The report opens on its own boundary, not on a KPI."
+  claim="The first page opens on the boundary of the analysis, not on a headline number."
   tier="Personal"
 />
+
+Only after that does the report start showing what happened.
+
+And some of what happened was much larger than I expected.
+
+## What the data showed
+
+### Diesel more than doubled
+
+From its low point in September 2025 to May 2026, diesel rose by a median **158.2%** across the 37 jurisdictions.
+
+Every jurisdiction recorded an increase.
+
+Even the smallest increase was **115%**.
 
 <Evidence
   src="/proof/nbci/02-powerbi-fuel-and-power.webp"
   alt="The fuel and power page. Cards show the latest median across 37 jurisdictions at 3,249.96, a gap between cheapest and dearest place of 638.66, a ratio of 1.29x, and an EXTREME threshold of 52.04%. A line chart tracks diesel from January 2025 to May 2026, and a second chart shows diesel self-generation as a multiple of the grid tariff, never dropping below 1."
-  claim="Chart titles state the conclusion first: 'Every fuel cost here ended the period higher than it started.'"
+  claim="Diesel from January 2025 to May 2026, with the self-generation line never dropping below the grid tariff."
   tier="Personal"
 />
 
-## What the data actually showed
+The chart title does not make you interpret the line before understanding the point.
 
-**Diesel more than doubled.** Up 158% from its low point in September 2025 to May 2026, and it went up in all 37 states. Even the slowest rose 115%.
+It tells you:
 
-**Falling fuel prices did not reach transport.** In 81 cases where petrol was cheaper than a year earlier, fares still went up: motorcycle taxis and water transport in 100% of them, city buses in 98.8%. Fares ratchet. They rise with fuel and then stay up.
+**Every fuel cost here ended the period higher than it started.**
 
-**The inflation rate in the news was going the other way.** It fell from about 22% to about 15% over the same period, while okada fares rose about 51%. A business that raised its transport allowances in line with the headline inflation rate fell roughly 35 percentage points behind what it was actually paying.
+### Falling petrol prices did not automatically mean cheaper transport
 
-**Running a generator was never cheaper than the grid.** Diesel self-generation cost between 3.9 and 5.2 times the reference electricity tariff, in every month of the series. A generator is cover for power cuts, not a cheaper supply.
+There were **81 cases** where petrol was cheaper than it had been a year earlier.
 
-**Where you are matters hugely for some costs and barely at all for others.** Boat fares are almost seven times higher in the dearest state than the cheapest. Petrol differs by 14%, which is close to nothing. Choosing between two places on fuel price is choosing on almost nothing.
+Transport fares often did not follow it down.
 
-**For five of the nine costs, the cheapest place keeps changing.** In a normal month a price moves more than the entire gap between the cheapest state and the dearest, so the order shuffles. Each month's ranking is still right for that month. What it cannot support is calling one place the cheapest over time, so it refuses to name one.
+Motorcycle taxi and water transport fares were still higher in **100% of those cases**.
+
+City bus fares were higher in **98.8%**.
+
+Fuel costs can fall without the transport prices businesses and customers actually pay falling with them.
+
+### Headline inflation did not describe every cost pressure
+
+Over the period examined, the headline inflation rate fell from roughly **22% to 15%**.
+
+At the same time, motorcycle taxi fares rose by roughly **51%**.
+
+A business using headline inflation alone to adjust transport allowances would therefore have been roughly **35 percentage points behind** the change in that particular transport cost.
+
+The national inflation number was moving one way while a cost businesses actually pay was moving another.
+
+### Generators were consistently more expensive than the reference grid tariff
+
+Across every month in the series, estimated diesel self-generation cost between **3.9 and 5.2 times** the reference electricity tariff.
+
+The result is simple.
+
+A generator may be necessary when grid power is unavailable, but in this dataset it was never the cheaper source of electricity.
+
+### Location matters far more for some costs than others
+
+Water transport fares differed by almost **seven times** between the lowest and highest jurisdictions.
+
+Petrol differed by only about **1.14 times**.
+
+So saying that "location matters" without asking **which cost** hides most of the useful information.
+
+For some costs, geography changes the picture dramatically.
+
+For others, the difference is relatively small.
 
 <Evidence
   src="/proof/nbci/03-powerbi-where-costs-differ.webp"
   alt="The page headed How does the external cost environment differ between locations. A note explains that location is one of the things the project looks at and not the point of it, that a cheaper jurisdiction is not a better one and a dearer one does not mean a business loses money there. Cards below show water fares at 6.91 times and petrol at 1.14 times between dearest and cheapest."
-  claim="On the page most likely to be misread, the reframing comes before the numbers."
+  claim="Location is one of the things the project looks at, not the point of it."
   tier="Personal"
 />
 
-## What a business owner gets from it
+And even when a place is cheaper in one month, that does not make it permanently cheaper.
 
-Not an instruction. The dataset holds no company's cost shares, margins or ability to pass a price rise on, so it cannot tell any particular business what to do.
+For five of the nine costs, the lowest-cost jurisdiction keeps changing.
 
-What it can do is narrow the question. Find the kind of business closest to yours, see which of the nine costs it actually buys in volume, and see what those costs have done. Then go and measure the one thing the project cannot see: how much of your own spending goes on it.
+In those cases, a single month's movement can be larger than the entire gap between the lowest and highest jurisdiction.
 
-If diesel is a large share of what you spend, a 158% rise is a serious event. If it is a small share, the same figure barely touches you. Same number, two completely different conclusions, and the difference is a figure only you hold.
+So the ranking reshuffles.
 
-## What it does not claim
+The project can show what was cheapest in a particular month.
 
-This is the part I spent the most time on, because it is where a cost dashboard turns into something dishonest.
+It does not pretend that one jurisdiction is permanently the cheapest.
 
-It measures nine costs a business buys in, plus inflation rates. **That is not the cost of doing business.** There is no rent, no wages, no land, no taxes, no levies and no stock in it.
+## What does any of this mean for an actual business?
 
-It does **not** predict whether a company will make or lose money, and it does **not** identify the best Nigerian state for business. A cheaper state is not a better one. Whether a business does well somewhere also depends on customer demand, purchasing power, market size, competition, rent, wages, supplier access and infrastructure. None of that is in this data.
+The project deliberately stops short of telling a business owner what to do.
 
-Those limits are not a footnote. Both tools carry them on two pages each, and the build fails if a page ever claims otherwise. An automatic check reads every line of text in the report and rejects phrases like "best state" or "cheaper place to do business" before anything can ship.
+It cannot see your company's margins.
 
-## How I know it is right
+It does not know how much diesel you use.
 
-**110 of 110 analysis checks pass**, across three separate passes. The database has its own audit at **245 of 245**, which re-reads all 17 source files from scratch rather than trusting what was loaded.
+It does not know what percentage of your costs goes to transport.
 
-Both dashboards are checked against the finished file, not against the build log:
+It does not know whether you can pass a price increase on to your customers.
 
-- **Excel: 105 checks, plus 25 more that open it in real Microsoft Excel.** Every headline figure is worked out again and compared against the evidence behind it. The file is fingerprinted before and after, and the two have to match, which proves the checker only read it.
-- **Power BI: 89 checks.** It opens the report in Power BI Desktop, clears the cached data so the refresh is real, then asks the running report for its own numbers.
+So a national number by itself cannot tell you how serious a change is for your particular company.
 
-That caution was earned. An early version of the workbook shipped 20 broken values hidden inside the file, and every build log had called it a success. A log saying "written" is not proof.
+Instead, the project helps narrow the question.
+
+Find the type of business closest to yours.
+
+Look at the costs that kind of business is likely to buy heavily.
+
+See how those costs have moved.
+
+Then compare that with the number the public datasets cannot know:
+
+**How much of your own spending goes there?**
+
+A **158% increase in diesel** could be a major event for a company that depends heavily on generators and logistics.
+
+For a business that barely buys diesel, the same national change could have little effect.
+
+Same external number.
+
+Different business.
+
+Different consequence.
+
+## That is also why I do not call this "the cost of doing business"
+
+The project tracks nine external costs businesses may buy, plus inflation measures.
+
+That is not the same thing as measuring the complete cost of running a business.
+
+There is no rent.
+
+No wages.
+
+No land.
+
+No taxes or levies.
+
+No inventory costs.
+
+Because those things are absent, the project does not claim to predict whether a company will make or lose money.
+
+It also does not identify the "best state for business."
+
+A location having cheaper fuel or transport does not automatically make it a better place to operate.
+
+A business also depends on customer demand, purchasing power, market size, competition, supplier access, infrastructure, wages, rent and many other factors that are outside this dataset.
+
+Those limitations are part of the system, not a disclaimer added at the bottom.
+
+They are stored as data in both tools.
+
+They appear directly inside the dashboards.
+
+And the build contains language checks that reject claims such as "best state" or "cheaper place to do business" before the final output can ship.
+
+## Then I tested whether I could trust my own work
+
+This became one of the largest parts of the project.
+
+The analysis layer passes **110 out of 110 checks** across three separate validation passes.
+
+The PostgreSQL database has an independent audit containing **245 out of 245 passing checks**.
+
+That audit does not simply trust what was loaded into the database.
+
+It goes back to the **17 source CSV files**, parses them again from scratch, and reconciles the result independently.
+
+The dashboards are tested separately too.
+
+The Excel workbook goes through **105 structural and reconciliation checks**, plus **25 Microsoft Excel compatibility checks**.
+
+Every headline number is recalculated and compared with its committed evidence.
+
+The workbook is hashed before and after validation. The two hashes must match, proving the validator inspected the file without altering it.
+
+The Power BI report goes through another **89 checks**.
+
+The process opens the project in Power BI Desktop, removes the existing data cache, performs a genuine refresh, and interrogates the live model directly.
+
+That level of validation came from learning the hard way that a successful build message proves very little.
+
+An early workbook passed its build process while still containing **20 invalid numeric values inside its XML**.
+
+The logs said the workbook had been written successfully.
+
+The file itself was wrong.
+
+That changed the standard for the rest of the project.
+
+A tool saying "success" is not proof.
+
+The output has to survive independent testing.
 
 <Evidence
   src="/proof/nbci/04-powerbi-validation.webp"
   alt="The validation page of the report. Four figures across the top: 110 validation checks passed, 342 raw source files SHA-256 verified, 29,032 fact rows in the database, 0 panel grain duplicates. Below, a table of the fifteen rules every page must obey, a list of months genuinely missing from the government sources, and the coverage of each dataset."
-  claim="110 checks, 342 files hash-verified, 29,032 rows, and not one duplicate row."
+  claim="Every check, every verified file, and every gap the sources left, on one page."
   tier="Personal"
 />
 
-Nothing is quietly patched over. Eleven government releases that were due and never appeared stay missing, and the page names them. Where a figure has no earlier month to compare against, the line breaks instead of guessing across the gap.
+That is how the project ends up with:
+
+**110 analysis checks passed**
+
+**342 raw files hash-verified**
+
+**29,032 database fact rows**
+
+**0 panel-grain duplicate rows**
+
+And when the source itself is incomplete, the dashboard shows that too.
+
+Eleven expected government releases that were not published remain missing.
+
+They are named directly on the validation page.
+
+If a year-on-year comparison cannot be calculated because the comparison month is missing, the chart breaks the line rather than pretending the gap does not exist.
 
 ## Built with
 
-Python and pandas for the cleaning pipelines. PostgreSQL for the model and the analytical mart. SQL for the analysis. Power BI, as a text-based project rather than a binary file. Excel, generated and validated by script. Git throughout, with every stage committed as it was proved.
+**Python and pandas** for cleaning and transformation.
 
-The repository holds the pipelines, the schema, the analysis scripts, the validation suites and both dashboards: [github.com/Qui-vira/nigeria-business-cost-intelligence](https://github.com/Qui-vira/nigeria-business-cost-intelligence).
+**PostgreSQL** for the database and analytical mart.
 
-## Why this matters to you
+**SQL** for analysis.
 
-Most dashboards are built to look certain. This one is built to be checkable, and it says out loud where it stops.
+**Power BI** using a text-based project structure.
 
-If you need data work where the numbers survive someone actually testing them, this is what that looks like.
+**Excel** generated and independently validated by script.
+
+**Git** throughout the build, with each stage committed as it was completed and verified.
+
+The repository contains the cleaning pipelines, schema, analysis code, validation suites and dashboard projects:
+
+[github.com/Qui-vira/nigeria-business-cost-intelligence](https://github.com/Qui-vira/nigeria-business-cost-intelligence)
+
+## Why I built it this way
+
+The useful part of a dashboard is not how certain it looks.
+
+It is whether the numbers still hold up when someone starts asking questions.
+
+Where did this figure come from?
+
+Was that geography actually published?
+
+What happens when a source file is missing?
+
+Can I reproduce the calculation?
+
+What does this number **not** prove?
+
+Nigeria Business Cost Intelligence was built so those questions have answers.
+
+Not to make the data look cleaner than it is.
+
+Not to turn incomplete information into certainty.
+
+But to take scattered public data, make it usable, and make sure every conclusion stops exactly where the evidence stops.
+
+If you need data work where the numbers are expected to survive someone actually testing them, this is what that looks like.
