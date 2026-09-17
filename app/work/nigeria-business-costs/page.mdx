@@ -8,33 +8,27 @@ export const metadata = {
 
 # Nobody publishes what it costs to run a business in Nigeria. So I built it.
 
-Diesel, petrol, cooking gas, transport fares, food prices, electricity tariffs, the exchange rate and inflation. Eight government agencies publish these. Every one of them publishes separately, on its own schedule, in its own file format.
-
-No one publishes the combined picture. I did, and then I spent most of the project making sure it was honest.
+Eight government agencies publish what things cost here. None of them publish it together. I did, and then spent most of the project making sure it was honest.
 
 ## The problem
 
-A shop owner in Lagos knows this month cost more than last month. Ask them which cost went up, and by how much, and nobody can answer.
+Your costs went up. Which ones, and by how much?
 
-The figures do exist. Every month the government publishes the price of diesel, petrol, cooking gas, bus fares, food and electricity, and the inflation rate on top of that. The trouble is that eight different agencies publish them, on eight different timetables, in eight different file layouts. Nobody puts them side by side.
+Almost no business in Nigeria can answer that. The prices are public. Diesel, petrol, cooking gas, bus fares, food, electricity, inflation. But eight different agencies publish them, in eight different formats, on eight different dates, and nobody puts them in one place.
 
-So you never get to see that diesel more than doubled while the inflation rate on the news was falling. You only feel that things got harder.
-
-**The obvious fix does not work.** Download all eight, line them up by state and by month, put a dashboard on top. It looks convincing, and part of it is made up, because **three of the eight never publish state-by-state figures at all.** Food is published by region. Electricity is published by supply company. The exchange rate is a single national number. To force those into a table with one row per state, you have to invent the missing numbers and hope nobody checks.
-
-I did the slower version. Combine only the figures that genuinely line up. Leave the rest at the level it was actually published. And on every single number, say which level it is, so a chart can never suggest detail that was never there in the first place.
+So you feel the squeeze without ever seeing where it came from. Diesel more than doubled in eight months. Most owners never saw that number.
 
 ## What it does
 
-It follows the outside costs a Nigerian business pays, and answers three questions.
+It puts all eight in one place and answers three questions.
 
-**What changed, and by how much?** Nine costs, tracked month by month.
+**What went up, and by how much?**
 
-**Does it depend on where you are?** For some costs it matters enormously. For others it barely matters at all, and the report says which is which rather than leaving you to guess.
+**Does it depend on where you are?**
 
-**Does this affect a business like mine?** Pick the closest type of business, see which of the nine costs it actually buys in any volume, and get a short list of things to check in your own books.
+**Should a business like mine care?**
 
-The nine are the ones that can honestly be compared state by state: diesel, petrol, two sizes of cooking gas cylinder, and five ways of moving people and goods. Inflation rates sit alongside them, across all 36 states and the Federal Capital Territory.
+Nine costs, month by month, across all 36 states and the Federal Capital Territory.
 
 <Evidence
   src="/proof/nbci/05-excel-what-is-changing.webp"
@@ -44,6 +38,10 @@ The nine are the ones that can honestly be compared state by state: diesel, petr
 />
 
 ## Where the numbers come from
+
+The obvious way to build this is to download all eight, line them up by state and month, and put a dashboard on top. It looks convincing and part of it is invented, because **three of the eight never publish state-by-state figures at all.** Food comes by region. Electricity comes by supply company. The exchange rate is one national number. Forcing those into a table with a row per state means inventing the gaps.
+
+So I only combined the figures that genuinely match, left the rest at the level it was published, and labelled every number with which level it came from.
 
 **342 raw source files, roughly 1.6 GB, every one verified by SHA-256 hash** at download and after every processing stage. No Kaggle, no mirrors, no aggregators. Where an official file does not exist, the gap is recorded instead of filled.
 
