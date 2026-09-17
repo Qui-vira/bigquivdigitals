@@ -48,6 +48,7 @@ const STATIC_ROUTES: Array<{ path: string; priority: number; changeFrequency: Me
   { path: "/work/peaceway", priority: 0.8, changeFrequency: "monthly" },
   { path: "/work/alpha-plays", priority: 0.8, changeFrequency: "monthly" },
   { path: "/work/content-engine", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/work/nigeria-business-costs", priority: 0.8, changeFrequency: "monthly" },
   { path: "/about", priority: 0.7, changeFrequency: "monthly" },
   { path: "/articles", priority: 0.7, changeFrequency: "weekly" },
   { path: "/contact", priority: 0.6, changeFrequency: "yearly" },

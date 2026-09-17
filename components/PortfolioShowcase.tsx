@@ -33,7 +33,14 @@ interface Category {
 
 interface Project {
   title: string;
+  /** The discipline this project leads with. */
   category: Exclude<CategoryId, "all">;
+  /**
+   * Further disciplines the same project genuinely answers. A build that is both
+   * data engineering and data analysis should appear under both, rather than
+   * leaving one tab claiming nothing has been shipped for it.
+   */
+  alsoIn?: Array<Exclude<CategoryId, "all">>;
   eyebrow: string;
   description: string;
   proof: string;
@@ -109,6 +116,20 @@ const PROJECTS: Project[] = [
     disclosure: "My father's pharmacy. I never billed him for it.",
   },
   {
+    title: "Nigeria Business Cost Intelligence",
+    category: "data-analyst",
+    alsoIn: ["data-engineer"],
+    eyebrow: "Cost intelligence and data modelling",
+    description:
+      "Eight Nigerian government agencies publish business costs separately and nobody publishes the combined picture, so I built it. 342 source files hash-verified, cleaned into a PostgreSQL model, then an Excel workbook and a Power BI report on top. It says out loud what it cannot tell you.",
+    proof:
+      "110 analysis checks pass, the database has its own 245-check audit, and both dashboards are validated against the saved file rather than the build log.",
+    image: "/proof/nbci/02-powerbi-fuel-and-power.webp",
+    imageAlt:
+      "The fuel and power page of the Power BI report, with the median price across 37 jurisdictions, the gap between the cheapest and dearest place, and a chart of diesel self-generation against the grid tariff.",
+    href: "/work/nigeria-business-costs",
+  },
+  {
     title: "PharmaOS",
     category: "software",
     eyebrow: "Pharmacy operations platform",
@@ -122,6 +143,14 @@ const PROJECTS: Project[] = [
     external: true,
   },
 ];
+
+function inCategory(project: Project, category: CategoryId): boolean {
+  return (
+    category === "all" ||
+    project.category === category ||
+    (project.alsoIn?.includes(category as Exclude<CategoryId, "all">) ?? false)
+  );
+}
 
 function ProjectCard({ project }: { project: Project }) {
   const card = (
@@ -190,8 +219,7 @@ export function PortfolioShowcase() {
   const [active, setActive] = useState<CategoryId>("all");
   /** The films are not in PROJECTS, so this tab renders the reel instead of cards. */
   const showFilmsOnly = active === "ai-video";
-  const visibleProjects =
-    active === "all" ? PROJECTS : PROJECTS.filter((project) => project.category === active);
+  const visibleProjects = PROJECTS.filter((project) => inCategory(project, active));
   const activeLabel = CATEGORIES.find((category) => category.id === active)?.label ?? "Work";
 
   return (
@@ -208,7 +236,7 @@ export function PortfolioShowcase() {
               ? PROJECTS.length + FILM_COUNT
               : category.id === "ai-video"
                 ? FILM_COUNT
-                : PROJECTS.filter((project) => project.category === category.id).length;
+                : PROJECTS.filter((project) => inCategory(project, category.id)).length;
 
           return (
             <button

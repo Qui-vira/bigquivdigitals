@@ -14,7 +14,7 @@ export default function PortfolioPage() {
   return (
     <div className="px-6 pb-28 pt-28 md:pt-40">
       <header className="mx-auto max-w-[1200px] border-b border-border pb-14 md:pb-20">
-        <p className="text-sm font-semibold text-accent">Proof of Work / 03 builds / 06 films</p>
+        <p className="text-sm font-semibold text-accent">Proof of Work / 04 builds / 06 films</p>
         {/*
           ⚠ NO EXPLAINER PARAGRAPH HERE. One listed the four builds and the six
           films, which the cards directly below already show, and a second

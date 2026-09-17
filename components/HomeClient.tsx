@@ -54,6 +54,17 @@ const CASE_STUDIES = [
       "Telegram channel showing an ETH buy call with entry, stop loss and take profit, next to the resulting position card.",
   },
   {
+    href: "/work/nigeria-business-costs",
+    tag: "Data analysis",
+    claim:
+      "Eight government datasets, 29,032 verified rows, one honest picture of Nigerian business costs.",
+    support:
+      "Diesel more than doubled while the inflation rate in the news was falling. A PostgreSQL model, an Excel workbook and a Power BI report, with 110 analysis checks and both dashboards validated against the file itself.",
+    image: "/proof/nbci/01-powerbi-what-is-changing.webp",
+    imageAlt:
+      "The opening page of the Power BI report, showing what the project measures against what it does not, and seven things it can tell you against six it cannot.",
+  },
+  {
     href: "/work/content-engine",
     tag: "Content",
     claim: "One video pulled 128,000 views and 1,700 comments.",

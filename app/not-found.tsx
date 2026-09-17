@@ -18,6 +18,10 @@ export default function NotFound() {
             { href: "/work/peaceway", label: "Peaceway Online, the health build" },
             { href: "/work/alpha-plays", label: "Big_Quiv Alpha plays, community and markets" },
             { href: "/work/content-engine", label: "The Content Engine, technical" },
+            {
+              href: "/work/nigeria-business-costs",
+              label: "Nigeria Business Cost Intelligence, the data build",
+            },
             { href: "/services", label: "The Growth Operating System" },
             { href: "/articles", label: "Articles" },
             { href: "/contact", label: "Contact" },
