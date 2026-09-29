@@ -11,7 +11,11 @@ import { RiseWords } from "@/components/TextMotion";
  * the course, the films, the archive and the brand-work disclaimer. None of that
  * answers why a stranger should hand over an email today, so all of it is gone.
  *
- * WHAT IS LEFT IS THE BET, AND IT LEADS. He has said publicly that he will earn
+ * 2026-09-29, owner: the class is free for the first 100 on this list, with no condition
+ * (Script 2 "Show, DON'T PROMPT" says "free for the first 100 people"). The headline and
+ * the promise below were changed from the earlier bet ("If I fail, you get it free").
+ *
+ * WHAT WAS HERE BEFORE: THE BET. He has said publicly that he will earn
  * $10,000 in 60 days using this skill. If he misses, the first N people on this
  * list get the course free. That is a specific, dated, costly promise, and it is
  * the only thing on this page that a stranger cannot get anywhere else.
@@ -44,7 +48,7 @@ export function AiMasteryWaitlistClient({ cap }: { cap: number }) {
           as="h1"
           className="mt-4 text-4xl font-extrabold leading-[1.1] tracking-tight text-text-primary md:text-5xl"
         >
-          If I fail, you get it free.
+          {`Free for the first ${cap}.`}
         </RiseWords>
 
         <p className="mt-8 text-lg leading-relaxed text-text-secondary">
@@ -53,14 +57,9 @@ export function AiMasteryWaitlistClient({ cap }: { cap: number }) {
         </p>
 
         <p className="mt-4 text-lg leading-relaxed text-text-secondary">
-          If I miss it, the first{" "}
+          The first{" "}
           <span className="font-semibold text-text-primary">{cap} people on this list</span> get the
-          course free. Not a discount. Free.
-        </p>
-
-        <p className="mt-4 text-lg leading-relaxed text-text-secondary">
-          Because I will have just proved the skill does not work, and I am not charging you for
-          that.
+          class free. Not a discount. Free.
         </p>
 
         <div className="mt-10">
@@ -68,8 +67,7 @@ export function AiMasteryWaitlistClient({ cap }: { cap: number }) {
 
           {joined ? (
             <p className="mt-4 text-text-secondary">
-              You are in. Nothing else to do. Whichever way it goes on day 60, you hear from me
-              first.
+              You are in. Nothing else to do. When it opens, you hear from me first.
             </p>
           ) : (
             <p className="mt-3 text-sm text-text-muted">

@@ -14,8 +14,8 @@ import { AiMasteryWaitlistClient } from "./AiMasteryWaitlistClient";
  * from a video about a $300 ad does not need the full page to leave an email.
  *
  * WHAT IT COMMITS TO. Exactly two things, both of which the owner has actually
- * said out loud: first access, and the free-access promise if the 60-day target
- * is missed. There is no lead magnet here. The Great Work's list hands over the
+ * said out loud: first access, and the class free for the first 100 on the list
+ * (changed 2026-09-29 from "free if the 60-day target is missed"). There is no lead magnet here. The Great Work's list hands over the
  * Opportunity Map on signup; no equivalent asset exists for this course yet, and
  * inventing one to fill the slot would be promising something that does not
  * exist. When one is built, add it and say so.
@@ -31,7 +31,7 @@ import { AiMasteryWaitlistClient } from "./AiMasteryWaitlistClient";
 export const metadata: Metadata = {
   title: "AI Mastery waitlist | BigQuiv Digitals",
   description:
-    "A small private list. First access when it opens, and free access to the first 100 if the 60-day target is missed.",
+    "A small private list. First access when it opens, and the class is free for the first 100.",
   alternates: { canonical: "/aimastery-waitlist" },
   openGraph: {
     title: "AI Mastery waitlist",
