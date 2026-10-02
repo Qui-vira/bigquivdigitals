@@ -46,3 +46,66 @@
 .doc-page a:hover {
   opacity: 0.8;
 }
+
+/* Prompt boxes: fenced code blocks, each with its own Copy button. */
+.doc-page .doc-code {
+  position: relative;
+  margin: 1rem 0 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-secondary);
+}
+.doc-page .doc-code pre {
+  margin: 0;
+  padding: 2.75rem 1rem 1rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: var(--color-text-primary);
+}
+.doc-page .doc-copy {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+.doc-page .doc-copy:hover,
+.doc-page .doc-copy:focus-visible {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  outline: none;
+}
+
+/* Images in articles. */
+.doc-page figure {
+  margin: 1rem 0 1.5rem;
+}
+.doc-page img {
+  display: block;
+  max-width: 100%;
+  max-height: 560px;
+  width: auto;
+  margin: 0 auto;
+  height: auto;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+}
+
+.doc-page blockquote {
+  margin: 0 0 1rem;
+  padding: 0.6rem 1rem;
+  border-left: 3px solid var(--color-accent);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
