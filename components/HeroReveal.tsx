@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createLiquidGlass, type Handle, type Stats } from "./hero/liquid-glass";
+import { HandNote } from "./ui-paper/HandNote";
+import { PaperClip, Tape } from "./ui-paper/Attachments";
+import { Sticker } from "./ui-paper/Sticker";
 import {
   HeroProbe,
   readTierOverrides,
@@ -34,8 +37,14 @@ import {
  * Pure cover-fit makes the head enormous on a phone; fit-to-width makes it
  * tiny. Instead the scale is capped so the subject always occupies ~90% of the
  * viewport width, and the leftover is left as black. That is free here because
- * the studio backdrop is literally #000000, sampled from all four corners, and
- * the page ground is the same value, so the letterbox is invisible.
+ * the studio backdrop is literally #000000, sampled from all four corners.
+ *
+ * REDESIGN 2026-10: the page is light now, so the portrait no longer fills the
+ * screen. It sits inside a framed print on grid paper, and "the viewport" the
+ * fit math sees is the photo window (the engine measures `wrap`, never the
+ * window). The letterbox is still invisible because the window's own ground is
+ * the same studio black. The engine, the shader and the fit constants are
+ * untouched; only the markup around them changed.
  */
 
 /**
@@ -102,7 +111,8 @@ export function HeroReveal({
   proof,
   children,
 }: {
-  headline: string;
+  /** A node, so a phrase inside it can carry a Highlighter. */
+  headline: React.ReactNode;
   /** The reader's situation. */
   supporting: string;
   /** What I do, one sentence. Shares a paragraph with `supporting` so the
@@ -260,189 +270,149 @@ export function HeroReveal({
     <section
       ref={sectionRef}
       aria-labelledby="hero-heading"
-      className="relative isolate flex h-[100svh] min-h-[520px] w-full flex-col justify-end overflow-hidden bg-bg-primary"
-      style={{ touchAction: "pan-y" }}
+      className="paper-scope relative isolate overflow-hidden bg-grid-paper text-ink"
     >
-      <div ref={wrapRef} className="absolute inset-0 h-full w-full">
-        {/* The plate is ALWAYS rendered, as the ground the canvas sits on.
-            It used to render only when reduced-motion or an explicit failure
-            flipped the branch, which meant a WebGL init that *hung* rather than
-            threw hit neither: `ready` stayed false, the canvas held opacity-0,
-            and the hero was black type on nothing. The subject is the reason
-            this hero exists; it cannot depend on a GPU path succeeding.
-
-            The canvas paints its own black outside the plate rect, so once it
-            fades in it occludes this entirely. The two differ by ~6% of scale
-            at narrow widths (object-cover here vs the width-capped fit there),
-            visible only as a slight settle during the one-time 700ms fade. */}
-        <picture>
-          <source
-            type="image/avif"
-            srcSet="/hero/king-base-1024.avif 1024w, /hero/king-base-1600.avif 1600w, /hero/king-base-2560.avif 2560w"
-            sizes="100vw"
-          />
-          <source
-            type="image/webp"
-            srcSet="/hero/king-base-1024.webp 1024w, /hero/king-base-1600.webp 1600w, /hero/king-base-2560.webp 2560w"
-            sizes="100vw"
-          />
-          <img
-            ref={plateRef}
-            src="/hero/king-base-1600.png"
-            alt="Portrait of Big Quiv, founder of BigQuiv Digitals, against a black studio backdrop."
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ objectPosition: "51.2% 40.3%" }}
-            fetchPriority="high"
-          />
-        </picture>
-        {!staticPlate && !dev.nocanvas && !dev.plateonly && (
-          <canvas
-            ref={canvasRef}
-            aria-hidden="true"
-            className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}
-          />
-        )}
-      </div>
-
-      {/* Legibility scrim, shaped to wherever the copy actually is.
-          A blanket 62% band was swallowing the face on portrait viewports,
-          which defeats the point of a portrait hero.
-          ?noscrim=1 and ?plateonly=1 remove it, to isolate whether the scrim is
-          what is covering the subject. */}
-      {!dev.noscrim && !dev.plateonly && (
-        <>
-          {/* Mobile only, under 768px. Left-to-right, so the darkness sits
-              where the copy is and the portrait keeps its light on the right,
-              rather than the whole image being dimmed.
-
-              It floors at 0.52 instead of reaching transparent. The mobile copy
-              column is full width, so headline lines run to about 93% across,
-              and a ramp that fades to zero leaves their right-hand end on bare
-              cheek: measured 3.98:1 at 592 and 4.04:1 at 390, below AA. Same
-              shape, same feel, with a floor.
-
-              Repositioning the subject was tried first and rejected. Moving the
-              focal point from 0.42 up to 0.28 only slides a different bright
-              region under the headline; at 375 wide it stayed at 4.09:1 no
-              matter where the face went.
-
-              Measured worst case, sampled across each line rather than only
-              down it, at 375, 390, 414 and 592 wide:
-                headline  7.04 to 8.63:1   AAA
-                body      11.1 to 15.9:1   AAA
-                proof     16.2 to 18.9:1   AAA
-              The right edge of the frame keeps 48% of its brightness, against
-              22% under the full-bleed version this replaces, so the portrait
-              reads better than it did before.
-
-              md:hidden, so 768px and up is untouched. See
-              scripts/hero-contrast.mjs. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 z-10 md:hidden"
-            style={{
-              background:
-                "linear-gradient(to right, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.80) 45%, rgba(0,0,0,0.64) 75%, rgba(0,0,0,0.52) 100%)",
-              // Faded out over the top quarter, where there is no copy. A
-              // horizontal ramp alone darkens the full height, including the
-              // head, and the portrait went flat. The mask is fully opaque by
-              // 25% and the highest any copy starts is 31%, so it costs nothing
-              // in contrast: measured ratios are identical with and without it.
-              WebkitMaskImage:
-                "linear-gradient(to bottom, transparent 0%, #000 25%)",
-              maskImage: "linear-gradient(to bottom, transparent 0%, #000 25%)",
-            }}
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[42%] lg:hidden"
-            style={{
-              background:
-                "linear-gradient(to top, #000 0%, #000 34%, rgba(0,0,0,0.72) 62%, rgba(0,0,0,0) 100%)",
-            }}
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-0 z-10 hidden w-[72%] lg:block"
-            style={{
-              background:
-                "linear-gradient(to right, #000 0%, rgba(0,0,0,0.88) 34%, rgba(0,0,0,0.45) 66%, rgba(0,0,0,0) 100%)",
-            }}
-          />
-        </>
-      )}
-
-      {/* Copy: bottom-anchored on phones, a left column beside the subject on
-          desktop. Never over the face at either size. */}
-      {/* pt clears the fixed navbar, which is h-16 (64px). With no top padding
-          the kicker sat hard under the wordmark with nothing between them.
-          At lg the block is vertically centred anyway, so 128px of that is
-          spent rather than used; 80px still leaves 16px under the navbar and
-          buys back the room a short window needs to fit the CTAs. */}
-      {/* ?plateonly=1 drops the copy entirely, leaving the plate alone.
-
-          `safe center` rather than plain center: safe centring falls back to
-          flex-start the moment the content is taller than the box, so it can
-          overflow the bottom but never the top. That is what stops the headline
-          rising into the navbar on a short viewport. Top padding is the
-          measured nav height plus a real gap. */}
+      {/* Layout. Phones read headline, then the photo, then the copy and the
+          buttons. From lg the copy is one column on the left and the framed
+          photo sits beside it. The copy wrapper is `display: contents` below
+          lg so its two blocks can be ordered around the photo without
+          duplicating any markup. */}
       <div
-        className={`relative z-20 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-end px-6 pt-28 pb-14 md:px-10 md:pt-32 lg:[justify-content:safe_center] lg:pt-[calc(var(--hero-nav-h,4rem)+1.5rem)] lg:pb-6 ${dev.plateonly ? "hidden" : ""}`}
+        className={`mx-auto flex w-full max-w-[1320px] flex-col gap-9 px-4 pb-16 pt-[calc(var(--hero-nav-h,4rem)_+_1.75rem)] sm:px-6 md:pb-20 lg:grid lg:min-h-[min(100svh,1000px)] lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:items-center lg:gap-x-14 lg:px-10 lg:pb-14 lg:pt-[calc(var(--hero-nav-h,4.5rem)_+_2rem)] `}
       >
-        {/* The "BIGQUIV DIGITALS" eyebrow that sat here is gone. It repeated
-            the navbar wordmark verbatim, directly beneath it. */}
-        {/* The column was only capped at lg, so the 640-1024 band ran the
-            headline to the full 820px of an 900px viewport — a measure no
-            headline should have. Capped from sm up. */}
-        <div className="w-full sm:max-w-[34rem] lg:max-w-[36rem]">
-          {/* Type scale in three real steps rather than one clamp.
-              The single clamp floored at 2.1rem, and below ~622px that floor
-              won: a 375px phone rendered the same 33.6px as a 620px window, in
-              a column 245px narrower, so it wrapped to three lines. The lg step
-              keeps the svh term, which is what stops a wide-but-short window
-              rendering desktop-size type and pushing the CTAs off the bottom. */}
-          <h1
-            id="hero-heading"
-            className="font-display text-[clamp(1.75rem,7.5vw,2.5rem)] font-bold leading-[0.98] tracking-[-0.025em] text-text-primary text-balance sm:text-[clamp(2.5rem,5.2vw,3.25rem)] sm:leading-[0.96] lg:text-[clamp(3rem,min(5.4vw,7.2svh),4rem)]"
-          >
-            {headline}
-          </h1>
+        <div className={dev.plateonly ? "hidden" : "contents lg:block"}>
+          <div className="order-1">
+            {/* Type sized against the measured width of the condensed Didone:
+                three lines at every breakpoint from 375 up. The lg step keeps
+                an svh term so a wide-but-short window cannot push the buttons
+                off the bottom. */}
+            <h1
+              id="hero-heading"
+              className="font-didone text-[clamp(3.2rem,14.6vw,4.4rem)] font-semibold leading-[1.02] tracking-[-0.01em] text-ink text-balance sm:text-[clamp(4rem,10vw,5.4rem)] lg:text-[clamp(3.8rem,min(6.4vw,10.5svh),6rem)]"
+            >
+              {headline}
+            </h1>
+          </div>
 
-          {/* Block 2. The reader's situation and the mechanism share one
-              paragraph, which is what keeps the hero at four blocks while still
-              stating both. Tight coupling to the headline above it. */}
-          {/* Gaps between blocks 1-3 are tight on purpose: they are one
-              argument and should read as one group. The only large gap on the
-              page is the one before the form. */}
-          {/* Mobile: near-white, no grey. text-secondary (#A39C93) measured
-              1.16 to 1.55:1 here and the earlier 85% lift was still reading as
-              grey against a photograph. mt-8 adds 16px over the previous mt-4
-              so the paragraph is not crowded under the headline.
-
-              leading-relaxed is already 1.625, which is the requested ~1.6, so
-              line-height is left alone rather than restated.
-
-              Every mobile value carries an md: restore, so desktop is
-              byte-identical. */}
-          <p className="mt-8 max-w-[46ch] text-base leading-relaxed text-[#F3F3F3] md:mt-4 md:text-text-secondary lg:text-lg">
-            {supporting} {mechanism}
-          </p>
-
-          {/* Block 3. Checkable evidence, not a claim. Text only.
-              Same near-white on mobile: text-muted (#6B655D) measured 1.49 to
-              2.85:1 under 768px, below AA at every size. With grey ruled out on
-              mobile, hierarchy against the paragraph above is carried by size,
-              14px against 16px, rather than by colour. Restored at md. */}
-          {proof ? (
-            <p className="mt-3 max-w-[46ch] text-sm leading-relaxed text-[#F3F3F3] md:text-text-muted">
-              {proof}
+          <div className="order-3 lg:mt-9">
+            <p className="max-w-[44ch] text-[1.0625rem] leading-relaxed text-ink-soft lg:text-lg">
+              {supporting} {mechanism}
             </p>
-          ) : null}
+            {proof ? (
+              <p className="mt-3 font-display text-lg font-bold tracking-[-0.01em] text-ink">{proof}</p>
+            ) : null}
+            {children ? <div className="mt-9 w-full">{children}</div> : null}
+          </div>
+        </div>
 
-          {/* Block 4. Large gap before the form. The rhythm was near-uniform,
-              so nothing grouped: the first three blocks couple, the form sits
-              clearly apart. */}
-          {children ? <div className="mt-10 w-full md:mt-12">{children}</div> : null}
+        {/* THE PRINT. The portrait and the shader are unchanged; only the
+            container moved. It is a framed photo object on the paper now:
+            ink frame, white mat, a tilted gold sheet behind it, tape and a
+            clip, and a handwritten note in the bottom margin.
+
+            The frame itself is never rotated or transformed. The engine sizes
+            the canvas from wrap.getBoundingClientRect() and maps the pointer
+            from canvas.getBoundingClientRect(); any transform on an ancestor
+            would inflate both rects to the rotated bounding box. All tilt and
+            entrance motion lives on the sibling layers around it instead.
+
+            Letterbox: inside a frame narrower than 1024px the fit takes its
+            narrow branch (min of cover, 90% subject width, crown-to-shoulder
+            height). At the 4:5 and 5:6 windows used here that leaves at most
+            ~11px of plate edge above the crown, and the plate edge is the
+            studio's own #000, so the window reads as one photograph. */}
+        <div className="relative order-2 mx-auto w-full max-w-[520px] sm:max-w-[540px] lg:mx-0 lg:ml-auto lg:max-w-[min(100%,calc((min(100svh,1000px)_-_var(--hero-nav-h,4.5rem)_-_12rem)_/_1.2))]">
+          <div
+            aria-hidden="true"
+            className="load-tilt absolute inset-0 border-[3px] border-ink bg-gold [rotate:3.5deg] [translate:12px_10px] sm:[translate:16px_12px]"
+            style={{ "--rv-delay": "120ms" } as React.CSSProperties}
+          />
+
+          <figure className="relative m-0 border-[3px] border-ink bg-paper p-2.5 pb-0 shadow-brutal-lg sm:p-3.5 sm:pb-0">
+            <div
+              ref={wrapRef}
+              className="relative aspect-[4/5] w-full overflow-hidden border-[3px] border-ink bg-black lg:aspect-[5/6]"
+              style={{ touchAction: "pan-y" }}
+            >
+              {/* The plate is ALWAYS rendered, as the ground the canvas sits
+                  on. It used to render only when reduced-motion or an explicit
+                  failure flipped the branch, which meant a WebGL init that
+                  *hung* rather than threw hit neither: `ready` stayed false,
+                  the canvas held opacity-0, and the hero had nothing in it.
+                  The subject is the reason this hero exists; it cannot depend
+                  on a GPU path succeeding.
+
+                  The canvas paints its own black outside the plate rect, so
+                  once it fades in it occludes this entirely. The two differ by
+                  a few percent of scale (object-cover here vs the width-capped
+                  fit there), visible only as a slight settle during the
+                  one-time 700ms fade. */}
+              <picture>
+                <source
+                  type="image/avif"
+                  srcSet="/hero/king-base-1024.avif 1024w, /hero/king-base-1600.avif 1600w, /hero/king-base-2560.avif 2560w"
+                  sizes="100vw"
+                />
+                <source
+                  type="image/webp"
+                  srcSet="/hero/king-base-1024.webp 1024w, /hero/king-base-1600.webp 1600w, /hero/king-base-2560.webp 2560w"
+                  sizes="100vw"
+                />
+                <img
+                  ref={plateRef}
+                  src="/hero/king-base-1600.png"
+                  alt="Portrait of Big Quiv, founder of BigQuiv Digitals, against a black studio backdrop."
+                  className="absolute inset-0 h-full w-full object-cover"
+                  style={{ objectPosition: "51.2% 40.3%" }}
+                  fetchPriority="high"
+                />
+              </picture>
+              {!staticPlate && !dev.nocanvas && !dev.plateonly && (
+                <canvas
+                  ref={canvasRef}
+                  aria-hidden="true"
+                  className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${ready ? "opacity-100" : "opacity-0"}`}
+                />
+              )}
+            </div>
+
+            <figcaption className="flex min-h-[64px] items-center justify-center py-3 sm:min-h-[76px]">
+              {staticPlate ? (
+                <span className="font-hand text-[1.6rem] font-bold leading-none text-ink">Big Quiv, founder</span>
+              ) : (
+                <HandNote load delay={900} arrow="up" arrowAt="start" tilt={-2} size="sm" arrowClassName="!w-[34px] sm:!w-[40px]" className="sm:text-[1.7rem]">
+                  <span className="only-pointer">move your cursor over my face</span>
+                  <span className="only-touch">drag your finger over my face</span>
+                </HandNote>
+              )}
+            </figcaption>
+          </figure>
+
+          {/* Things holding the print to the page. All decorative. */}
+          <Tape className="load-settle -top-3.5 left-[12%]" tilt={-7} width={92} />
+          <PaperClip className="-top-8 right-[16%]" tilt={10} />
+          <Sticker
+            shape="wavy"
+            tone="soft"
+            size={44}
+            tilt={-9}
+            reveal={false}
+            delay={520}
+            className="load-settle absolute -left-3 top-[38%] sm:-left-9"
+          >
+            hi, i&apos;m big quiv
+          </Sticker>
+          <Sticker
+            shape="starburst"
+            tone="gold"
+            size={96}
+            tilt={12}
+            reveal={false}
+            delay={680}
+            className="load-settle absolute -right-3 bottom-[14%] sm:-right-8"
+          >
+            {staticPlate ? null : "try it"}
+          </Sticker>
         </div>
       </div>
 
