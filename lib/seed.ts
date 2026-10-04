@@ -39,7 +39,6 @@ async function seed() {
     { name: "LinkedIn", href: "https://linkedin.com/in/bigquiv", sortOrder: 1 },
     { name: "TikTok", href: "https://tiktok.com/@big_quiv", sortOrder: 2 },
     { name: "Instagram", href: "https://instagram.com/big_quiv", sortOrder: 3 },
-    { name: "YouTube", href: "https://youtube.com/@big_quiv", sortOrder: 4 },
     { name: "Telegram", href: "https://t.me/Quivira_Ophir", sortOrder: 5 },
   ]);
   console.log("✓ Social links seeded");
@@ -192,7 +191,7 @@ async function seed() {
 
   // ─── About ecosystem ───
   await db.insert(schema.aboutEcosystem).values([
-    { name: "Quivira", role: "Personal Brand", description: "Authority content across X, LinkedIn, TikTok, Instagram, YouTube, and Facebook.", sortOrder: 0 },
+    { name: "Quivira", role: "Personal Brand", description: "Authority content across X, LinkedIn, TikTok, Instagram and Facebook.", sortOrder: 0 },
     { name: "Ophir Institute", role: "Education", description: "Structured courses and cohorts for builders, traders, and creators.", sortOrder: 1 },
     { name: "Trigon Labs", role: "AI Signals", description: "Automated trading signal engine scanning crypto and forex markets around the clock.", sortOrder: 2 },
     { name: "Hustler's Krib", role: "Community", description: "Private community of builders, traders, and creators helping each other grow.", sortOrder: 3 },

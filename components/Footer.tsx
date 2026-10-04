@@ -14,7 +14,6 @@ const socialLinks = [
   { href: "https://linkedin.com/in/bigquiv", label: "LinkedIn" },
   { href: "https://tiktok.com/@big_quiv", label: "TikTok" },
   { href: "https://instagram.com/big_quiv", label: "Instagram" },
-  { href: "https://youtube.com/@big_quiv", label: "YouTube" },
   { href: "https://t.me/Quivira_Ophir", label: "Telegram" },
 ];
 
