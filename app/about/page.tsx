@@ -6,7 +6,7 @@ export const revalidate = 60;
 export const metadata = {
   title: "About Big Quiv | From a shop floor in Lagos to systems that ship",
   description:
-    "Microbiologist, then a sales boy on ₦10,000 a month. Now: Ophir Digital Education Foundation (CAC 9071886), over 2,000 students trained, and thirteen production systems running.",
+    "Microbiologist, then a sales boy on ₦10,000 a month. Now: Ophir Digital Education Foundation (CAC 9071886), over 2,000 students trained, and ten production systems deployed.",
   alternates: { canonical: "/about" },
 };
 
