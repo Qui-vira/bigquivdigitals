@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
-import { motion } from "framer-motion";
-import { Button } from "./Button";
+import { BrutalButton } from "@/components/ui-paper/BrutalButton";
+import { CheckerStrip } from "@/components/ui-paper/CheckerStrip";
+import { Sticker } from "@/components/ui-paper/Sticker";
 
 const links = [
   { href: "/services", label: "Services" },
@@ -15,128 +15,164 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
-function NavLink({ href, label, isActive }: { href: string; label: string; isActive: boolean }) {
-  const [hovered, setHovered] = useState(false);
+const CALENDLY = "https://calendly.com/_quivira/one-on-one-meeting";
 
-  return (
-    <Link
-      href={href}
-      className={`relative text-sm font-medium tracking-wide transition-colors hover:text-text-primary ${
-        isActive ? "text-text-primary" : "text-text-secondary"
-      }`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      {label}
-      <motion.div
-        className="absolute -bottom-1 left-0 h-[2px] w-full bg-accent"
-        initial={false}
-        animate={{ scaleX: hovered || isActive ? 1 : 0 }}
-        transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-        style={{ originX: 0.5 }}
-      />
-    </Link>
-  );
+function isActive(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+/**
+ * The paper navbar. A solid white bar with a 3px ink rule under it, on every
+ * public page, at every scroll position. It used to switch from transparent to
+ * blurred black on a window scroll listener; a solid bar needs no listener at
+ * all, and never sits over content with a see-through edge.
+ *
+ * HeroReveal measures this element's height (it queries `nav, header`), so the
+ * hero clears it whatever height it ends up.
+ */
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const firstLinkRef = useRef<HTMLAnchorElement>(null);
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  const close = useCallback((returnFocus = false) => {
+    setIsOpen(false);
+    if (returnFocus) toggleRef.current?.focus();
   }, []);
 
+  // While the menu is open: Escape closes it, the page behind does not scroll,
+  // and focus lands on the first link so a keyboard user starts inside it.
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close(true);
+    };
+    const root = document.documentElement;
+    const prev = root.style.overflow;
+    root.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey);
+    firstLinkRef.current?.focus();
+    return () => {
+      root.style.overflow = prev;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [isOpen, close]);
 
   return (
-    <nav
-      className={`fixed top-0 z-50 w-full transition-all duration-200 ${
-        scrolled
-          ? "bg-bg-primary/80 backdrop-blur-xl"
-          : "bg-transparent"
-      }`}
-    >
-      <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-6">
-        <Link href="/" className="text-xl font-bold text-white">
-          <motion.span
-            className="inline-block"
-            initial={{ scale: 0.5, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
-          >
-            BigQuiv Digitals
-          </motion.span>
+    <header className="paper-scope fixed inset-x-0 top-0 z-50 border-b-[3px] border-ink bg-paper text-ink">
+      <nav
+        aria-label="Main"
+        className="mx-auto flex h-16 max-w-[1320px] items-center justify-between gap-6 px-4 sm:px-6 md:h-[72px] lg:px-10"
+      >
+        <Link
+          href="/"
+          className="relative font-display text-[1.2rem] font-bold tracking-[-0.01em] text-ink md:text-[1.3rem]"
+          onClick={() => close()}
+        >
+          <span className="paper-link">BigQuiv Digitals</span>
         </Link>
 
-        {/* Desktop links */}
-        <div className="hidden items-center gap-8 md:flex">
-          {links.map((link) => (
-            <NavLink
-              key={link.href}
-              href={link.href}
-              label={link.label}
-              isActive={pathname === link.href}
-            />
-          ))}
-        </div>
+        {/* Desktop links. Typewriter caps; an ink bar under the current page,
+            a gold bar that draws in on hover. */}
+        <ul className="hidden items-center gap-1 md:flex lg:gap-2">
+          {links.map((link) => {
+            const active = isActive(pathname, link.href);
+            return (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className="group/nl relative inline-flex min-h-[44px] items-center px-2.5 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink lg:px-3"
+                >
+                  {link.label}
+                  <span
+                    aria-hidden="true"
+                    className={`absolute inset-x-2.5 bottom-2 h-[3px] origin-left transition-transform duration-200 ease-out lg:inset-x-3 ${
+                      active ? "scale-x-100 bg-ink" : "scale-x-0 bg-gold group-hover/nl:scale-x-100"
+                    }`}
+                  />
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
 
         <div className="hidden md:block">
-          <Button href="https://calendly.com/_quivira/one-on-one-meeting" showArrow={false}>
+          <BrutalButton href={CALENDLY} size="sm" arrow={false}>
             Book a Call
-          </Button>
+          </BrutalButton>
         </div>
 
-        {/* Mobile hamburger */}
-        {/*
-          A screen reader previously announced this as an unnamed button and
-          never reported whether the menu was open — WCAG 4.1.2 (Name, Role,
-          Value), Level A. `aria-label` names it, `aria-expanded` reports state,
-          and `aria-controls` ties it to the overlay it opens.
-
-          The icon was 24x24, which technically clears WCAG 2.5.8 (AA) and fails
-          Apple's 44pt guidance. `-m-2.5 p-2.5` grows the tap target to 44x44
-          without moving the icon a pixel: the padding is cancelled by an equal
-          negative margin, so layout is unchanged.
-        */}
+        {/* Mobile toggle. A 44px square; two bars that cross into an X. */}
         <button
+          ref={toggleRef}
           type="button"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => setIsOpen((v) => !v)}
           aria-label={isOpen ? "Close menu" : "Open menu"}
           aria-expanded={isOpen}
           aria-controls="mobile-menu"
-          className="-m-2.5 p-2.5 text-white md:hidden cursor-pointer"
+          className="relative inline-flex h-11 w-11 cursor-pointer items-center justify-center border-[3px] border-ink bg-paper shadow-brutal-sm transition-[translate,box-shadow] duration-150 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none md:hidden"
         >
-          {isOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
+          <span
+            aria-hidden="true"
+            className={`absolute h-[3px] w-5 bg-ink transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isOpen ? "rotate-45" : "-translate-y-[4px]"
+            }`}
+          />
+          <span
+            aria-hidden="true"
+            className={`absolute h-[3px] w-5 bg-ink transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              isOpen ? "-rotate-45" : "translate-y-[4px]"
+            }`}
+          />
         </button>
-      </div>
+      </nav>
 
-      {/* Mobile overlay */}
+      {/* Mobile menu: a sheet of grid paper under the bar. */}
       {isOpen && (
-        <div id="mobile-menu" className="fixed inset-0 top-16 z-40 bg-bg-primary/95 backdrop-blur-xl md:hidden">
-          <div className="flex flex-col items-center gap-8 pt-12">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-lg font-medium transition-colors hover:text-text-primary ${
-                  pathname === link.href ? "text-text-primary" : "text-text-secondary"
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Button href="https://calendly.com/_quivira/one-on-one-meeting" showArrow={false}>
+        <div
+          id="mobile-menu"
+          className="mobile-sheet fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col overflow-y-auto bg-grid-paper md:hidden"
+        >
+          <ul className="px-4 pt-4 sm:px-6">
+            {links.map((link, i) => {
+              const active = isActive(pathname, link.href);
+              return (
+                <li
+                  key={link.href}
+                  className="mobile-sheet-item border-b-[3px] border-ink"
+                  style={{ "--i": i } as React.CSSProperties}
+                >
+                  <Link
+                    ref={i === 0 ? firstLinkRef : undefined}
+                    href={link.href}
+                    aria-current={active ? "page" : undefined}
+                    onClick={() => close()}
+                    className="flex min-h-[68px] items-center gap-4 py-3"
+                  >
+                    <span aria-hidden="true" className="w-7 font-typewriter text-[13px] font-bold text-ink-soft">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className={`font-didone text-[2.6rem] font-semibold leading-none text-ink ${active ? "hl-mark" : ""}`}>
+                      {link.label}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="relative px-4 pb-14 pt-9 sm:px-6">
+            <BrutalButton href={CALENDLY} size="lg" arrow={false} className="w-full">
               Book a Call
-            </Button>
+            </BrutalButton>
+            <Sticker shape="starburst" tone="gold" size={84} tilt={14} reveal={false} className="absolute -top-4 right-5">
+              hi
+            </Sticker>
           </div>
+          <CheckerStrip className="mt-auto shrink-0" />
         </div>
       )}
-    </nav>
+    </header>
   );
 }
