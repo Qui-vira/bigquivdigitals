@@ -46,11 +46,15 @@ async function seed() {
 
   // ─── Stats ───
   await db.insert(schema.stats).values([
-    // Home trust bar
-    { page: "home_trust", label: "Community Members", value: 500, suffix: "+", sortOrder: 0 },
-    { page: "home_trust", label: "Pairs Scanned Daily", value: 20, suffix: "+", sortOrder: 1 },
-    { page: "home_trust", label: "Platforms", value: 6, suffix: "", sortOrder: 2 },
-    { page: "home_trust", label: "Signal Win Rate", value: 85, suffix: "%+", sortOrder: 3 },
+    // Home trust bar. Mirrors the live rows as of 2026-10-04 (see
+    // scripts/home-trust-numbers-2026-10-04.ts). The old seed rows here were
+    // banned claims (500+ members, 85% win rate) with no evidenceRef.
+    // Telegram is 3,485 (t.me/Quivira_hub1, 4 Oct 2026). Only 6 systems run:
+    // the 6 Vercel projects; the 4 Railway projects are stopped.
+    { page: "home_trust", label: "Subscribers on a channel I built", value: 3485, suffix: "", evidenceRef: "quivira/blocks.md#block-1", sortOrder: 0 },
+    { page: "home_trust", label: "Production systems running", value: 6, suffix: "", evidenceRef: "technical/blocks.md#block-1", sortOrder: 1 },
+    { page: "home_trust", label: "Views on a single post", value: 1000000, suffix: "+", evidenceRef: "content/blocks.md#block-1", sortOrder: 2 },
+    { page: "home_trust", label: "Published breakdowns", value: 25, suffix: "", evidenceRef: "technical/blocks.md#block-2", sortOrder: 3 },
     // Home results section
     { page: "home_results", label: "Community Members", value: 500, suffix: "+", sortOrder: 0 },
     { page: "home_results", label: "Signal Win Rate", value: 85, suffix: "%+", sortOrder: 1 },

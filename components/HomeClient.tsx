@@ -46,7 +46,7 @@ const CASE_STUDIES = [
   {
     href: "/work/alpha-plays",
     tag: "Community and markets",
-    claim: "8,874 people get my market calls. Individual posts pull 1.2K to 2.6K views.",
+    claim: "3,485 people get my market calls.",
     support:
       "Every result published next to the call that produced it, with the entry, the stop and the target still visible.",
     image: "/proof/quivira/result-eth-setup-85pct.webp",
@@ -69,7 +69,7 @@ const CASE_STUDIES = [
     tag: "Content",
     claim: "One video pulled 128,000 views and 1,700 comments.",
     support:
-      "I answered every comment by hand. Behind it sits the pipeline: 13 deployed systems, a lead engine that scored 200 prospects, 25 published articles.",
+      "I answered every comment by hand. Behind it sits the pipeline: 6 deployed systems, a lead engine that scored 200 prospects, 25 published articles.",
     image: "/proof/content/web3-video-128k.webp",
     imageAlt:
       "The post's own metrics bar: 8:43 AM, 24 April 2025, 128K views, with 1.7K comments, 267 reposts, 1.4K likes and 598 bookmarks, and the follow-up post delivering the free Web3 guide the next day.",
