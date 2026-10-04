@@ -54,6 +54,8 @@ const STATIC_ROUTES: Array<{ path: string; priority: number; changeFrequency: Me
   { path: "/contact", priority: 0.6, changeFrequency: "yearly" },
   { path: "/greatwork-waitlist", priority: 0.8, changeFrequency: "weekly" },
   { path: "/aimastery-waitlist", priority: 0.8, changeFrequency: "weekly" },
+  // /ugc: LISTED, but kept out of the nav. Linked from bios and pitches (owner, 2026-10-04).
+  { path: "/ugc", priority: 0.7, changeFrequency: "monthly" },
 ];
 
 async function articleSlugs(): Promise<Array<{ slug: string; updated: Date }>> {

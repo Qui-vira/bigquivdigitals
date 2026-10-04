@@ -60,7 +60,7 @@ export type Film = {
  * Read at module scope because it is a build-time public var — Next inlines it,
  * so there is no runtime lookup and no reason to read it per render.
  */
-const VIDEO_BASE = (process.env.NEXT_PUBLIC_PROOF_VIDEO_BASE || "").replace(/\/+$/, "");
+export const VIDEO_BASE = (process.env.NEXT_PUBLIC_PROOF_VIDEO_BASE || "").replace(/\/+$/, "");
 
 /**
  * Vertical films are capped rather than run full bleed. At the 820px content
