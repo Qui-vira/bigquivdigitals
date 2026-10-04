@@ -50,6 +50,42 @@ const body = localFont({
   display: "swap",
 });
 
+/**
+ * Paper system faces (redesign 2026-10). Same self-hosting rule as above: the
+ * woff2 files live in app/fonts, latin only.
+ *
+ *   Imbue          condensed Didone, variable (wght + opsz). Display sizes only.
+ *                  The hero headline is set in it, so it is the one new face
+ *                  that is preloaded.
+ *   Courier Prime  the typewriter. Labels, metadata, small print.
+ *   Caveat 700     the marker pen for margin notes. Subset to printable ASCII
+ *                  plus curly quotes, arrows and the naira sign. Never critical,
+ *                  so not preloaded.
+ */
+const didone = localFont({
+  src: [{ path: "./fonts/Imbue-var.woff2", weight: "100 900", style: "normal" }],
+  variable: "--font-serif-face",
+  display: "swap",
+  adjustFontFallback: "Times New Roman",
+});
+
+const typewriter = localFont({
+  src: [
+    { path: "./fonts/CourierPrime-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/CourierPrime-700.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-mono-face",
+  display: "swap",
+  preload: false,
+});
+
+const hand = localFont({
+  src: [{ path: "./fonts/Caveat-700.woff2", weight: "700", style: "normal" }],
+  variable: "--font-hand-face",
+  display: "swap",
+  preload: false,
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   alternates: { canonical: "/" },
@@ -93,7 +129,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable} ${didone.variable} ${typewriter.variable} ${hand.variable}`}>
       <head>
         {/*
           The hero is the largest contentful paint on the homepage and both
@@ -101,23 +137,29 @@ export default function RootLayout({
           lazy-loaded. Preloaded as avif at the two sizes the canvas actually
           picks; the 1024 pair is 29 KB total.
         */}
+        {/* The chrome plate is only ever fetched by the WebGL engine, which
+            loads it with crossOrigin="anonymous" (a texture must be CORS-clean).
+            Without the same attribute here the preload's credentials mode did
+            not match, Chrome discarded it and downloaded the plate a second
+            time. The base plate is also painted by the <picture>, a plain
+            request, so its preload stays without the attribute. */}
         {/* Breakpoints must match pickSrc() in components/HeroReveal.tsx.
             Both key on CSS pixels; mismatching them downloads the hero twice. */}
         <link rel="preload" as="image" type="image/avif" href="/hero/king-base-1024.avif" media="(max-width: 900px)" />
-        <link rel="preload" as="image" type="image/avif" href="/hero/king-chrome-1024.avif" media="(max-width: 900px)" />
+        <link rel="preload" as="image" type="image/avif" crossOrigin="anonymous" href="/hero/king-chrome-1024.avif" media="(max-width: 900px)" />
         <link rel="preload" as="image" type="image/avif" href="/hero/king-base-1600.avif" media="(min-width: 901px) and (max-width: 1600px)" />
-        <link rel="preload" as="image" type="image/avif" href="/hero/king-chrome-1600.avif" media="(min-width: 901px) and (max-width: 1600px)" />
+        <link rel="preload" as="image" type="image/avif" crossOrigin="anonymous" href="/hero/king-chrome-1600.avif" media="(min-width: 901px) and (max-width: 1600px)" />
         <link rel="preload" as="image" type="image/avif" href="/hero/king-base-2560.avif" media="(min-width: 1601px)" />
-        <link rel="preload" as="image" type="image/avif" href="/hero/king-chrome-2560.avif" media="(min-width: 1601px)" />
+        <link rel="preload" as="image" type="image/avif" crossOrigin="anonymous" href="/hero/king-chrome-2560.avif" media="(min-width: 1601px)" />
       </head>
-      <body className="min-h-screen bg-bg-primary font-sans text-text-primary antialiased">
+      <body id="top" className="min-h-screen bg-bg-primary font-sans text-text-primary antialiased">
         {/* JSON-LD. In the root layout so it is present on every route, and in
             the SSR HTML so a crawler sees it without executing anything. */}
         <OrganizationJsonLd />
         <CustomCursor />
         <ParticleFieldLoader />
         <PublicNavbar />
-        <main>{children}</main>
+        <main id="main" tabIndex={-1} className="outline-none">{children}</main>
         <PublicWrapper>
           <FooterServer />
         </PublicWrapper>

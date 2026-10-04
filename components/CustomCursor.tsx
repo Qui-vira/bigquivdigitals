@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { motion, useSpring, useReducedMotion } from "framer-motion";
+import { isPaperRoute } from "@/lib/paper-routes";
 
 /**
  * Not rendered on the homepage.
@@ -13,11 +14,12 @@ import { motion, useSpring, useReducedMotion } from "framer-motion";
  * bug, but the object itself is still wrong on this page. It stays everywhere
  * else, where it sits over flat backgrounds.
  */
-const DISABLED_ON = new Set(["/"]);
+// Every paper route (lib/paper-routes.ts) also drops it: the paper design uses
+// the system cursor everywhere.
 
 export function CustomCursor() {
   const pathname = usePathname();
-  return DISABLED_ON.has(pathname) ? null : <CursorLayer />;
+  return isPaperRoute(pathname) ? null : <CursorLayer />;
 }
 
 function CursorLayer() {

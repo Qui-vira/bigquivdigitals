@@ -30,6 +30,245 @@
   --font-display: var(--font-display-face), var(--font-body), sans-serif;
 }
 
+/* ── Paper system (redesign 2026-10) ───────────────────────────────────────
+   The public site moves from a black page to a light paper page: white grounds,
+   grid paper, ink rules, hard offset shadows, gold as a FILL. The legacy dark
+   tokens above stay untouched so pages that have not been migrated yet (and the
+   whole admin area) keep rendering exactly as before. New work uses these.
+   Primitives that consume them live in components/ui-paper (read its README).
+
+   Contrast, measured (WCAG 2.x relative luminance):
+     ink        #111111  18.9:1 paper   17.0:1 paper-alt   8.8:1 on gold
+     ink-soft   #383838  11.7:1 paper   10.6:1 paper-alt   5.4:1 on gold
+     ink-muted  #5A5A5A   6.9:1 paper    6.2:1 paper-alt   3.2:1 on gold (NO)
+     gold-deep  #8A5A0E   5.9:1 paper    5.3:1 paper-alt   5.0:1 on gold-tint
+     gold       #E8A33D   2.2:1 paper  -> fills, stickers, marks, large display
+                                          only. Never gold text at body size.
+   On a gold fill, text is ink or ink-soft. Nothing lighter.
+
+   Rejected by the owner as PAGE grounds, never use: cream (#F4F1EA family),
+   gold grounds, black or near-black sections. Gold is for objects on the page
+   (stickers, a framed panel, a button), not for a full-bleed section.
+   ────────────────────────────────────────────────────────────────────────── */
+@theme {
+  --color-paper: #ffffff;
+  --color-paper-alt: #f2f3f5;
+  --color-grid-line: #e6e9ed;
+  --color-ink: #111111;
+  --color-ink-soft: #383838;
+  --color-ink-muted: #5a5a5a;
+  --color-gold: #e8a33d;
+  --color-gold-hover: #f0b457;
+  --color-gold-soft: #e7bb88;
+  --color-gold-tint: #fbebcf;
+  --color-gold-deep: #8a5a0e;
+  --color-bronze: #6e4510;
+
+  /* Condensed Didone (Imbue) for display sizes ONLY, 24px and up. Its
+     hairlines vanish below that, and this owner has rejected a Bodoni in
+     reading text before. */
+  --font-didone: var(--font-serif-face), "Times New Roman", serif;
+  /* Typewriter mono (Courier Prime) for labels, metadata and small print. */
+  --font-typewriter: var(--font-mono-face), "Courier New", monospace;
+  /* Marker pen (Caveat) for margin notes and annotations. Asides only. */
+  --font-hand: var(--font-hand-face), "Comic Sans MS", cursive;
+
+  --shadow-brutal-sm: 3px 3px 0 0 #111111;
+  --shadow-brutal: 6px 6px 0 0 #111111;
+  --shadow-brutal-lg: 10px 10px 0 0 #111111;
+  --shadow-brutal-gold: 6px 6px 0 0 #e8a33d;
+}
+
+/* Shared paper variables that are not utilities. */
+:root {
+  --rule: 3px;
+  --grid-size: 28px;
+  /* z-index scale. Nothing on a public page uses a value outside this list. */
+  --z-raised: 1;
+  --z-sticker: 5;
+  --z-menu: 40;
+  --z-nav: 50;
+}
+
+/* Grid paper. White ground, faint cool grid (1.22:1 against white): present,
+   never louder than the ink on top of it. */
+.bg-grid-paper {
+  background-color: var(--color-paper);
+  background-image:
+    linear-gradient(var(--color-grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-grid-line) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  background-position: -1px -1px;
+}
+
+/* Checker strip. Gold and white squares between two ink rules. Decorative,
+   always aria-hidden. Override --checker-a / --checker-b for other pairs. */
+.checker-strip {
+  height: 18px;
+  border-block: 2px solid var(--color-ink);
+  background: repeating-conic-gradient(
+      var(--checker-a, var(--color-gold)) 0 25%,
+      var(--checker-b, var(--color-paper)) 0 50%
+    )
+    0 0 / 14px 14px;
+}
+
+/* One visible focus treatment for every paper surface: a 3px ink ring with a
+   pale gold halo, offset so it never sits on top of a hard shadow. */
+.paper-scope :focus-visible,
+.paper-focus:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 7px var(--color-gold-tint);
+}
+
+.paper-scope ::selection {
+  background-color: var(--color-gold-soft);
+  color: var(--color-ink);
+}
+
+/* Highlighter mark. The background IS the marker; box-decoration-break makes
+   it follow the words across line breaks instead of drawing one box. */
+.hl-mark {
+  background-image: linear-gradient(
+    100deg,
+    transparent 0 0.4%,
+    color-mix(in srgb, var(--color-gold) 78%, transparent) 1% 98.6%,
+    transparent 99.4%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 0.58em;
+  background-position: 0 86%;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-inline: 0.05em;
+}
+
+/* ── Reveal states ──────────────────────────────────────────────────────────
+   Driven by useReveal() (components/ui-paper/useReveal.ts), which writes
+   data-reveal onto the element. The motion-layer rule above still holds: the
+   DEFAULT state (no attribute: server render, no JS, reduced motion) is the
+   finished, visible state. "armed" is only ever set on an element that is
+   below the fold at mount, so its pre-pose is never seen; "in" plays the
+   entrance once. Nothing here animates opacity. */
+
+/* Stickers and stamps drop on with a small overshoot, like they were slapped
+   onto the page. Animates `transform`, so it composes with the element's own
+   `rotate` tilt instead of overwriting it. */
+@keyframes paper-settle {
+  0% { transform: translate3d(0, -14px, 0) rotate(-9deg) scale(1.14); }
+  70% { transform: translate3d(0, 1px, 0) rotate(1.5deg) scale(0.99); }
+  100% { transform: none; }
+}
+[data-reveal="armed"].rv-settle { transform: translate3d(0, -14px, 0) rotate(-9deg) scale(1.14); }
+[data-reveal="in"].rv-settle { animation: paper-settle 0.62s var(--ease-out-back) both; animation-delay: var(--rv-delay, 0ms); }
+
+/* Prints and frames lift up off the page and settle onto it. */
+@keyframes paper-drop {
+  from { transform: translate3d(0, 22px, 0) rotate(-1.2deg); }
+  to { transform: none; }
+}
+[data-reveal="armed"].rv-drop { transform: translate3d(0, 22px, 0) rotate(-1.2deg); }
+[data-reveal="in"].rv-drop { animation: paper-drop 0.75s var(--ease-out-expo) both; animation-delay: var(--rv-delay, 0ms); }
+
+/* Handwriting: strokes draw on (paths carry pathLength="1"), words write on
+   from left to right. */
+@keyframes ink-draw { to { stroke-dashoffset: 0; } }
+[data-reveal="armed"] .rv-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; }
+[data-reveal="in"] .rv-stroke {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: ink-draw 0.7s var(--ease-out-expo) forwards;
+  animation-delay: var(--stroke-delay, 0ms);
+}
+
+@keyframes ink-write {
+  from { clip-path: inset(-30% 100% -30% 0); }
+  to { clip-path: inset(-30% 0 -30% 0); }
+}
+[data-reveal="armed"] .rv-write { clip-path: inset(-30% 100% -30% 0); }
+[data-reveal="in"] .rv-write { animation: ink-write 0.9s var(--ease-out-expo) both; animation-delay: var(--rv-delay, 0ms); }
+
+/* Highlighter sweeps across. */
+@keyframes hl-sweep {
+  from { background-size: 0% 0.58em; }
+  to { background-size: 100% 0.58em; }
+}
+[data-reveal="armed"].hl-mark { background-size: 0% 0.58em; }
+[data-reveal="in"].hl-mark { animation: hl-sweep 0.8s var(--ease-out-expo) both; animation-delay: var(--rv-delay, 0ms); }
+
+/* Page-load entrances for the hero, which is above the fold by definition and
+   therefore never armed. Transform only, opacity stays at 1. */
+.load-drop { animation: paper-drop 0.9s var(--ease-out-expo) both; animation-delay: var(--rv-delay, 0ms); }
+.load-settle { animation: paper-settle 0.7s var(--ease-out-back) both; animation-delay: var(--rv-delay, 0ms); }
+@keyframes load-tilt { from { rotate: 0deg; translate: 0 0; } }
+.load-tilt { animation: load-tilt 1s var(--ease-out-expo) both; animation-delay: var(--rv-delay, 0ms); }
+.hl-load { animation: hl-sweep 0.9s var(--ease-out-expo) both; animation-delay: var(--rv-delay, 0ms); }
+.load-write { animation: ink-write 1s var(--ease-out-expo) both; animation-delay: var(--rv-delay, 0ms); }
+.load-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; animation: ink-draw 0.8s var(--ease-out-expo) forwards; animation-delay: var(--stroke-delay, 0ms); }
+
+/* Mobile menu sheet: unrolls from under the bar, links rise in sequence. */
+@keyframes sheet-in {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+@keyframes item-rise {
+  from { transform: translate3d(0, 16px, 0); }
+  to { transform: none; }
+}
+.mobile-sheet { animation: sheet-in 0.28s var(--ease-out-expo) both; }
+.mobile-sheet-item { animation: item-rise 0.45s var(--ease-out-expo) both; animation-delay: calc(70ms + var(--i, 0) * 45ms); }
+
+/* Footer and inline links on paper: a highlighter that slides in on hover. */
+.paper-link {
+  background-image: linear-gradient(var(--color-gold), var(--color-gold));
+  background-repeat: no-repeat;
+  background-size: 0% 0.5em;
+  background-position: 0 90%;
+  transition: background-size 0.25s var(--ease-out-expo);
+}
+.paper-link:hover,
+.paper-link:focus-visible {
+  background-size: 100% 0.5em;
+}
+
+/* Pointer copy versus touch copy ("move your cursor" / "drag your finger"). */
+.only-touch { display: none; }
+@media (hover: none), (pointer: coarse) {
+  .only-pointer { display: none; }
+  .only-touch { display: inline; }
+}
+
+/* Reduced motion: every paper entrance resolves to its finished state, even
+   if an element was armed before the preference changed. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal].rv-settle,
+  [data-reveal].rv-drop,
+  .load-drop,
+  .load-settle {
+    transform: none !important;
+    animation: none !important;
+  }
+  .load-tilt,
+  .mobile-sheet,
+  .mobile-sheet-item { animation: none !important; }
+  [data-reveal] .rv-stroke,
+  .load-stroke {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+  [data-reveal] .rv-write,
+  .load-write {
+    clip-path: none !important;
+    animation: none !important;
+  }
+  .hl-load,
+  [data-reveal].hl-mark {
+    background-size: 100% 0.58em !important;
+    animation: none !important;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -293,6 +532,12 @@ html {
      new `infinite` animation anywhere, add it to this list in the same commit. */
   .animate-marquee,
   .anim-float,
+  .load-drop,
+  .load-settle,
+  .load-tilt,
+  [data-reveal],
+  [data-reveal] .rv-stroke,
+  [data-reveal] .rv-write,
   .caret,
   .cta-emphasis::before,
   .cta-emphasis::after {
