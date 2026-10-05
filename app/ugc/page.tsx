@@ -65,6 +65,7 @@ export const metadata: Metadata = {
 };
 
 const EMAIL = "contact@bigquivdigitals.com";
+const WHATSAPP = { display: "+234 706 509 2434", href: "https://wa.me/2347065092434" };
 
 const NICHES = ["Crypto apps", "Wallets", "Exchanges", "AI tools", "Fintech", "Health tech"];
 
@@ -252,6 +253,19 @@ function EmailLink({ className = "" }: { className?: string }) {
   );
 }
 
+function WhatsAppLink({ className = "" }: { className?: string }) {
+  return (
+    <a
+      href={WHATSAPP.href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cx("paper-link select-all whitespace-nowrap", className)}
+    >
+      {WHATSAPP.display}
+    </a>
+  );
+}
+
 /** A section tag in the reference's wavy pill shape. Decorative: the heading carries the meaning. */
 function Tag({ children, tilt = -7, className }: { children: string; tilt?: number; className?: string }) {
   return (
@@ -394,7 +408,7 @@ export default function UgcPage() {
               </p>
             </div>
 
-            {/* The contact card: handles and email, taped into the spread. */}
+            {/* The contact card: handles, email and WhatsApp, taped into the spread. */}
             <div className="relative mt-14 max-w-[460px] border-[3px] border-ink bg-gold-tint p-6 pt-8 shadow-brutal [rotate:-1.2deg] sm:p-7 sm:pt-9">
               <Tape className="-top-3.5 left-8" tilt={-5} width={96} />
               <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
@@ -419,6 +433,12 @@ export default function UgcPage() {
                   <dt className="font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-ink-soft">Email</dt>
                   <dd className="mt-1">
                     <EmailLink className="font-display font-bold text-ink" />
+                  </dd>
+                </div>
+                <div className="col-span-2 sm:col-span-3">
+                  <dt className="font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-ink-soft">WhatsApp</dt>
+                  <dd className="mt-1">
+                    <WhatsAppLink className="font-display font-bold text-ink" />
                   </dd>
                 </div>
               </dl>
@@ -799,6 +819,9 @@ export default function UgcPage() {
               <p>
                 <EmailLink className="normal-case tracking-normal" />
               </p>
+              <p>
+                WhatsApp <WhatsAppLink className="normal-case tracking-normal" />
+              </p>
               <p className="flex flex-wrap gap-x-5 gap-y-1">
                 {HANDLES.map((h) => (
                   <a
@@ -814,9 +837,12 @@ export default function UgcPage() {
               </p>
             </div>
 
-            <div className="mt-10">
+            <div className="mt-10 flex flex-wrap gap-5">
               <BrutalButton href={`mailto:${EMAIL}`} size="lg">
                 Email me
+              </BrutalButton>
+              <BrutalButton href={WHATSAPP.href} variant="paper" size="lg" newTab>
+                WhatsApp me
               </BrutalButton>
             </div>
           </div>

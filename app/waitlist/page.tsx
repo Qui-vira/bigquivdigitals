@@ -32,7 +32,7 @@ const doors = [
     eyebrow: "AI Mastery",
     promise: "Make ads, films and content with AI. No camera, no crew, no budget.",
     detail:
-      "The 60-day challenge list. First 100 on it get the class free if I miss my target.",
+      "The 60-day challenge list. The first 100 on it get the class free.",
   },
   {
     href: "/greatwork-waitlist",

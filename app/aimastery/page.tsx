@@ -36,12 +36,10 @@ export const revalidate = 60;
  * to buy. It is a different door for a different person, not a gate on this one.
  *
  * ⚠ THE TWO PAGES CONFLICT AND THE OWNER HAS BEEN TOLD. The waitlist promises
- * free access to the first 100 if the 60-day target is missed. Anyone who sees
- * both pages is better off joining the list and waiting than paying today. Do
- * not link this page to the waitlist, and do not repeat the free-access promise
- * here. If it ever needs resolving properly, the clean version is that buyers
- * are refunded on a miss rather than non-buyers getting it free — that rewards
- * buying instead of waiting.
+ * the class free to the first 100 on it, with no condition (owner, 2026-09-29,
+ * confirmed 2026-10-05). Anyone who sees both pages may join the list instead of
+ * paying today. Do not link this page to the waitlist, and do not repeat the
+ * free-access promise here.
  *
  * STILL UNLISTED. robots.index:false below, no nav, no footer, no sitemap. It
  * sells to anyone handed the link; it is not yet competing in search. Remove
