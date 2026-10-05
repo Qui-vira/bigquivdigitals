@@ -253,11 +253,15 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
       <PaperSection ground="grid" id="work" aria-labelledby="work-heading" pad="lg">
         <div className="relative">
           <SectionHead index="02" id="work-heading" title="Three builds. Go and check them." />
+          {/* Sits in the gap the staggered right column leaves above its first
+              print, so the arrow lands on that print's top edge. */}
           <HandNote
             arrow="down-right"
-            arrowAt="end"
-            tilt={4}
-            className="absolute -bottom-20 left-[44%] hidden lg:inline-flex"
+            arrowAt="below"
+            tilt={-4}
+            size="lg"
+            className="absolute -bottom-[13.25rem] left-[calc(50%+1.5rem)] z-[5] hidden lg:inline-flex"
+            arrowClassName="ml-40"
           >
             go on, open one
           </HandNote>
@@ -317,12 +321,15 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
           >
             Five freelancers, five invoices, and <HandMark kind="circle">nobody answering</HandMark> for the result.
           </h2>
+          {/* Beside the headline, its arrow ending at the circled words. Only
+              from xl: below that the headline fills the measure. */}
           <HandNote
             tilt={-6}
-            className="absolute -top-6 right-0 hidden lg:inline-flex"
+            size="lg"
+            className="absolute left-[52%] top-[30%] hidden xl:inline-flex"
             arrow="down-left"
             arrowAt="below"
-            arrowClassName="ml-6"
+            arrowClassName="-ml-2"
           >
             sound familiar?
           </HandNote>
@@ -397,7 +404,13 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
         <SectionHead id="process-heading" title="Seven days to your first report." />
 
         <div aria-hidden="true" className="relative hidden h-24 xl:block">
-          <HandNote arrow="down-right" arrowAt="end" tilt={-3} className="absolute -bottom-3 left-[40%]" arrowClassName="!w-[96px]">
+          <HandNote
+            arrow="down-right"
+            arrowAt="end"
+            tilt={-3}
+            className="absolute -bottom-7 left-[41%]"
+            arrowClassName="mt-8"
+          >
             the report lands here
           </HandNote>
         </div>

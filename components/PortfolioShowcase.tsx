@@ -3,8 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowUpRight, CheckCircle2, Clock3 } from "lucide-react";
-import { FilmReel, FILM_COUNT } from "@/components/FilmReel";
+import { ArrowRight, ArrowUpRight, Check, Clock3 } from "lucide-react";
+import { PaperFilmReel, FILM_COUNT } from "@/components/portfolio/PaperFilmReel";
+import { MonoLabel, PhotoPrint, Sticker, Tape, cx } from "@/components/ui-paper";
 
 /**
  * ⚠ "ai-video" HAS NO ENTRY IN PROJECTS AND THAT IS CORRECT. Its six items are
@@ -152,53 +153,74 @@ function inCategory(project: Project, category: CategoryId): boolean {
   );
 }
 
-function ProjectCard({ project }: { project: Project }) {
-  const card = (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg-secondary transition-[border-color,transform] duration-300 hover:-translate-y-1 hover:border-accent/50">
-      <div className="relative aspect-[16/10] overflow-hidden bg-[#11100e]">
-        <Image
-          src={project.image}
-          alt={project.imageAlt}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.025]"
-        />
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-bg-secondary to-transparent" />
-      </div>
+/** How each build's print sits on the board. */
+const CARD_LAYOUT = [
+  { tilt: -1.8, attach: "tape" as const, sticker: "gold" as const },
+  { tilt: 1.4, attach: "clip" as const, sticker: "tint" as const },
+  { tilt: 1, attach: "pin" as const, sticker: "tint" as const },
+  { tilt: -1.3, attach: "tape-corners" as const, sticker: "gold" as const },
+];
 
-      <div className="flex flex-1 flex-col px-6 pb-6 pt-3 md:px-7 md:pb-7">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-accent">
-          {project.eyebrow}
-        </p>
-        <div className="mt-3 flex items-start justify-between gap-5">
-          <h2 className="text-2xl font-bold leading-tight tracking-tight text-text-primary">
-            {project.title}
-          </h2>
-          <ArrowUpRight
-            className="mt-1 h-5 w-5 shrink-0 text-text-muted transition-[color,transform] duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-accent"
-            aria-hidden="true"
+/**
+ * One build: the real capture as a print, then the words beneath it on the
+ * paper. The whole card is one link. External builds get the up-right arrow,
+ * internal case studies the plain one.
+ */
+function ProjectCard({ project, index }: { project: Project; index: number }) {
+  const l = CARD_LAYOUT[index % CARD_LAYOUT.length];
+  const Arrow = project.external ? ArrowUpRight : ArrowRight;
+  const card = (
+    <article className="flex h-full flex-col">
+      <PhotoPrint tilt={l.tilt} attach={l.attach} lift="group" mat="even" delay={index * 80}>
+        <div className="relative aspect-[16/10]">
+          <Image
+            src={project.image}
+            alt={project.imageAlt}
+            fill
+            sizes="(max-width: 768px) 92vw, (max-width: 1320px) 46vw, 600px"
+            className="object-cover object-top"
           />
         </div>
+      </PhotoPrint>
 
-        <p className="mt-4 text-base leading-relaxed text-text-secondary">
-          {project.description}
-        </p>
+      <div className="mt-8 flex flex-1 flex-col px-1">
+        <div>
+          <Sticker shape="label" tone={l.sticker} tilt={index % 2 === 0 ? -2 : 2} decorative={false}>
+            {project.eyebrow}
+          </Sticker>
+        </div>
+        <div className="mt-5 flex items-start justify-between gap-5">
+          <h2 className="font-didone text-[clamp(2.2rem,3.6vw,3rem)] font-semibold leading-[0.98] tracking-[-0.01em] text-ink">
+            {project.title}
+          </h2>
+          <span
+            aria-hidden="true"
+            className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center border-[3px] border-ink bg-paper shadow-brutal-sm transition-[background-color,translate] duration-200 ease-out group-hover:-translate-y-0.5 group-hover:bg-gold"
+          >
+            <Arrow className="h-5 w-5 text-ink" strokeWidth={2.5} />
+          </span>
+        </div>
 
-        <div className="mt-6 border-t border-border pt-5">
-          <p className="flex gap-2 text-sm leading-relaxed text-text-primary">
-            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" aria-hidden="true" />
+        <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-ink-soft">{project.description}</p>
+
+        <div className="mt-6 border-t-[3px] border-ink pt-5">
+          <p className="flex gap-3 text-[15px] leading-relaxed text-ink">
+            <span aria-hidden="true" className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center border-2 border-ink bg-gold">
+              <Check className="h-4 w-4 text-ink" strokeWidth={3} />
+            </span>
             <span>{project.proof}</span>
           </p>
           {project.disclosure && (
-            <p className="mt-3 text-xs leading-relaxed text-text-muted">{project.disclosure}</p>
+            <MonoLabel as="p" caps={false} size="sm" tone="muted" className="mt-3">
+              {project.disclosure}
+            </MonoLabel>
           )}
         </div>
       </div>
     </article>
   );
 
-  const className =
-    "block h-full rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent";
+  const className = "group block h-full";
 
   if (project.external) {
     return (
@@ -224,10 +246,12 @@ export function PortfolioShowcase() {
 
   return (
     <div>
+      {/* The filter: square tabs. Wraps from sm up; on a phone it scrolls
+          sideways inside itself, never the page. */}
       <div
         role="tablist"
         aria-label="Filter portfolio by discipline"
-        className="flex gap-2 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-3 pt-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
       >
         {CATEGORIES.map((category) => {
           const selected = active === category.id;
@@ -245,22 +269,28 @@ export function PortfolioShowcase() {
               role="tab"
               aria-selected={selected}
               onClick={() => setActive(category.id)}
-              className={`shrink-0 rounded-lg border px-4 py-2.5 text-sm font-semibold transition-[background-color,border-color,color,transform] duration-200 active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+              className={cx(
+                "paper-focus inline-flex min-h-[48px] shrink-0 cursor-pointer items-center gap-2.5 border-[3px] border-ink px-4 font-display text-[15px] font-bold text-ink transition-[background-color,translate,box-shadow] duration-150 ease-out",
                 selected
-                  ? "border-accent bg-accent text-black"
-                  : "border-border bg-bg-secondary text-text-secondary hover:border-border-hover hover:text-text-primary"
-              }`}
+                  ? "-translate-x-0.5 -translate-y-0.5 bg-gold shadow-brutal"
+                  : "bg-paper shadow-brutal-sm hover:-translate-x-px hover:-translate-y-px hover:bg-gold-tint active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
+              )}
             >
               {category.label}
-              <span className={`ml-2 tabular-nums ${selected ? "text-black/60" : "text-text-muted"}`}>
-                {count || "—"}
+              <span
+                className={cx(
+                  "inline-flex h-6 min-w-6 items-center justify-center border-2 border-ink px-1 font-typewriter text-[12px] font-bold tabular-nums",
+                  selected ? "bg-paper" : "bg-paper-alt"
+                )}
+              >
+                {count}
               </span>
             </button>
           );
         })}
       </div>
 
-      <p className="mt-5 text-sm text-text-muted" aria-live="polite">
+      <p className="mt-6 font-typewriter text-[15px] leading-snug text-ink-soft" aria-live="polite">
         {showFilmsOnly
           ? `${FILM_COUNT} films in ${activeLabel}`
           : visibleProjects.length > 0
@@ -269,29 +299,38 @@ export function PortfolioShowcase() {
       </p>
 
       {showFilmsOnly ? (
-        <div className="mt-10">
-          <FilmReel headless />
+        <div className="mt-14">
+          <PaperFilmReel headless />
         </div>
       ) : visibleProjects.length > 0 ? (
-        <div className="mt-8 grid gap-7 md:grid-cols-2">
-          {visibleProjects.map((project) => (
-            <ProjectCard key={project.title} project={project} />
+        <ul className="mt-14 grid gap-x-12 gap-y-20 md:grid-cols-2 lg:gap-x-20">
+          {visibleProjects.map((project, i) => (
+            <li key={project.title} className={cx(i % 2 === 1 && visibleProjects.length > 1 && "md:mt-24")}>
+              <ProjectCard project={project} index={i} />
+            </li>
           ))}
-        </div>
+        </ul>
       ) : (
-        <div className="mt-8 border-y border-border py-20 md:py-28">
-          <div className="max-w-xl">
-            <Clock3 className="h-7 w-7 text-accent" aria-hidden="true" />
-            <p className="mt-6 text-xs font-semibold uppercase tracking-[0.16em] text-accent">
-              Coming soon
-            </p>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight text-text-primary md:text-4xl">
+        <div className="mt-14 flex justify-center py-6 md:py-12">
+          <div
+            className="relative w-full max-w-[620px] border-[3px] border-ink bg-gold-tint p-8 shadow-brutal-lg sm:p-12"
+            style={{ rotate: "-1.2deg" }}
+          >
+            <Tape className="-top-3.5 left-1/2 -translate-x-1/2" tilt={-3} />
+            <div className="flex items-center gap-4">
+              <span aria-hidden="true" className="flex h-12 w-12 items-center justify-center border-[3px] border-ink bg-gold">
+                <Clock3 className="h-6 w-6 text-ink" strokeWidth={2.25} />
+              </span>
+              <Sticker shape="label" tone="paper" tilt={2} decorative={false} reveal={false}>
+                Coming soon
+              </Sticker>
+            </div>
+            <h2 className="mt-7 font-didone text-[clamp(2.2rem,4.6vw,3.4rem)] font-semibold leading-[1] tracking-[-0.01em] text-ink">
               I have not built one of these yet.
             </h2>
-            <p className="mt-5 text-base leading-relaxed text-text-secondary md:text-lg">
-              I can do the work. I have not shipped a {activeLabel.toLowerCase()} project I would
-              put in front of you, so there is nothing here. When I have, it goes up with a link you
-              can open.
+            <p className="mt-5 text-base leading-relaxed text-ink-soft md:text-lg">
+              I can do the work. I have not shipped a {activeLabel.toLowerCase()} project I would put in front of you, so
+              there is nothing here. When I have, it goes up with a link you can open.
             </p>
           </div>
         </div>
@@ -301,11 +340,10 @@ export function PortfolioShowcase() {
           On a discipline tab they are either the whole answer (ai-video, handled
           above) or irrelevant, so they do not render at all. */}
       {active === "all" && (
-        <div className="mt-20 border-t border-border pt-16 md:mt-24 md:pt-20">
-          <FilmReel />
+        <div className="mt-24 border-t-[3px] border-ink pt-20 md:mt-32 md:pt-24">
+          <PaperFilmReel />
         </div>
       )}
     </div>
   );
 }
-

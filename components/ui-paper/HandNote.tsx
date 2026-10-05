@@ -1,7 +1,7 @@
 "use client";
 
 import { cx, display, positioned } from "./cx";
-import { useReveal } from "./useReveal";
+import { STROKE_DRAW, useInkEntrance, type InkPart } from "./useInkEntrance";
 
 type Pt = [number, number];
 type Curve = { p0: Pt; c1: Pt; c2: Pt; p3: Pt; box: [number, number] };
@@ -49,6 +49,24 @@ function arrowPaths({ p0, c1, c2, p3 }: Curve) {
   return { body, head: `M${head(0.5)} L${p3[0]} ${p3[1]} L${head(-0.5)}` };
 }
 
+/** The arrow draws body first, then the head, like a pen would. */
+function arrowParts(delay: number): InkPart[] {
+  return [
+    { selector: '[data-ink="arrow-body"]', keyframes: STROKE_DRAW, duration: 620, delay, hiddenStart: true },
+    { selector: '[data-ink="arrow-head"]', keyframes: STROKE_DRAW, duration: 260, delay: delay + 480, hiddenStart: true },
+  ];
+}
+
+/**
+ * The words of a note never hide. They arrive from a visible pose, a small
+ * lift and over-tilt that settles, like ink landing on the page; the strokes
+ * of the arrow are the only thing that draws on.
+ */
+const WORDS_SETTLE: Keyframe[] = [
+  { transform: "translate3d(-0.08em, 0.16em, 0) rotate(-2.5deg) scale(0.95)", filter: "blur(1.2px)" },
+  { transform: "none", filter: "blur(0)" },
+];
+
 /** A pen-drawn arrow on its own. Size it with className (width; height follows). */
 export function HandArrow({
   kind = "down-left",
@@ -56,6 +74,7 @@ export function HandArrow({
   strokeDelay = 0,
   load = false,
   tone = "ink",
+  selfDraw = true,
 }: {
   kind?: ArrowKind;
   className?: string;
@@ -64,12 +83,16 @@ export function HandArrow({
   /** Draw on page load instead of on scroll (above-the-fold use). */
   load?: boolean;
   tone?: "ink" | "gold-deep";
+  /** false when a parent (HandNote) runs the entrance for it. */
+  selfDraw?: boolean;
 }) {
   const curve = ARROWS[kind];
   const { body, head } = arrowPaths(curve);
-  const strokeCls = load ? "load-stroke" : "rv-stroke";
+  // Standalone use only: inside a HandNote the note's own entrance draws it.
+  const ref = useInkEntrance<SVGSVGElement>(selfDraw ? arrowParts(strokeDelay) : [], { load });
   return (
     <svg
+      ref={ref}
       aria-hidden="true"
       viewBox={`0 0 ${curve.box[0]} ${curve.box[1]}`}
       className={cx("block h-auto overflow-visible", tone === "ink" ? "text-ink" : "text-gold-deep", className)}
@@ -79,25 +102,16 @@ export function HandArrow({
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path
-        d={body}
-        pathLength={1}
-        className={strokeCls}
-        style={{ "--stroke-delay": `${strokeDelay}ms` } as React.CSSProperties}
-      />
-      <path
-        d={head}
-        pathLength={1}
-        className={strokeCls}
-        style={{ "--stroke-delay": `${strokeDelay + 450}ms` } as React.CSSProperties}
-      />
+      <path d={body} pathLength={1} data-ink="arrow-body" />
+      <path d={head} pathLength={1} data-ink="arrow-head" />
     </svg>
   );
 }
 
 /**
  * A margin note in marker pen, the way a designer annotates a printout.
- * The words write on from left to right, then the arrow draws.
+ * The words settle onto the page, then the arrow draws. The words are never
+ * clipped or hidden at any frame (see useInkEntrance for why).
  *
  *   <HandNote arrow="down-left" arrowAt="end">move your cursor over my face</HandNote>
  *
@@ -133,21 +147,31 @@ export function HandNote({
   as?: "span" | "div" | "p";
   className?: string;
 }) {
-  const ref = useReveal<HTMLElement>();
-  const sizeCls = size === "lg" ? "text-[2rem] sm:text-[2.3rem]" : size === "sm" ? "text-[1.3rem]" : "text-[1.55rem] sm:text-[1.75rem]";
+  const ref = useInkEntrance<HTMLElement>(
+    [
+      { selector: '[data-ink="words"]', keyframes: WORDS_SETTLE, duration: 700 },
+      ...arrowParts(260),
+    ],
+    { load, delay }
+  );
+  const sizeCls =
+    size === "lg"
+      ? "text-[2.2rem] sm:text-[2.6rem]"
+      : size === "sm"
+        ? "text-[1.45rem] sm:text-[1.55rem]"
+        : "text-[1.75rem] sm:text-[2.05rem]";
   const toneCls = tone === "ink" ? "text-ink" : "text-gold-deep";
   const words = (
-    <span className={cx("inline-block whitespace-nowrap", load ? "load-write" : "rv-write")} style={{ "--rv-delay": `${delay}ms` } as React.CSSProperties}>
+    <span data-ink="words" className="inline-block whitespace-nowrap">
       {children}
     </span>
   );
   const arrowEl = arrow ? (
     <HandArrow
       kind={arrow}
-      load={load}
       tone={tone}
-      strokeDelay={delay + 650}
-      className={cx("w-[72px] shrink-0 sm:w-[88px]", arrowClassName)}
+      selfDraw={false}
+      className={cx("w-[84px] shrink-0 sm:w-[100px]", arrowClassName)}
     />
   ) : null;
   const vertical = arrowAt === "below" || arrowAt === "above";
