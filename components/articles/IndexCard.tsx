@@ -108,7 +108,7 @@ export function IndexCard({
           {views != null && views > 0 && (
             <p className="mt-auto flex items-center gap-1.5 pt-[28px] font-typewriter text-[12px] leading-[28px] text-ink-muted">
               <Eye className="h-3.5 w-3.5" aria-hidden="true" />
-              <span>{views} views</span>
+              <span>{views.toLocaleString()} {views === 1 ? "view" : "views"}</span>
             </p>
           )}
         </div>

@@ -1,14 +1,88 @@
+import { cache } from "react";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getArticle } from "@/lib/articles-db";
 import { mdToHtml } from "@/lib/doc-markdown";
+import { SITE_NAME } from "@/lib/site";
 import { BrutalButton, CheckerStrip, HandNote, MonoLabel, Sticker } from "@/components/ui-paper";
 import { ReadingProgress } from "@/components/longread/ReadingProgress";
 import "./doc.css";
 import CopyButtons from "./CopyButtons";
 
 export const revalidate = 60;
+
+/** One Neon read per request, shared by generateMetadata and the page. */
+const loadArticle = cache((slug: string) => getArticle(slug));
+
+/** Rendered HTML to one line of plain text, for the title and description tags. */
+function plainText(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** About 155 characters, cut on a word boundary. */
+function clip(text: string, max = 155): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max - 1);
+  const space = cut.lastIndexOf(" ");
+  return `${(space > 80 ? cut.slice(0, space) : cut).replace(/[\s.,;:!?-]+$/, "")}…`;
+}
+
+/** The leading `# title` and the rest of the body, as rendered HTML. */
+function splitTitle(fullHtml: string) {
+  const lead = /^\s*<h1>([\s\S]*?)<\/h1>\s*/.exec(fullHtml);
+  return {
+    titleHtml: lead ? lead[1] : null,
+    bodyHtml: lead ? fullHtml.slice(lead[0].length) : fullHtml,
+  };
+}
+
+/**
+ * Each article gets its own title, description, canonical and og tags. Before
+ * this every /doc page inherited the homepage's, so a shared article link
+ * carded as "Growth systems that turn attention into revenue". The words come
+ * from the article: its title, and the first paragraph of its body.
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { article } = await loadArticle(slug);
+  if (!article) return { title: `Article not found | ${SITE_NAME}` };
+
+  const { titleHtml, bodyHtml } = splitTitle(mdToHtml(article.content));
+  const name = (titleHtml && plainText(titleHtml)) || article.title;
+  const firstPara = /<p>([\s\S]*?)<\/p>/.exec(bodyHtml);
+  const description = clip(plainText(firstPara ? firstPara[1] : bodyHtml));
+  const title = `${name} | ${SITE_NAME}`;
+  const path = `/doc/${slug}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      title,
+      description,
+      type: "article",
+      url: path,
+      siteName: SITE_NAME,
+      publishedTime: article.created_at ? new Date(article.created_at).toISOString() : undefined,
+      images: [{ url: "/og-image.webp", width: 1456, height: 816, alt: name }],
+    },
+  };
+}
 
 /**
  * The CTA document reader, on paper (redesign 2026-10).
@@ -33,19 +107,16 @@ export default async function DocPage({
   // This page used to 404 whenever the database would not answer, which made an
   // outage look exactly like a deleted article — hence `source`: a clean miss
   // 404s, a failed read does not.
-  const { article, source } = await getArticle(slug);
+  const { article, source } = await loadArticle(slug);
 
   if (!article) notFound();
   if (source === "none") {
     console.error(`[doc] read of "${slug}" failed — this is an outage, not a missing article`);
   }
 
-  const fullHtml = mdToHtml(article.content);
   // Lift the leading title out of the body. If an article ever starts without
   // one, its stored title stands in so the page still has a single h1.
-  const lead = /^\s*<h1>([\s\S]*?)<\/h1>\s*/.exec(fullHtml);
-  const titleHtml = lead ? lead[1] : null;
-  const bodyHtml = lead ? fullHtml.slice(lead[0].length) : fullHtml;
+  const { titleHtml, bodyHtml } = splitTitle(mdToHtml(article.content));
 
   return (
     <div className="paper-scope relative isolate overflow-x-clip bg-paper pt-[67px] text-ink md:pt-[75px]">
