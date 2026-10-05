@@ -6,6 +6,7 @@ const pageLinks = [
   { href: "/services", label: "Services" },
   { href: "/about", label: "About" },
   { href: "/portfolio", label: "Work" },
+  { href: "/ugc", label: "UGC" },
   { href: "/contact", label: "Contact" },
   { href: "/greatwork-waitlist", label: "The Great Work Waitlist" },
   { href: "/aimastery-waitlist", label: "AI Mastery Waitlist" },
