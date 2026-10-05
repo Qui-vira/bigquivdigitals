@@ -1,0 +1,50 @@
+/* Long-read chrome shared by /work/* and /doc/[slug] (redesign 2026-10).
+   Lives beside its component instead of in globals.css so the paper token
+   file stays owned by the design system. */
+
+/* Reading progress: a gold rule under the navbar that fills as you scroll.
+   Pure CSS (a scroll-driven animation), so no scroll listener and no
+   re-render. Browsers without scroll timelines simply never show it. */
+.read-progress {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .read-progress {
+    display: block;
+    position: fixed;
+    inset-inline: 0;
+    /* Navbar: h-16 / md:h-[72px] plus its 3px rule. */
+    top: 67px;
+    height: 5px;
+    z-index: 40;
+    background: var(--color-gold);
+    box-shadow: 0 2px 0 0 var(--color-ink);
+    transform-origin: 0 50%;
+    transform: scaleX(0);
+    animation: read-progress linear both;
+    animation-timeline: scroll(root block);
+    pointer-events: none;
+  }
+
+  @media (min-width: 768px) {
+    .read-progress {
+      top: 75px;
+    }
+  }
+}
+
+@keyframes read-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* The global reduced-motion rule collapses animation durations, which would
+   break a scroll timeline in some engines. It carries no information a reader
+   needs, so it is removed outright. */
+@media (prefers-reduced-motion: reduce) {
+  .read-progress {
+    display: none !important;
+  }
+}
