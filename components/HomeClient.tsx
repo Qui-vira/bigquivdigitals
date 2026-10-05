@@ -260,7 +260,7 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
             arrowAt="below"
             tilt={-4}
             size="lg"
-            className="absolute -bottom-[15rem] left-[calc(50%+1.5rem)] hidden lg:inline-flex"
+            className="absolute -bottom-[13.25rem] left-[calc(50%+1.5rem)] z-[5] hidden lg:inline-flex"
             arrowClassName="ml-40"
           >
             go on, open one
