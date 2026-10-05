@@ -24,7 +24,7 @@ const PATHS: Record<Kind, { viewBox: string; d: string[]; box: string }> = {
   circle: {
     viewBox: "0 0 200 64",
     d: ["M30 9 C 78 1, 168 3, 190 21 C 204 38, 164 59, 100 60 C 38 61, 4 51, 7 33 C 10 17, 44 8, 92 6"],
-    box: "left-[-0.32em] w-[calc(100%+0.64em)] top-[-0.05em] h-[calc(100%+0.14em)]",
+    box: "left-[-0.24em] w-[calc(100%+0.48em)] top-[-0.05em] h-[calc(100%+0.14em)]",
   },
   strike: {
     viewBox: "0 0 200 12",
