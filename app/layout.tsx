@@ -142,12 +142,14 @@ export default function RootLayout({
             time. The base plate is also painted by the <picture>, a plain
             request, so its preload stays without the attribute. */}
         {/* Breakpoints must match pickSrc() in components/HeroReveal.tsx.
-            Both key on CSS pixels; mismatching them downloads the hero twice. */}
-        <link rel="preload" as="image" type="image/avif" href="/hero/king-base-1024.avif" media="(max-width: 900px)" />
+            Both key on CSS pixels; mismatching them downloads the hero twice.
+            The base plate is the homepage LCP element since the paper
+            redesign framed it as a print, so its preload is high priority. */}
+        <link rel="preload" as="image" type="image/avif" fetchPriority="high" href="/hero/king-base-1024.avif" media="(max-width: 900px)" />
         <link rel="preload" as="image" type="image/avif" crossOrigin="anonymous" href="/hero/king-chrome-1024.avif" media="(max-width: 900px)" />
-        <link rel="preload" as="image" type="image/avif" href="/hero/king-base-1600.avif" media="(min-width: 901px) and (max-width: 1600px)" />
+        <link rel="preload" as="image" type="image/avif" fetchPriority="high" href="/hero/king-base-1600.avif" media="(min-width: 901px) and (max-width: 1600px)" />
         <link rel="preload" as="image" type="image/avif" crossOrigin="anonymous" href="/hero/king-chrome-1600.avif" media="(min-width: 901px) and (max-width: 1600px)" />
-        <link rel="preload" as="image" type="image/avif" href="/hero/king-base-2560.avif" media="(min-width: 1601px)" />
+        <link rel="preload" as="image" type="image/avif" fetchPriority="high" href="/hero/king-base-2560.avif" media="(min-width: 1601px)" />
         <link rel="preload" as="image" type="image/avif" crossOrigin="anonymous" href="/hero/king-chrome-2560.avif" media="(min-width: 1601px)" />
       </head>
       <body id="top" className="min-h-screen bg-bg-primary font-sans text-text-primary antialiased">
