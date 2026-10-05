@@ -350,9 +350,9 @@ export default function UgcPage() {
               delay={700}
               tilt={-5}
               arrow="down-left"
-              arrowAt="above"
-              arrowClassName="!w-[64px] ml-8"
-              className="absolute -right-2 -top-24 hidden xl:inline-flex"
+              arrowAt="start"
+              arrowClassName="!w-[56px]"
+              className="absolute -right-6 -top-16 hidden xl:inline-flex"
             >
               hi, that&rsquo;s me
             </HandNote>

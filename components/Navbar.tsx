@@ -17,8 +17,16 @@ const links = [
 
 const CALENDLY = "https://calendly.com/_quivira/one-on-one-meeting";
 
+/** Detail routes that belong to a nav section: a case study is Work, a doc is Articles. */
+const SECTION_ALIASES: Record<string, string[]> = {
+  "/portfolio": ["/work"],
+  "/articles": ["/doc"],
+};
+
 function isActive(pathname: string, href: string) {
-  return pathname === href || pathname.startsWith(`${href}/`);
+  return [href, ...(SECTION_ALIASES[href] ?? [])].some(
+    (p) => pathname === p || pathname.startsWith(`${p}/`)
+  );
 }
 
 /**

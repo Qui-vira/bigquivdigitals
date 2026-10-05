@@ -205,7 +205,7 @@ export function ServicesClient({ calendlyUrl }: ServicesClientProps) {
                     ({String(i + 1).padStart(2, "0")})
                   </Sticker>
                   {i === 4 && (
-                    <Sticker shape="starburst" tone="paper" size={74} tilt={16} className="absolute -right-6 -top-8" delay={300} />
+                    <Sticker shape="starburst" tone="paper" size={74} tilt={16} className="absolute -right-3 -top-8 sm:-right-6" delay={300} />
                   )}
                   <h3
                     className={cx(

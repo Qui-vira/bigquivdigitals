@@ -81,7 +81,7 @@ export function CaseTitle({ children }: { children: React.ReactNode }) {
 export function PullQuote({ children }: { children: React.ReactNode }) {
   return (
     <figure aria-hidden="true" className="case-wide relative mx-0 my-16 md:my-24">
-      <div className="relative border-y-[3px] border-ink pb-12 pt-14 md:pb-16 md:pl-[12%] md:pt-16">
+      <div className="relative border-y-[3px] border-ink pb-12 pt-28 md:pb-16 md:pl-[max(12%,7.5rem)] md:pt-16">
         <span className="pointer-events-none absolute -top-[0.3em] left-0 select-none bg-paper pr-4 font-display text-[9rem] font-bold leading-none text-gold [-webkit-text-stroke:2.5px_#111111] md:text-[12rem]">
           &ldquo;
         </span>
