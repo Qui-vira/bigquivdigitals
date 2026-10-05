@@ -41,7 +41,7 @@ interface ContactClientProps {
  */
 
 const FIELD =
-  "block w-full border-[3px] border-ink bg-paper px-4 text-[16px] text-ink placeholder:text-ink-muted transition-[background-color,box-shadow] duration-150 focus:bg-gold-tint focus:shadow-brutal-sm focus:outline-none";
+  "block w-full border-[3px] border-ink bg-paper px-4 text-[16px] text-ink placeholder:text-ink-muted transition-[background-color,box-shadow] duration-150 focus:bg-gold-tint";
 
 const LABEL = "mb-2 block font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink";
 
