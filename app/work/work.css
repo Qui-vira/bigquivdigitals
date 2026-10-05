@@ -1,0 +1,139 @@
+/* Case studies on paper (redesign 2026-10). Imported by app/work/layout.tsx.
+   The MDX element map lives in mdx-components.tsx; the pieces it hands out
+   are in components/work/CaseParts.tsx and components/Evidence.tsx. */
+
+/* ── The long-read grid ──────────────────────────────────────────────────
+   One reading column ("content", 680px, about 68 characters of Karla at
+   18px), a wider track for prints and pull-quotes ("wide", 1000px), and the
+   full width for the title band. Everything is in the reading column unless
+   it asks otherwise, so a new paragraph in an .mdx file is readable by
+   default. On a phone all three tracks collapse to the same width. */
+.case-article {
+  --measure: 680px;
+  --wide: 1000px;
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(0, 1fr)
+    [wide-start] minmax(0, calc((var(--wide) - var(--measure)) / 2))
+    [content-start] min(var(--measure), 100%)
+    [content-end] minmax(0, calc((var(--wide) - var(--measure)) / 2))
+    [wide-end] minmax(0, 1fr)
+    [full-end];
+  counter-reset: case-part;
+}
+
+.case-article > * {
+  grid-column: content;
+  min-width: 0;
+}
+
+.case-article > .case-wide {
+  grid-column: wide;
+}
+
+.case-article > .case-full {
+  grid-column: full;
+}
+
+/* The lede: the first paragraph under the title band reads a size up. */
+.case-article > header + p {
+  margin-top: 3.75rem;
+  font-size: clamp(1.2rem, 2.1vw, 1.4rem);
+  line-height: 1.6;
+  color: var(--color-ink);
+}
+
+/* A paragraph that is nothing but one bold line (the questions and sheet
+   names in the data case study) reads as a set line in the grotesk, not as
+   a shouted paragraph. The class is added by the MDX map. */
+.case-article > p.case-solo {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+
+/* ── Numbered section heads ──────────────────────────────────────────────
+   Every h2 is a numbered part: a 3px ink rule, the boxed index the homepage
+   section heads use, and a short checker tab sitting on the rule. The number
+   is a CSS counter, so the MDX stays plain markdown ("## The problem"). */
+.case-h2 {
+  counter-increment: case-part;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  margin-top: 6rem;
+  padding-top: 2rem;
+  border-top: 3px solid var(--color-ink);
+  font-family: var(--font-didone);
+  font-weight: 600;
+  font-size: clamp(2.15rem, 4.4vw, 3.15rem);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  color: var(--color-ink);
+  text-wrap: balance;
+}
+
+.case-h2::before {
+  content: "(" counter(case-part, decimal-leading-zero) ")";
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 2.35rem;
+  margin-top: 0.05em;
+  padding-inline: 0.4rem;
+  border: 3px solid var(--color-ink);
+  background: var(--color-gold);
+  box-shadow: 3px 3px 0 0 var(--color-ink);
+  font-family: var(--font-typewriter);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+/* The checker tab: a short strip of the section-edge pattern, sitting on the
+   rule at the right, so each part starts with the same mark the page edges
+   carry without running a full strip through the reading column. */
+.case-h2::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  right: 0;
+  width: 112px;
+  height: 18px;
+  border-block: 2px solid var(--color-ink);
+  background: repeating-conic-gradient(var(--color-gold) 0 25%, var(--color-paper) 0 50%) 0 0 / 14px 14px;
+}
+
+@media (max-width: 639px) {
+  .case-h2 {
+    margin-top: 4.5rem;
+  }
+  .case-h2::after {
+    width: 72px;
+  }
+}
+
+/* An h2 that directly follows a print or a pull-quote does not need the
+   extra air above it: the object already separates the parts. */
+.case-article > figure + .case-h2 {
+  margin-top: 4.5rem;
+}
+
+/* Typewriter bullets. Unused by today's case studies, ready for the next. */
+.case-article ul > li {
+  position: relative;
+  padding-left: 1.6rem;
+}
+.case-article ul > li::before {
+  content: "*";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.05em;
+  font-family: var(--font-typewriter);
+  font-weight: 700;
+  color: var(--color-gold-deep);
+}

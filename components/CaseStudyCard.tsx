@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { PhotoPrint, Sticker } from "@/components/ui-paper";
 
 interface CaseStudyCardProps {
   href: string;
@@ -10,6 +10,9 @@ interface CaseStudyCardProps {
   support: string;
   image: string;
   imageAlt: string;
+  /** Degrees. Vary it across a set so the prints do not line up like tiles. */
+  tilt?: number;
+  attach?: "tape" | "tape-corners" | "clip" | "pin";
 }
 
 /**
@@ -18,6 +21,9 @@ interface CaseStudyCardProps {
  * The old portfolio cards were four bullet points of unbacked stats. This
  * shows the work instead of asserting it, and the whole card is one link
  * target so there is no small hit area to hunt for.
+ *
+ * Paper redesign (2026-10): the same pinned print the homepage's case-study
+ * board uses (components/HomeClient.tsx, section 3), as a reusable card.
  */
 export function CaseStudyCard({
   href,
@@ -26,42 +32,34 @@ export function CaseStudyCard({
   support,
   image,
   imageAlt,
+  tilt = -1.6,
+  attach = "tape",
 }: CaseStudyCardProps) {
   return (
-    <Link
-      href={href}
-      className="group flex flex-col overflow-hidden rounded-xl border border-border bg-bg-secondary transition-colors duration-200 hover:border-border-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
-    >
+    <Link href={href} className="group block">
       {/* aspect-ratio declared so nothing shifts while the image loads */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-bg-tertiary">
-        <Image
-          src={image}
-          alt={imageAlt}
-          fill
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 380px"
-          className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
-        />
-      </div>
+      <PhotoPrint tilt={tilt} attach={attach} lift="group" mat="even">
+        <div className="relative aspect-[16/10]">
+          <Image
+            src={image}
+            alt={imageAlt}
+            fill
+            sizes="(max-width: 768px) 92vw, (max-width: 1200px) 46vw, 560px"
+            className="object-cover object-top"
+          />
+        </div>
+      </PhotoPrint>
 
-      <div className="flex flex-1 flex-col p-6">
-        <span className="text-xs font-medium uppercase tracking-widest text-accent">
+      <div className="mt-8 px-1">
+        <Sticker shape="label" tone={tilt < 0 ? "tint" : "gold"} tilt={tilt < 0 ? -2 : 2} decorative={false}>
           {tag}
-        </span>
-
-        <h3 className="mt-3 text-lg font-bold leading-snug text-text-primary md:text-xl">
+        </Sticker>
+        <h3 className="mt-5 font-display text-[1.4rem] font-bold leading-[1.15] tracking-[-0.015em] text-ink text-balance md:text-[1.6rem]">
           {claim}
         </h3>
-
-        <p className="mt-3 flex-1 text-sm leading-relaxed text-text-secondary">
-          {support}
-        </p>
-
-        <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-text-primary">
-          Read the build
-          <ArrowRight
-            className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1"
-            aria-hidden="true"
-          />
+        <p className="mt-3 max-w-[56ch] text-[15px] leading-relaxed text-ink-soft md:text-base">{support}</p>
+        <span className="mt-5 inline-flex items-center gap-2 border-b-[3px] border-ink pb-1 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink transition-[gap] duration-200 group-hover:gap-3.5">
+          Read the build <span aria-hidden="true">&rarr;</span>
         </span>
       </div>
     </Link>
