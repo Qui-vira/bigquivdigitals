@@ -50,7 +50,7 @@ function splitTitle(fullHtml: string) {
  * Each article gets its own title, description, canonical and og tags. Before
  * this every /doc page inherited the homepage's, so a shared article link
  * carded as "Growth systems that turn attention into revenue". The words come
- * from the article: its title, and the first paragraph of its body.
+ * from the article: its title, and the opening paragraphs of its body.
  */
 export async function generateMetadata({
   params,
@@ -63,8 +63,14 @@ export async function generateMetadata({
 
   const { titleHtml, bodyHtml } = splitTitle(mdToHtml(article.content));
   const name = (titleHtml && plainText(titleHtml)) || article.title;
-  const firstPara = /<p>([\s\S]*?)<\/p>/.exec(bodyHtml);
-  const description = clip(plainText(firstPara ? firstPara[1] : bodyHtml));
+  // Many articles open with a one-line greeting ("Thank you for commenting."),
+  // so read paragraphs in order until there is enough to describe the page.
+  let lead = "";
+  for (const m of bodyHtml.matchAll(/<p>([\s\S]*?)<\/p>/g)) {
+    lead = lead ? `${lead} ${plainText(m[1])}` : plainText(m[1]);
+    if (lead.length >= 120) break;
+  }
+  const description = clip(lead || plainText(bodyHtml));
   const title = `${name} | ${SITE_NAME}`;
   const path = `/doc/${slug}`;
 
