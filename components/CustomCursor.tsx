@@ -1,25 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { usePathname } from "next/navigation";
 import { motion, useSpring, useReducedMotion } from "framer-motion";
-import { isPaperRoute } from "@/lib/paper-routes";
 
 /**
- * Not rendered on the homepage.
+ * Admin only (rendered by app/admin/layout.tsx). The public site is paper since
+ * the October 2026 redesign and uses the system cursor everywhere.
  *
- * The ring is a 32px bordered circle following a spring. Over a full-bleed
- * portrait it does not read as a cursor, it reads as a stray artifact floating
- * on the face. An earlier pass stopped it flying in from 0,0, which was a real
- * bug, but the object itself is still wrong on this page. It stays everywhere
- * else, where it sits over flat backgrounds.
+ * The ring is a 32px bordered circle following a spring, sitting over the
+ * admin's flat dark backgrounds.
  */
-// Every paper route (lib/paper-routes.ts) also drops it: the paper design uses
-// the system cursor everywhere.
-
 export function CustomCursor() {
-  const pathname = usePathname();
-  return isPaperRoute(pathname) ? null : <CursorLayer />;
+  return <CursorLayer />;
 }
 
 function CursorLayer() {

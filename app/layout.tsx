@@ -4,8 +4,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { PublicNavbar, PublicWrapper } from "@/components/PublicShell";
 import { FooterServer } from "@/components/FooterServer";
-import { ParticleFieldLoader } from "@/components/ParticleFieldLoader";
-import { CustomCursor } from "@/components/CustomCursor";
 import { OrganizationJsonLd } from "@/components/StructuredData";
 
 export const viewport: Viewport = {
@@ -156,8 +154,6 @@ export default function RootLayout({
         {/* JSON-LD. In the root layout so it is present on every route, and in
             the SSR HTML so a crawler sees it without executing anything. */}
         <OrganizationJsonLd />
-        <CustomCursor />
-        <ParticleFieldLoader />
         <PublicNavbar />
         <main id="main" tabIndex={-1} className="outline-none">{children}</main>
         <PublicWrapper>
