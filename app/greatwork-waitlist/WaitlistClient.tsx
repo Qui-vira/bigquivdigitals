@@ -99,7 +99,7 @@ export function WaitlistClient({ roomUrl }: { roomUrl: string | null }) {
   function onJoined() {
     setJoined(true);
     requestAnimationFrame(() => {
-      window.scrollTo({ top: 0 });
+      window.scrollTo({ top: 0, behavior: "instant" });
       document.getElementById("gww-unlocked")?.focus({ preventScroll: true });
     });
   }
