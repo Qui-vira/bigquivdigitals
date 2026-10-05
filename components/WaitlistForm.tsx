@@ -103,8 +103,11 @@ export function WaitlistForm({
     return (
       <p
         role="status"
-        className={`text-base font-medium text-accent ${className}`}
+        className={`inline-flex items-center gap-3 border-[3px] border-ink bg-gold-tint px-4 py-3 text-base font-semibold text-ink shadow-brutal-sm ${className}`}
       >
+        <span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-ink bg-gold text-sm font-bold">
+          ✓
+        </span>
         {message}
       </p>
     );
@@ -115,7 +118,7 @@ export function WaitlistForm({
       <label htmlFor={id} className="sr-only">
         Email address
       </label>
-      <div className={`flex w-full flex-col gap-3 sm:flex-row ${compact ? "sm:max-w-[430px]" : "sm:max-w-[480px]"}`}>
+      <div className={`flex w-full flex-col gap-4 sm:flex-row sm:gap-3 ${compact ? "sm:max-w-[460px]" : "sm:max-w-[540px]"}`}>
         <input
           ref={inputRef}
           id={id}
@@ -127,23 +130,17 @@ export function WaitlistForm({
           placeholder="your email"
           aria-describedby={message ? `${id}-msg` : undefined}
           aria-invalid={state === "error" || undefined}
-          className="min-w-0 flex-1 rounded-lg border border-border bg-bg-secondary px-4 py-3.5 text-base text-text-primary placeholder:text-text-muted focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/40"
+          className="min-h-[56px] min-w-0 flex-1 border-[3px] border-ink bg-paper px-4 py-3 text-base text-ink shadow-[inset_3px_3px_0_0_rgba(17,17,17,0.06)] placeholder:text-ink-muted"
         />
+        {/* The single most important control on the site during a launch.
+            Paper button: hard shadow, lifts on hover, pushes in on press.
+            While sending it stops advertising itself, so the press reads as
+            registered. */}
         <button
           type="submit"
           disabled={state === "sending"}
           data-variant="primary"
-          // cta-emphasis: sheen + ring, defined in globals.css. This is the
-          // single most important control on the site during the launch, and
-          // it is the one CTA that is not a MagneticButton, so it would
-          // otherwise have been the only unanimated one.
-          //
-          // The emphasis is dropped while sending. A button that keeps
-          // advertising itself after it has been pressed reads as though the
-          // press did not register.
-          className={`shrink-0 cursor-pointer rounded-lg bg-accent px-7 py-3.5 text-base font-semibold tracking-wide text-[#0A0806] transition-colors hover:bg-accent-hover disabled:opacity-60 ${
-            state === "sending" ? "" : "cta-emphasis"
-          }`}
+          className="min-h-[56px] shrink-0 cursor-pointer whitespace-nowrap border-[3px] border-ink bg-gold px-7 py-3 font-display text-base font-bold text-ink shadow-brutal transition-[translate,box-shadow,background-color] duration-150 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] hover:bg-gold-hover hover:shadow-[8px_8px_0_0_#111111] active:translate-x-[5px] active:translate-y-[5px] active:shadow-[1px_1px_0_0_#111111] disabled:pointer-events-none disabled:translate-x-[3px] disabled:translate-y-[3px] disabled:shadow-[2px_2px_0_0_#111111] disabled:opacity-70"
         >
           {state === "sending" ? "Adding you…" : "Join the waitlist"}
         </button>
@@ -152,7 +149,7 @@ export function WaitlistForm({
         <p
           id={`${id}-msg`}
           role="alert"
-          className="mt-3 text-sm text-text-secondary"
+          className="mt-4 inline-block border-2 border-ink bg-gold-tint px-3 py-1.5 text-sm font-semibold text-ink"
         >
           {message}
         </p>

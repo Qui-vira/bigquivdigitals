@@ -81,20 +81,20 @@ export function BlockradarPayment({ serviceName, amount, onSuccess }: Blockradar
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <Loader2 className="h-6 w-6 animate-spin text-[#E63946]" />
-        <span className="ml-2 text-sm text-[#888]">Generating payment address...</span>
+      <div className="flex items-center justify-center py-8" role="status">
+        <Loader2 className="h-6 w-6 animate-spin text-gold-deep motion-reduce:animate-none" />
+        <span className="ml-2 font-typewriter text-sm text-ink-soft">Generating payment address...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-900 bg-red-950/30 p-4 space-y-1">
-        <p className="text-sm text-red-400">{error}</p>
-        <p className="text-xs text-[#666]">
+      <div className="space-y-1 border-[3px] border-ink bg-gold-tint p-4" role="alert">
+        <p className="text-sm font-semibold text-ink">{error}</p>
+        <p className="text-xs text-ink-soft">
           DM{" "}
-          <a href="https://t.me/Quivira_Ophir" target="_blank" rel="noopener noreferrer" className="underline text-[#888]">
+          <a href="https://t.me/Quivira_Ophir" target="_blank" rel="noopener noreferrer" className="font-bold text-ink underline">
             @Quivira_Ophir
           </a>{" "}
           to arrange crypto payment directly.
@@ -109,11 +109,11 @@ export function BlockradarPayment({ serviceName, amount, onSuccess }: Blockradar
     <div className="space-y-4">
       {/* Network + token badges */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-full bg-[#F0B90B]/10 px-3 py-1 text-xs font-semibold text-[#F0B90B]">
+        <span className="border-2 border-ink bg-gold px-2.5 py-0.5 font-typewriter text-[12px] font-bold uppercase tracking-[0.06em] text-ink">
           {paymentData.network}
         </span>
         {paymentData.tokens.map((t) => (
-          <span key={t} className="rounded-full bg-[#2775CA]/10 px-3 py-1 text-xs font-semibold text-[#2775CA]">
+          <span key={t} className="border-2 border-ink bg-paper px-2.5 py-0.5 font-typewriter text-[12px] font-bold uppercase tracking-[0.06em] text-ink">
             {t}
           </span>
         ))}
@@ -121,38 +121,40 @@ export function BlockradarPayment({ serviceName, amount, onSuccess }: Blockradar
 
       {/* QR Code */}
       <div className="flex justify-center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={paymentData.qrCodeUrl}
           alt="Payment QR Code"
-          className="h-40 w-40 rounded-xl border border-[#333] bg-white p-1"
+          className="h-40 w-40 border-[3px] border-ink bg-white p-1 shadow-brutal-sm"
         />
       </div>
 
       {/* Amount box */}
-      <div className="rounded-lg bg-[#1a1a1a] px-4 py-3 text-center">
-        <p className="text-xs text-[#666]">Send exactly</p>
-        <p className="text-lg font-bold text-white">${amount.toLocaleString()} USDC</p>
+      <div className="border-[3px] border-ink bg-paper-alt px-4 py-3 text-center">
+        <p className="font-typewriter text-xs uppercase tracking-[0.08em] text-ink-soft">Send exactly</p>
+        <p className="font-display text-lg font-bold text-ink">${amount.toLocaleString()} USDC</p>
       </div>
 
       {/* Address row */}
-      <div className="flex items-center gap-2 rounded-lg bg-[#1a1a1a] px-3 py-2">
-        <span className="flex-1 truncate font-mono text-xs text-[#ccc]">{paymentData.address}</span>
+      <div className="flex items-center gap-2 border-[3px] border-ink bg-paper px-3 py-2">
+        <span className="flex-1 truncate font-typewriter text-xs text-ink">{paymentData.address}</span>
         <button
           type="button"
           onClick={copyAddress}
-          className="shrink-0 text-[#666] transition-colors hover:text-white cursor-pointer"
+          aria-label={copied ? "Address copied" : "Copy address"}
+          className="grid h-11 w-11 shrink-0 cursor-pointer place-items-center text-ink transition-colors hover:bg-gold-tint"
         >
-          {copied ? <Check className="h-4 w-4 text-green-400" /> : <Copy className="h-4 w-4" />}
+          {copied ? <Check className="h-4 w-4 text-gold-deep" /> : <Copy className="h-4 w-4" />}
         </button>
       </div>
 
       {/* Polling status */}
-      <div className="flex items-center justify-center gap-2 text-sm text-[#666]">
-        <Loader2 className="h-4 w-4 animate-spin" />
+      <div className="flex items-center justify-center gap-2 text-sm text-ink-soft" role="status">
+        <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" />
         <span>Waiting for payment confirmation...</span>
       </div>
 
-      <p className="text-center text-xs text-[#555]">
+      <p className="text-center text-xs text-ink-soft">
         Only send USDC or BUSD on BNB Chain. Other tokens or chains will result in permanent loss.
       </p>
     </div>

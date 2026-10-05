@@ -449,14 +449,14 @@ export default function UgcPage() {
               delay={160}
               className="absolute bottom-0 left-0 w-[56%] sm:w-[50%]"
             >
-              <div className="relative aspect-square bg-black">
+              <div className="relative aspect-[4/5] bg-black">
                 <Image
                   src="/about-journey.jpg"
                   alt="A selfie of Big Quiv with classmates at his web design class graduation."
                   fill
                   sizes="240px"
                   className="object-cover"
-                  style={{ objectPosition: "18% 50%" }}
+                  style={{ objectPosition: "0% 50%" }}
                 />
               </div>
             </PhotoPrint>
