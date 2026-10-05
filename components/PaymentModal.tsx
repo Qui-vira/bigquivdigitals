@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
 import { FlutterwaveButton } from "./FlutterwaveButton";
+import { formatPrice } from "@/lib/format-price";
 import { BlockradarPayment } from "./BlockradarPayment";
 
 interface PaymentModalProps {
@@ -29,15 +30,6 @@ interface PaymentModalProps {
    * set the number, revisit when it drifts.
    */
   cryptoAmountUsd?: number;
-}
-
-/** Currency-aware price label. The header hardcoded `$` for every product. */
-function formatPrice(amount: number, currency: string): string {
-  const symbols: Record<string, string> = { USD: "$", NGN: "₦", GBP: "£", EUR: "€" };
-  const symbol = symbols[currency.toUpperCase()];
-  return symbol
-    ? `${symbol}${amount.toLocaleString()}`
-    : `${amount.toLocaleString()} ${currency.toUpperCase()}`;
 }
 
 export function PaymentModal({
