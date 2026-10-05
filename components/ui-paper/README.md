@@ -31,8 +31,11 @@ is the worked example of everything below: copy its patterns before inventing ne
    or organic shapes are stickers (starburst, wavy pill, circle stamp) and pins.
 7. **Nothing animates opacity, and nothing hides content waiting for a trigger.**
    Default state is the finished state. See "Motion" below.
-8. **Add the route to `lib/paper-routes.ts`** in the same commit you migrate a
-   page. That switches off the legacy ParticleField and CustomCursor there.
+8. **Every public route is paper.** The legacy ParticleField and CustomCursor
+   were removed from the public shell in October 2026 and now render only in
+   `app/admin/layout.tsx`, so the admin keeps its dark look. There is no
+   per-route switch any more (`lib/paper-routes.ts` is gone): a new public page
+   is paper from its first commit.
 
 ## Tokens (app/globals.css)
 
@@ -64,7 +67,9 @@ Utility classes: `bg-grid-paper`, `checker-strip`, `hl-mark` (highlighter),
 selection colour for everything inside), `paper-focus` (same ring on one element),
 `only-pointer` / `only-touch` (swap copy for mouse vs touch).
 
-z-index scale: sticker 5, menu 40, nav 50, skip link 60. Nothing else.
+z-index scale: sticker 5, menu 40, nav 50, skip link 60, modal 9999 (the
+payment modal, `components/PaymentModal.tsx`, which must sit over the nav and
+the skip link). Nothing else.
 
 ## Primitives
 
@@ -131,7 +136,8 @@ characters at the default size).
 ```
 
 ### HandNote / HandArrow
-Marker-pen margin note; the words write on, then the arrow draws.
+Marker-pen margin note; the words settle in (they never hide), then the arrow
+draws. The entrance runs through `useInkEntrance` (see Motion).
 `arrow` = `down-left | down-right | up-left | up-right | down | up | left | right`,
 `arrowAt` = `start | end | below | above`, `tilt`, `size` = `sm | md | lg`,
 `tone` = `ink | gold-deep`, `load` (play on page load, for above-the-fold),
@@ -143,7 +149,7 @@ the note would collide with content. `HandArrow` is the arrow on its own.
 
 ### HandMark
 Pen marks on live text: `kind` = `underline | double-underline | circle | strike`,
-`tone` = `gold | ink`. The phrase does not wrap, so keep it to a few words.
+`tone` = `gold | ink`. The stroke draws through `useInkEntrance`. The phrase does not wrap, so keep it to a few words.
 ```tsx
 Five freelancers, five invoices, and <HandMark kind="circle">nobody answering</HandMark> for the result.
 ```
@@ -156,6 +162,22 @@ Gold highlighter behind live text, follows line breaks, sweeps in on view
 A proof number as a stamped ticket. `value` (string, rendered as given),
 `label`, `tone` = `paper | gold | tint`, `tilt`, `delay`. Only for numbers with
 a receipt; no count-up animation, ever.
+
+### PhoneFrame
+A phone lying on the paper, for vertical video: graphite body, metal rim, side
+buttons, the island, a 9:16 screen and a hard ink shadow. The bezel is dark
+because it is a device; the page stays light. The child is the SCREEN: give it
+`absolute inset-0` (or a `fill` next/image). `label` is a typewriter caption
+under the phone. `tilt`, `lift` = `self | group | none`, `reveal` (default
+true, a `useReveal` drop), `delay` (ms), `screenClassName`. Width comes from
+`className` (default `w-full max-w-[280px]`) and everything inside scales from
+it. Never put something that measures itself with getBoundingClientRect inside
+a tilted phone.
+```tsx
+<PhoneFrame label="Beauty" tilt={-2} lift="group">
+  <video className="absolute inset-0 h-full w-full object-cover" playsInline muted ... />
+</PhoneFrame>
+```
 
 ### MonoLabel
 Typewriter text for labels and small print. `caps` (default true), `tone` =
@@ -177,6 +199,13 @@ own `relative` or `inline-flex`. Every primitive uses them; new primitives must 
   `load-write`, `load-stroke`, `hl-load`) with `--rv-delay`.
 - Below the fold: primitives arm themselves through `useReveal()`, which only
   arms elements that are off screen at mount and plays each entrance once.
+  It never arms under reduced motion or automation (`navigator.webdriver`), so
+  a full-page capture always shows the resting state.
+- Pen marks (HandNote, HandArrow, HandMark) use `useInkEntrance()` instead:
+  Web Animations with `fill: "backwards"`, so once an entrance finishes nothing
+  is attached and a capture cannot replay it half-written. Words never start
+  hidden; only decorative strokes draw on, and only while off screen. Above
+  the fold pass `load`. Skipped under reduced motion and `navigator.webdriver`.
 - Hover: prints lift and straighten, buttons lift, links get the highlighter.
   Tailwind v4's `hover:` already applies only on hover-capable devices.
 - Easing tokens: `--ease-out-expo`, `--ease-out-back` (restrained overshoot).

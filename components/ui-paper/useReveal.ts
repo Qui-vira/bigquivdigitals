@@ -10,8 +10,9 @@ import { useEffect, useRef } from "react";
  * app/globals.css under "Reveal states".
  *
  * The rule it enforces: the default, unarmed element is the FINISHED element.
- *   - server render, no JS, reduced motion, no IntersectionObserver:
- *     never armed, renders finished.
+ *   - server render, no JS, reduced motion, no IntersectionObserver, or
+ *     automation (navigator.webdriver, like useInkEntrance): never armed,
+ *     renders finished, so a full-page capture shows the resting state.
  *   - already on screen when it mounts: never armed either. Above-the-fold
  *     motion belongs to the page-load classes (.load-*), not to this hook, so
  *     nothing visible on arrival ever jumps into a pre-pose.
@@ -31,6 +32,7 @@ export function useReveal<T extends Element = HTMLElement>(rootMargin = "0px 0px
     if (!el) return;
     if (!("IntersectionObserver" in window)) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (navigator.webdriver) return;
 
     const r = el.getBoundingClientRect();
     if (r.top < window.innerHeight && r.bottom > 0) return;

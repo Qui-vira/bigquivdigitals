@@ -12,5 +12,6 @@ export { MonoLabel } from "./MonoLabel";
 export { SectionHead } from "./SectionHead";
 export { BrutalButton } from "./BrutalButton";
 export { StatStamp } from "./StatStamp";
+export { PhoneFrame } from "./PhoneFrame";
 export { useReveal } from "./useReveal";
 export { cx, display, positioned } from "./cx";
