@@ -3,11 +3,14 @@
 import Image from "next/image";
 import { useState } from "react";
 import { VIDEO_BASE } from "@/components/ProofFilm";
+import { PhoneFrame } from "@/components/ui-paper/PhoneFrame";
 
 /**
  * A video in a vertical phone frame, for /ugc. Built 2026-10-04 off the class
  * UGC portfolios (Toni's Canva template, Elle's deck, Iman's site): every one
  * shows each video inside a phone, with the client and the brief under it.
+ * Restyled 2026-10-05 onto the paper system's PhoneFrame; the play logic
+ * below is unchanged.
  *
  * TWO MODES.
  *   autoPlay  muted, looping, inline, with controls. Use it on ONE tile per
@@ -30,7 +33,22 @@ export type PhoneVideo = {
   vertical: boolean;
 };
 
-export function PhoneTile({ video, autoPlay = false }: { video: PhoneVideo; autoPlay?: boolean }) {
+export function PhoneTile({
+  video,
+  autoPlay = false,
+  label,
+  tilt = 0,
+  delay = 0,
+  className,
+}: {
+  video: PhoneVideo;
+  autoPlay?: boolean;
+  /** Typewriter caption under the phone. */
+  label?: React.ReactNode;
+  tilt?: number;
+  delay?: number;
+  className?: string;
+}) {
   const [playing, setPlaying] = useState(false);
   const src = VIDEO_BASE ? `${VIDEO_BASE}/${video.file}` : null;
   const fit = video.vertical ? "object-cover" : "object-contain";
@@ -70,17 +88,20 @@ export function PhoneTile({ video, autoPlay = false }: { video: PhoneVideo; auto
           src={video.poster}
           alt={video.title}
           fill
-          sizes="(max-width: 640px) 80vw, 320px"
+          sizes="(max-width: 640px) 80vw, 300px"
           className={fit}
         />
+        {/* Play control: a gold sticker button with a hard ink shadow, the
+            same object language as the page. It carries its own frame, so it
+            never depends on the poster underneath being dark. */}
         <span className="absolute inset-0 grid place-items-center">
-          <span className="grid h-14 w-14 place-items-center rounded-full bg-black/60 backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
-            <svg viewBox="0 0 24 24" className="ml-1 h-6 w-6 fill-white" aria-hidden="true">
-              <path d="M8 5v14l11-7z" />
+          <span className="grid aspect-square w-[27%] max-w-16 place-items-center rounded-full border-[3px] border-ink bg-gold shadow-[4px_4px_0_0_#111111] transition-[scale,translate,box-shadow] duration-200 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/tile:-translate-x-0.5 group-hover/tile:-translate-y-0.5 group-hover/tile:scale-105 group-hover/tile:shadow-[6px_6px_0_0_#111111] group-active/tile:translate-x-[3px] group-active/tile:translate-y-[3px] group-active/tile:shadow-[0_0_0_0_#111111]">
+            <svg viewBox="0 0 24 24" className="ml-[8%] h-[46%] w-[46%] fill-ink" aria-hidden="true">
+              <path d="M7 4.5v15l12.5-7.5z" />
             </svg>
           </span>
         </span>
-        <span className="absolute bottom-4 right-4 rounded-full bg-black/75 px-2.5 py-0.5 text-xs font-medium text-white">
+        <span className="absolute bottom-[4%] right-[6%] border-2 border-ink bg-paper px-2 py-0.5 font-typewriter text-[12px] font-bold tabular-nums text-ink">
           {video.runtime}
         </span>
       </>
@@ -90,7 +111,7 @@ export function PhoneTile({ video, autoPlay = false }: { video: PhoneVideo; auto
         type="button"
         onClick={() => setPlaying(true)}
         aria-label={`Play ${video.title}`}
-        className="group absolute inset-0 block h-full w-full cursor-pointer"
+        className="group/tile absolute inset-0 block h-full w-full cursor-pointer focus-visible:-outline-offset-[3px]! focus-visible:shadow-[inset_0_0_0_8px_#E8A33D]!"
       >
         {still}
       </button>
@@ -100,16 +121,8 @@ export function PhoneTile({ video, autoPlay = false }: { video: PhoneVideo; auto
   }
 
   return (
-    <div className="mx-auto w-full max-w-[300px] rounded-[2.4rem] border border-border-hover bg-bg-tertiary p-2.5 shadow-[0_24px_60px_-30px_rgba(232,163,61,0.35)]">
-      <div className="relative aspect-[9/16] overflow-hidden rounded-[1.9rem] bg-black">
-        {screen}
-        {/* The speaker slot. Decorative, and above the video so the frame reads
-            as a phone even while it plays. */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-2 z-10 h-1.5 w-14 -translate-x-1/2 rounded-full bg-black/70"
-        />
-      </div>
-    </div>
+    <PhoneFrame label={label} tilt={tilt} lift="self" delay={delay} className={className}>
+      {screen}
+    </PhoneFrame>
   );
 }

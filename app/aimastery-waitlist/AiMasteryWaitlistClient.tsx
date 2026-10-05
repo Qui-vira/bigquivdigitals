@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { WaitlistForm } from "@/components/WaitlistForm";
-import { RiseWords } from "@/components/TextMotion";
+import { HandMark, MonoLabel, PaperSection, Sticker, Tape } from "@/components/ui-paper";
 
 /**
  * One question, answered: why join.
@@ -35,52 +35,90 @@ import { RiseWords } from "@/components/TextMotion";
  *   A founding-price promise. The Great Work's waitlist commits to one. Nothing
  *   equivalent has been committed to here, so nothing is claimed. Add it the day
  *   it is decided and it becomes the third reason.
+ *
+ * PAPER REDESIGN 2026-10-05: one statement and one framed form on grid paper.
+ * The cap still comes from the server (AIMASTERY_FREE_CAP) and appears only
+ * where the copy already put it. Rendered inside the layout's <main>, so the
+ * root here is a div (it was a nested <main>).
  */
 export function AiMasteryWaitlistClient({ cap }: { cap: number }) {
   const [joined, setJoined] = useState(false);
 
   return (
-    <main className="px-6 pt-28 pb-24 md:pt-36">
-      <div className="mx-auto max-w-[620px]">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">AI Mastery</p>
+    <div className="paper-scope overflow-x-clip bg-paper text-ink">
+      <PaperSection
+        as="header"
+        ground="grid"
+        pad="none"
+        width="mid"
+        aria-labelledby="aimw-title"
+        innerClassName="pb-24 pt-[calc(4rem+2.75rem)] md:pb-32 md:pt-[calc(4.5rem+4.5rem)]"
+      >
+        <Sticker shape="label" tone="gold" tilt={-3} decorative={false} reveal={false} className="load-settle">
+          AI Mastery
+        </Sticker>
 
-        <RiseWords
-          as="h1"
-          className="mt-4 text-4xl font-extrabold leading-[1.1] tracking-tight text-text-primary md:text-5xl"
+        <h1
+          id="aimw-title"
+          className="load-drop relative mt-8 font-didone text-[clamp(3.6rem,13vw,8.6rem)] font-semibold leading-[0.9] tracking-[-0.01em] text-ink"
         >
           {`Free for the first ${cap}.`}
-        </RiseWords>
+          <Sticker
+            shape="starburst"
+            tone="gold"
+            size={110}
+            tilt={14}
+            reveal={false}
+            className="load-settle ml-[0.1em] size-[0.6em]! align-top"
+          />
+        </h1>
 
-        <p className="mt-8 text-lg leading-relaxed text-text-secondary">
-          I said I would earn <span className="font-semibold text-text-primary">$10,000 in 60 days</span>{" "}
-          using nothing but this skill. In public. Starting from zero.
-        </p>
-
-        <p className="mt-4 text-lg leading-relaxed text-text-secondary">
-          The first{" "}
-          <span className="font-semibold text-text-primary">{cap} people on this list</span> get the
-          class free. Not a discount. Free.
-        </p>
-
-        <div className="mt-10">
-          <WaitlistForm source="aimastery-waitlist" onSuccess={() => setJoined(true)} />
-
-          {joined ? (
-            <p className="mt-4 text-text-secondary">
-              You are in. Nothing else to do. When it opens, you hear from me first.
+        <div className="mt-12 grid gap-x-14 gap-y-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
+          <div>
+            <p className="text-lg leading-relaxed text-ink-soft md:text-xl">
+              I said I would earn{" "}
+              <span className="font-semibold text-ink">
+                <HandMark kind="underline" load delay={900}>
+                  $10,000 in 60 days
+                </HandMark>
+              </span>{" "}
+              using nothing but this skill. In public. Starting from zero.
             </p>
-          ) : (
-            <p className="mt-3 text-sm text-text-muted">
-              Email only. It is not open yet, so there is nothing to pay.
+            <p className="mt-5 text-lg leading-relaxed text-ink-soft md:text-xl">
+              The first <span className="hl-mark font-semibold text-ink">{cap} people on this list</span> get the class
+              free. Not a discount. Free.
             </p>
-          )}
+          </div>
+
+          <div className="relative border-[3px] border-ink bg-paper p-6 pt-10 shadow-brutal-lg [rotate:-0.8deg] sm:p-8 sm:pt-11">
+            <Tape className="-top-3.5 left-10" tilt={-5} />
+            <WaitlistForm source="aimastery-waitlist" onSuccess={() => setJoined(true)} compact />
+
+            {joined ? (
+              <p
+                role="status"
+                className="flex items-start gap-3 border-[3px] border-ink bg-gold-tint px-4 py-3 font-semibold leading-relaxed text-ink shadow-brutal-sm"
+              >
+                <span
+                  aria-hidden="true"
+                  className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-ink bg-gold text-sm font-bold"
+                >
+                  ✓
+                </span>
+                You are in. Nothing else to do. When it opens, you hear from me first.
+              </p>
+            ) : (
+              <MonoLabel as="p" caps={false} tone="soft" className="mt-5 text-[14px] leading-relaxed">
+                Email only. It is not open yet, so there is nothing to pay.
+              </MonoLabel>
+            )}
+          </div>
         </div>
 
-        <p className="mt-10 text-sm leading-relaxed text-text-muted">
-          Day 60 is 22 October 2026. You will know either way, because I am posting the number every
-          week until then.
+        <p className="mt-16 max-w-[62ch] border-t-[3px] border-ink pt-6 font-typewriter text-[14px] leading-relaxed text-ink-soft">
+          Day 60 is 22 October 2026. You will know either way, because I am posting the number every week until then.
         </p>
-      </div>
-    </main>
+      </PaperSection>
+    </div>
   );
 }

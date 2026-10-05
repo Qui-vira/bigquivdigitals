@@ -60,6 +60,8 @@ export function PaymentModal({
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
+      // Payment logic left exactly as it was (paper redesign is visual only).
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTab("fiat");
       setEmail("");
       setEmailError("");
@@ -99,39 +101,45 @@ export function PaymentModal({
   }
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+    <div
+      className="paper-scope fixed inset-0 z-[9999] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="pay-title"
+    >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-ink/55"
         onClick={onClose}
       />
 
-      {/* Modal */}
-      <div className="relative z-10 w-full max-w-md rounded-2xl border border-[#2a2a2a] bg-[#0d0d0d] p-6 shadow-2xl">
+      {/* Modal: a framed sheet of paper with a hard shadow. */}
+      <div className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto border-[3px] border-ink bg-paper p-6 text-ink shadow-[10px_10px_0_0_#E8A33D] motion-safe:animate-[paper-drop_0.4s_cubic-bezier(0.16,1,0.3,1)_both] sm:p-7">
         {/* Header */}
-        <div className="mb-6 flex items-start justify-between gap-4">
+        <div className="mb-6 flex items-start justify-between gap-4 border-b-2 border-dashed border-ink/40 pb-5">
           <div>
-            <p className="text-xs font-medium uppercase tracking-widest text-[#666]">Complete your purchase</p>
-            <h3 className="mt-1 text-base font-bold text-white">{serviceName}</h3>
-            <p className="mt-1 text-3xl font-extrabold text-[#E63946]">
+            <p className="font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-ink-soft">Complete your purchase</p>
+            <h3 id="pay-title" className="mt-1.5 font-display text-lg font-bold tracking-[-0.01em] text-ink">{serviceName}</h3>
+            <p className="mt-1 font-didone text-[2.75rem] font-semibold leading-none text-ink tabular-nums">
               {formatPrice(amount, currency)}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="shrink-0 text-[#555] transition-colors hover:text-white cursor-pointer"
+            aria-label="Close"
+            className="grid h-11 w-11 shrink-0 cursor-pointer place-items-center border-[3px] border-ink bg-paper text-ink shadow-brutal-sm transition-[background-color,translate,box-shadow] duration-150 hover:bg-gold-tint active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
           >
-            <X className="h-5 w-5" />
+            <X className="h-5 w-5" strokeWidth={2.5} />
           </button>
         </div>
 
         {paymentStatus === "success" ? (
           /* Success state */
-          <div className="py-8 text-center">
-            <div className="mb-3 text-5xl">✓</div>
-            <p className="text-lg font-bold text-green-400">Payment Confirmed!</p>
-            <p className="mt-2 text-sm text-[#888]">
+          <div className="py-8 text-center" role="status">
+            <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full border-[3px] border-ink bg-gold text-3xl font-bold text-ink shadow-brutal-sm">✓</div>
+            <p className="font-display text-xl font-bold text-ink">Payment Confirmed!</p>
+            <p className="mt-2 text-sm text-ink-soft">
               {calPaidUrl
                 ? "Opening your booking link in a moment..."
                 : "Check your email for next steps."}
@@ -141,18 +149,24 @@ export function PaymentModal({
           <>
             {/* Email input */}
             <div className="mb-5">
-              <label className="mb-1 block text-xs font-medium text-[#888]">
-                Your Email <span className="text-[#555]">(for receipt + access)</span>
+              <label htmlFor="pay-email" className="mb-2 block font-typewriter text-[12px] font-bold uppercase tracking-[0.08em] text-ink">
+                Your Email <span className="normal-case tracking-normal text-ink-soft">(for receipt + access)</span>
               </label>
               <input
+                id="pay-email"
                 type="email"
+                autoComplete="email"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setEmailError(""); }}
                 placeholder="you@example.com"
-                className="w-full rounded-lg border border-[#333] bg-[#1a1a1a] px-3 py-2 text-sm text-white placeholder:text-[#555] focus:border-[#E63946] focus:outline-none"
+                aria-invalid={emailError ? true : undefined}
+                aria-describedby={emailError ? "pay-email-error" : undefined}
+                className="min-h-[48px] w-full border-[3px] border-ink bg-paper px-3.5 py-2.5 text-base text-ink placeholder:text-ink-muted"
               />
               {emailError && (
-                <p className="mt-1 text-xs text-red-400">{emailError}</p>
+                <p id="pay-email-error" role="alert" className="mt-2 inline-block border-2 border-ink bg-gold-tint px-2 py-0.5 text-sm font-semibold text-ink">
+                  {emailError}
+                </p>
               )}
             </div>
 
@@ -161,10 +175,11 @@ export function PaymentModal({
               <button
                 type="button"
                 onClick={() => setTab("fiat")}
-                className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
+                aria-pressed={tab === "fiat"}
+                className={`min-h-[44px] flex-1 cursor-pointer border-[3px] border-ink px-4 py-2 font-typewriter text-[13px] font-bold uppercase tracking-[0.06em] transition-colors ${
                   tab === "fiat"
-                    ? "bg-[#E63946] text-white"
-                    : "bg-[#1a1a1a] text-[#888] hover:text-white"
+                    ? "bg-ink text-paper"
+                    : "bg-paper text-ink hover:bg-gold-tint"
                 }`}
               >
                 Card / Bank
@@ -173,10 +188,11 @@ export function PaymentModal({
                 <button
                   type="button"
                   onClick={() => setTab("crypto")}
-                  className={`flex-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors cursor-pointer ${
+                  aria-pressed={tab === "crypto"}
+                  className={`min-h-[44px] flex-1 cursor-pointer border-[3px] border-ink px-4 py-2 font-typewriter text-[13px] font-bold uppercase tracking-[0.06em] transition-colors ${
                     tab === "crypto"
-                      ? "bg-[#E63946] text-white"
-                      : "bg-[#1a1a1a] text-[#888] hover:text-white"
+                      ? "bg-ink text-paper"
+                      : "bg-paper text-ink hover:bg-gold-tint"
                   }`}
                 >
                   Crypto (USDC/BUSD)
@@ -203,7 +219,7 @@ export function PaymentModal({
               />
             )}
 
-            <p className="mt-4 text-center text-xs text-[#444]">
+            <p className="mt-5 text-center font-typewriter text-[12px] text-ink-muted">
               Secured by Flutterwave &amp; Blockradar · 256-bit SSL
             </p>
           </>

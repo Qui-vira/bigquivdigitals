@@ -3,8 +3,18 @@
 import Image from "next/image";
 import { useState } from "react";
 import { WaitlistForm } from "@/components/WaitlistForm";
-import { PopIn, RiseWords, Typewriter } from "@/components/TextMotion";
 import { OPPORTUNITY_MAP, OPPORTUNITY_MAP_HOW_TO } from "@/lib/opportunity-map";
+import {
+  BrutalButton,
+  HandNote,
+  Highlighter,
+  MonoLabel,
+  PaperSection,
+  PhotoPrint,
+  Sticker,
+  Tape,
+  cx,
+} from "@/components/ui-paper";
 
 /**
  * The waitlist page has one job and carries nothing that competes with it.
@@ -25,6 +35,10 @@ import { OPPORTUNITY_MAP, OPPORTUNITY_MAP_HOW_TO } from "@/lib/opportunity-map";
  *    the page can actually prove on the spot.
  * 3. The tool is delivered on this page the moment the signup lands, not by
  *    email. Nothing sits between the promise and the thing promised.
+ *
+ * PAPER REDESIGN 2026-10-05: the replies pinned up as prints with the words
+ * taped under them, the promises as numbered tickets, the form in a framed
+ * card. Copy, order and the signup flow are unchanged.
  */
 
 /**
@@ -72,12 +86,27 @@ const PROMISES = [
   },
 ];
 
+const REPLY_TILT = [-2.4, 1.8, -1.2];
+const PROMISE_TONE = ["bg-paper", "bg-gold-tint", "bg-paper", "bg-gold"];
+const PROMISE_TILT = [-1, 1.2, 0.8, -1.4];
+
 export function WaitlistClient({ roomUrl }: { roomUrl: string | null }) {
   const [joined, setJoined] = useState(false);
 
+  // The form sits at the bottom of a long pitch. When the signup lands the
+  // pitch is swapped for the Opportunity Map, so bring the visitor to the top
+  // of it and move focus to its heading, rather than leaving them mid-page.
+  function onJoined() {
+    setJoined(true);
+    requestAnimationFrame(() => {
+      window.scrollTo({ top: 0, behavior: "instant" });
+      document.getElementById("gww-unlocked")?.focus({ preventScroll: true });
+    });
+  }
+
   return (
-    <div className="mx-auto max-w-[720px] px-6 py-20 md:py-28">
-      {joined ? <Unlocked roomUrl={roomUrl} /> : <Pitch onJoined={() => setJoined(true)} />}
+    <div className="paper-scope overflow-x-clip bg-paper text-ink">
+      {joined ? <Unlocked roomUrl={roomUrl} /> : <Pitch onJoined={onJoined} />}
     </div>
   );
 }
@@ -85,137 +114,159 @@ export function WaitlistClient({ roomUrl }: { roomUrl: string | null }) {
 function Pitch({ onJoined }: { onJoined: () => void }) {
   return (
     <>
-      {/* Types itself out. It is three words at the very top of the page, so
-          it finishes long before anyone has finished reading the headline. */}
-      <Typewriter
-        as="p"
-        text="The Great Work"
-        speed={65}
-        className="text-sm font-semibold uppercase tracking-[0.2em] text-accent"
-      />
-
-      <RiseWords
-        as="h1"
-        className="mt-5 font-display text-4xl font-bold leading-[1.1] tracking-tight text-text-primary md:text-6xl"
-        stagger={0.035}
-        delay={0.25}
+      <PaperSection
+        as="header"
+        ground="grid"
+        pad="none"
+        aria-labelledby="gww-title"
+        innerClassName="pb-16 pt-[calc(4rem+2.75rem)] md:pb-24 md:pt-[calc(4.5rem+4rem)]"
       >
-        You already have the skill. Nobody showed you where the money is.
-      </RiseWords>
+        <Sticker shape="label" tone="gold" tilt={-3} decorative={false} reveal={false} className="load-settle">
+          The Great Work
+        </Sticker>
+        <h1
+          id="gww-title"
+          className="load-drop mt-7 max-w-[16ch] font-didone text-[clamp(3.1rem,9.4vw,6.6rem)] font-semibold leading-[0.95] tracking-[-0.01em] text-ink text-balance"
+        >
+          You already have the skill. <Highlighter load delay={500}>Nobody showed you where the money is.</Highlighter>
+        </h1>
 
-      <p className="mt-7 text-lg leading-relaxed text-text-secondary">
-        On day one I asked one question. What skill do you have that is not
-        paying you yet? This is some of what came back.
-      </p>
+        <p className="mt-9 max-w-[52ch] text-lg leading-relaxed text-ink-soft md:text-xl">
+          On day one I asked one question. What skill do you have that is not paying you yet? This is some of what came
+          back.
+        </p>
 
-      {/* Cropped to the bottom of each screenshot on purpose: in all three the
-          reply that matters is the newest message, and the top of the frame is
-          only a pixelated header. */}
-      <ul className="mt-8 grid gap-8 md:grid-cols-3 md:gap-6">
-        {REPLIES.map((r) => (
-          <li key={r.src}>
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg border border-border bg-bg-secondary">
-              <Image
-                src={r.src}
-                alt={r.alt}
-                fill
-                sizes="(min-width: 768px) 33vw, 100vw"
-                className="object-cover object-bottom"
-              />
-            </div>
-            <p className="mt-4 border-l-2 border-accent/50 py-1 pl-4 text-base leading-relaxed text-text-primary">
-              <span className="text-text-muted">&ldquo;</span>
-              {r.quote}
-              <span className="text-text-muted">&rdquo;</span>
-            </p>
-          </li>
-        ))}
-      </ul>
+        {/* Cropped to the bottom of each screenshot on purpose: in all three the
+            reply that matters is the newest message, and the top of the frame is
+            only a pixelated header. The verbatim words are taped under each. */}
+        <ul className="mt-16 grid gap-x-10 gap-y-16 md:grid-cols-3">
+          {REPLIES.map((r, i) => (
+            <li key={r.src} className={cx(i === 1 && "md:mt-12", i === 2 && "md:mt-4")}>
+              <figure className="m-0">
+                <PhotoPrint
+                  tilt={REPLY_TILT[i]}
+                  attach={i === 1 ? "clip" : "pin"}
+                  mat="even"
+                  lift="self"
+                  delay={i * 90}
+                  className="mx-auto max-w-[340px]"
+                >
+                  <div className="relative aspect-[3/4] w-full">
+                    <Image
+                      src={r.src}
+                      alt={r.alt}
+                      fill
+                      sizes="(min-width: 768px) 30vw, 340px"
+                      className="object-cover object-bottom"
+                    />
+                  </div>
+                </PhotoPrint>
+                <figcaption className="relative mx-auto mt-8 max-w-[340px] border-[3px] border-ink bg-gold-tint px-5 pb-5 pt-6 shadow-brutal-sm [rotate:0.8deg]">
+                  <Tape className="-top-3.5 left-6" tilt={-6} width={72} />
+                  <p className="font-didone text-[1.55rem] font-medium leading-[1.15] text-ink">
+                    &ldquo;{r.quote}&rdquo;
+                  </p>
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
 
-      <p className="mt-8 text-lg leading-relaxed text-text-secondary">
-        Different people. Different skills. The same thing underneath every one
-        of them. Nobody ever showed them where the money actually comes from.
-      </p>
-
-      <p className="mt-4 text-lg leading-relaxed text-text-secondary">
-        So that is what I am building, and I am building it with those people in
-        the room. This is the room.
-      </p>
+        <div className="mt-20 max-w-[60ch]">
+          <p className="text-lg leading-relaxed text-ink-soft">
+            Different people. Different skills. The same thing underneath every one of them. Nobody ever showed them where
+            the money actually comes from.
+          </p>
+          <p className="mt-5 font-display text-[1.3rem] font-bold leading-snug tracking-[-0.01em] text-ink">
+            So that is what I am building, and I am building it with those people in the room. This is the room.
+          </p>
+        </div>
+      </PaperSection>
 
       {/* ── The offer ─────────────────────────────────────────────────────── */}
-      <div className="mt-14 border-t border-border pt-12">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-text-primary md:text-3xl">
+      <PaperSection ground="paper" checker="top" pad="lg" aria-labelledby="gww-offer">
+        <h2
+          id="gww-offer"
+          className="max-w-[20ch] font-didone text-[clamp(2.4rem,5.4vw,4.2rem)] font-semibold leading-[0.98] tracking-[-0.005em] text-ink text-balance"
+        >
           A small private list. Three things come with it.
         </h2>
 
-        {/* Staggered pop. These three are the argument for joining today, so
-            they arrive one at a time rather than as a block, which makes the
-            eye read them in order instead of scanning past. */}
-        <ol className="mt-8 space-y-7">
+        {/* Numbered tickets. These are the argument for joining today, so they
+            settle on one at a time and the eye reads them in order. */}
+        <ol className="mt-14 grid gap-x-10 gap-y-12 md:grid-cols-2">
           {PROMISES.map((p, i) => (
-            <PopIn key={p.title} as="li" delay={i * 0.12} className="flex gap-5">
+            <li
+              key={p.title}
+              className={cx("relative border-[3px] border-ink p-6 pl-20 shadow-brutal sm:p-8 sm:pl-24", PROMISE_TONE[i])}
+              style={{ rotate: `${PROMISE_TILT[i]}deg` }}
+            >
               <span
-                aria-hidden
-                className="mt-0.5 shrink-0 font-display text-2xl font-bold leading-none text-accent"
+                aria-hidden="true"
+                className={cx(
+                  "absolute left-5 top-6 grid h-11 w-11 place-items-center rounded-full border-[3px] border-ink font-didone text-[1.6rem] font-semibold leading-none text-ink shadow-brutal-sm sm:left-7 sm:top-8 sm:h-12 sm:w-12",
+                  i === 3 ? "bg-paper" : "bg-gold"
+                )}
               >
                 {i + 1}
               </span>
-              <div>
-                <h3 className="text-lg font-semibold text-text-primary">
-                  {p.title}
-                </h3>
-                <p className="mt-1.5 leading-relaxed text-text-secondary">
-                  {p.body}
-                </p>
-              </div>
-            </PopIn>
+              <h3 className="font-display text-[1.3rem] font-bold tracking-[-0.01em] text-ink">{p.title}</h3>
+              <p className={cx("mt-2 leading-relaxed", i === 3 ? "text-ink" : "text-ink-soft")}>{p.body}</p>
+            </li>
           ))}
         </ol>
 
-        <div className="mt-12">
+        <div id="join" className="relative mt-20 max-w-[720px] border-[3px] border-ink bg-paper p-6 pt-10 shadow-brutal-lg sm:p-10 sm:pt-12">
+          <Tape className="-top-3.5 left-10" tilt={-4} />
+          <HandNote arrow="down-left" arrowAt="above" tilt={-4} className="absolute -top-24 right-6 hidden lg:inline-flex" arrowClassName="ml-12 !w-[64px]">
+            your email goes here
+          </HandNote>
           <WaitlistForm source="waitlist-page" onSuccess={onJoined} />
-          <p className="mt-4 text-sm text-text-muted">
-            Email only. No spam, and you can leave whenever you want. The room opens
-            on the next screen.
-          </p>
+          <MonoLabel as="p" caps={false} tone="soft" className="mt-5 text-[14px] leading-relaxed">
+            Email only. No spam, and you can leave whenever you want. The room opens on the next screen.
+          </MonoLabel>
         </div>
-      </div>
+      </PaperSection>
     </>
   );
 }
 
 function Unlocked({ roomUrl }: { roomUrl: string | null }) {
   return (
-    <>
-      {/* The confirmation types out. This is the one moment on the site where
-          something just happened because of the visitor, so it is worth the
-          half second of theatre. */}
-      <Typewriter
-        as="p"
-        text="You are on the list"
-        speed={55}
-        className="text-sm font-semibold uppercase tracking-[0.2em] text-accent"
-      />
+    <PaperSection
+      ground="grid"
+      pad="none"
+      width="mid"
+      aria-labelledby="gww-unlocked"
+      innerClassName="pb-24 pt-[calc(4rem+2.75rem)] md:pt-[calc(4.5rem+4rem)]"
+    >
+      {/* This is the one moment on the site where something just happened
+          because of the visitor, so the confirmation lands as a stamp. */}
+      <Sticker shape="label" tone="gold" tilt={-3} decorative={false} reveal={false} className="load-settle">
+        You are on the list
+      </Sticker>
 
-      <RiseWords
-        as="h1"
-        className="mt-5 font-display text-4xl font-bold leading-[1.1] tracking-tight text-text-primary md:text-5xl"
-        delay={0.4}
+      <h1
+        id="gww-unlocked"
+        tabIndex={-1}
+        className="load-drop mt-7 font-didone text-[clamp(2.9rem,7.4vw,5.4rem)] font-semibold leading-[0.95] tracking-[-0.01em] text-ink text-balance outline-none"
       >
         Here is the first thing, right now.
-      </RiseWords>
+      </h1>
 
-      <p className="mt-7 text-lg leading-relaxed text-text-secondary">
-        The Opportunity Map. It is an interview that finds the one skill you
-        should already be getting paid for, including the one you keep
-        dismissing because it comes easy to you.
+      <p className="mt-8 max-w-[60ch] text-lg leading-relaxed text-ink-soft">
+        The Opportunity Map. It is an interview that finds the one skill you should already be getting paid for,
+        including the one you keep dismissing because it comes easy to you.
       </p>
 
-      <ol className="mt-8 space-y-2.5">
+      <ol className="mt-9 space-y-3">
         {OPPORTUNITY_MAP_HOW_TO.map((step, i) => (
-          <li key={step} className="flex gap-4 leading-relaxed text-text-secondary">
-            <span aria-hidden className="shrink-0 font-semibold text-accent">
-              {i + 1}.
+          <li key={step} className="grid grid-cols-[2.5rem_1fr] items-baseline gap-2 leading-relaxed text-ink-soft">
+            <span
+              aria-hidden="true"
+              className="grid h-8 w-8 place-items-center border-2 border-ink bg-gold font-typewriter text-sm font-bold text-ink"
+            >
+              {i + 1}
             </span>
             <span>{step}</span>
           </li>
@@ -226,11 +277,10 @@ function Unlocked({ roomUrl }: { roomUrl: string | null }) {
 
       <CopyBlock />
 
-      <p className="mt-12 border-t border-border pt-10 leading-relaxed text-text-secondary">
-        Run it, then send me what it said. I read every one, and the answers are
-        what this is being built from.
+      <p className="mt-14 max-w-[60ch] border-t-[3px] border-ink pt-8 leading-relaxed text-ink-soft">
+        Run it, then send me what it said. I read every one, and the answers are what this is being built from.
       </p>
-    </>
+    </PaperSection>
   );
 }
 
@@ -257,27 +307,19 @@ function Unlocked({ roomUrl }: { roomUrl: string | null }) {
  */
 function Room({ url }: { url: string }) {
   return (
-    <div className="mt-10 rounded-lg border border-accent/30 bg-bg-secondary p-6">
-      <h2 className="font-display text-xl font-bold tracking-tight text-text-primary">
-        One more thing. Come into the room.
-      </h2>
-      <p className="mt-2 leading-relaxed text-text-secondary">
-        Everything lands there first. Updates before they go public, the parts I
-        am still figuring out, and launch day before anyone outside hears about
-        it.
+    <div className="relative mt-14 border-[3px] border-ink bg-gold-tint p-6 pt-9 shadow-brutal [rotate:-0.6deg] sm:p-8 sm:pt-10">
+      <Tape className="-top-3.5 right-10" tilt={5} />
+      <h2 className="font-display text-[1.4rem] font-bold tracking-[-0.01em] text-ink">One more thing. Come into the room.</h2>
+      <p className="mt-3 leading-relaxed text-ink-soft">
+        Everything lands there first. Updates before they go public, the parts I am still figuring out, and launch day
+        before anyone outside hears about it.
       </p>
-      <p className="mt-3 leading-relaxed text-text-secondary">
-        It is not a chat. I post, you read. No two hundred notifications a day.
-      </p>
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="cta-emphasis group mt-5 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-accent px-7 py-3.5 text-base font-semibold tracking-wide text-[#0A0806] transition-colors hover:bg-accent-hover"
-        data-variant="primary"
-      >
-        <span className="relative z-10">Join the room on WhatsApp</span>
-      </a>
+      <p className="mt-3 leading-relaxed text-ink-soft">It is not a chat. I post, you read. No two hundred notifications a day.</p>
+      <div className="mt-6">
+        <BrutalButton href={url} newTab>
+          Join the room on WhatsApp
+        </BrutalButton>
+      </div>
     </div>
   );
 }
@@ -299,27 +341,20 @@ function CopyBlock() {
   }
 
   return (
-    <div className="mt-10">
-      <div className="flex flex-wrap items-center gap-4">
-        <button
-          type="button"
-          onClick={copy}
-          className="cursor-pointer rounded-lg bg-accent px-7 py-3.5 text-base font-semibold tracking-wide text-[#0A0806] transition-colors hover:bg-accent-hover"
-        >
+    <div className="mt-14">
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-4">
+        <BrutalButton onClick={copy} arrow={false} variant={copied ? "paper" : "gold"}>
           {copied ? "Copied" : "Copy the whole prompt"}
-        </button>
-        <span
-          role="status"
-          aria-live="polite"
-          className="text-sm text-text-secondary"
-        >
+        </BrutalButton>
+        <span role="status" aria-live="polite" className="font-typewriter text-[14px] font-bold text-ink">
           {copied ? "Now paste it into any AI chat." : ""}
         </span>
       </div>
 
       {/* Scrolls inside itself rather than making the page enormous. Kept fully
-          selectable so a blocked clipboard is never a dead end. */}
-      <pre className="mt-6 max-h-[420px] overflow-auto rounded-lg border border-border bg-bg-secondary p-5 text-sm leading-relaxed whitespace-pre-wrap break-words text-text-secondary">
+          selectable so a blocked clipboard is never a dead end. Set like a typed
+          sheet. */}
+      <pre className="mt-7 max-h-[420px] overflow-auto whitespace-pre-wrap break-words border-[3px] border-ink bg-paper p-5 font-typewriter text-[14px] leading-relaxed text-ink shadow-brutal sm:p-7">
         {OPPORTUNITY_MAP}
       </pre>
     </div>
