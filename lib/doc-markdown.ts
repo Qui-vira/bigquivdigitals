@@ -154,3 +154,12 @@ export function mdToHtml(md: string): string {
     .join("\n")
     .replace(/(<p>)?@@DOCBLOCK(\d+)@@(<\/p>)?/g, (_m, _a, i: string) => blocks[Number(i)]);
 }
+
+/** The leading `# title` and the rest of the body, as rendered HTML. */
+export function splitTitle(fullHtml: string) {
+  const lead = /^\s*<h1>([\s\S]*?)<\/h1>\s*/.exec(fullHtml);
+  return {
+    titleHtml: lead ? lead[1] : null,
+    bodyHtml: lead ? fullHtml.slice(lead[0].length) : fullHtml,
+  };
+}

@@ -37,6 +37,10 @@ import { neon } from "@neondatabase/serverless";
  * which pulled that column into a page component for all 25 articles even though
  * nothing renders it. Flagged in the 2026-09-12 security audit. Ask for columns
  * by name; do not reintroduce a star select.
+ *
+ * ⚠ GATED ARTICLES (2026-10-07). A row with an `access_code` is a code-word page:
+ * `getArticle` returns it with `gated: true` and an EMPTY body, and the body is
+ * only released by `unlockArticle` (via POST /api/doc-unlock) for the right code.
  */
 
 /** Null when DATABASE_URL is absent, so a missing database degrades rather than throws. */
@@ -52,7 +56,10 @@ export type ArticleSummary = {
 };
 
 export type Article = ArticleSummary & {
+  /** Empty for a gated article. Its body only leaves the server through `unlockArticle`. */
   content: string;
+  /** True when the row has an `access_code`. The code itself is never selected here. */
+  gated: boolean;
 };
 
 /**
@@ -95,8 +102,12 @@ export async function getArticle(
   }
 
   try {
+    // A gated row's body is withheld in the query itself, so it cannot reach a
+    // page component, its metadata, or the static HTML by accident.
     const rows = await sql`
-      select slug, title, content, cta_keyword, video_title, views, created_at
+      select slug, title, cta_keyword, video_title, views, created_at,
+        coalesce(trim(access_code), '') <> '' as gated,
+        case when coalesce(trim(access_code), '') <> '' then '' else content end as content
       from cta_documents
       where slug = ${slug}
       limit 1`;
@@ -106,5 +117,29 @@ export async function getArticle(
   } catch (e) {
     console.error(`[articles] NEON READ FAILED for "${slug}":`, e);
     return { article: null, source: "none" };
+  }
+}
+
+/**
+ * The body of a gated article, but only for the right code word (trimmed,
+ * case-insensitive). Null for a wrong code or an ungated slug, answered the
+ * same way so nothing about the row leaks. A failed read THROWS, so an outage
+ * never looks like a wrong code word. The comparison runs in SQL; the stored
+ * code never comes back to Node.
+ */
+export async function unlockArticle(slug: string, code: string): Promise<string | null> {
+  if (!sql) throw new Error("[articles] DATABASE_URL is not set.");
+  try {
+    const rows = await sql`
+      select content
+      from cta_documents
+      where slug = ${slug}
+        and coalesce(trim(access_code), '') <> ''
+        and lower(trim(access_code)) = lower(trim(${code}))
+      limit 1`;
+    return (rows[0]?.content as string | undefined) ?? null;
+  } catch (e) {
+    console.error(`[articles] NEON UNLOCK READ FAILED for "${slug}":`, e);
+    throw e;
   }
 }

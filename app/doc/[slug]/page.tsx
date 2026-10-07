@@ -4,12 +4,13 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getArticle } from "@/lib/articles-db";
-import { mdToHtml } from "@/lib/doc-markdown";
+import { mdToHtml, splitTitle } from "@/lib/doc-markdown";
 import { SITE_NAME } from "@/lib/site";
 import { BrutalButton, CheckerStrip, HandNote, MonoLabel, Sticker } from "@/components/ui-paper";
 import { ReadingProgress } from "@/components/longread/ReadingProgress";
 import "./doc.css";
 import CopyButtons from "./CopyButtons";
+import DocGate from "./DocGate";
 
 export const revalidate = 60;
 
@@ -37,15 +38,6 @@ function clip(text: string, max = 155): string {
   return `${(space > 80 ? cut.slice(0, space) : cut).replace(/[\s.,;:!?-]+$/, "")}…`;
 }
 
-/** The leading `# title` and the rest of the body, as rendered HTML. */
-function splitTitle(fullHtml: string) {
-  const lead = /^\s*<h1>([\s\S]*?)<\/h1>\s*/.exec(fullHtml);
-  return {
-    titleHtml: lead ? lead[1] : null,
-    bodyHtml: lead ? fullHtml.slice(lead[0].length) : fullHtml,
-  };
-}
-
 /**
  * Each article gets its own title, description, canonical and og tags. Before
  * this every /doc page inherited the homepage's, so a shared article link
@@ -63,6 +55,9 @@ export async function generateMetadata({
 
   const { titleHtml, bodyHtml } = splitTitle(mdToHtml(article.content));
   const name = (titleHtml && plainText(titleHtml)) || article.title;
+  // A gated article has no body here (see getArticle), and its description must
+  // not hint at one.
+  const gatedDescription = "Enter the code word from the video to open the full workflow.";
   // Many articles open with a one-line greeting ("Thank you for commenting."),
   // so read paragraphs in order until there is enough to describe the page.
   let lead = "";
@@ -70,7 +65,7 @@ export async function generateMetadata({
     lead = lead ? `${lead} ${plainText(m[1])}` : plainText(m[1]);
     if (lead.length >= 120) break;
   }
-  const description = clip(lead || plainText(bodyHtml));
+  const description = article.gated ? gatedDescription : clip(lead || plainText(bodyHtml));
   const title = `${name} | ${SITE_NAME}`;
   const path = `/doc/${slug}`;
 
@@ -179,7 +174,12 @@ export default async function DocPage({
 
       {/* ───────── The reading column ───────── */}
       <div className="mx-auto w-full max-w-[960px] px-4 pb-24 pt-14 sm:px-6 md:pb-32 md:pt-20">
-        <article className="doc-page mx-auto" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+        {/* A gated article ships no body: DocGate fetches it after the server checks the code word. */}
+        {article.gated ? (
+          <DocGate slug={slug} />
+        ) : (
+          <article className="doc-page mx-auto" dangerouslySetInnerHTML={{ __html: bodyHtml }} />
+        )}
         <CopyButtons />
 
         <footer className="doc-sign mx-auto mt-20 flex flex-col gap-8 border-t-[3px] border-ink pt-8 sm:flex-row sm:items-end sm:justify-between">
