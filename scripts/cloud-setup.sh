@@ -9,8 +9,8 @@
 
 VENV=/opt/hf-venv
 
-# Python tools: Scrapling, Kokoro voice, MusicGen music (CPU-only PyTorch would be smaller,
-# but download.pytorch.org is blocked by the default network policy, so this pulls from PyPI).
+# Python tools: Scrapling, Kokoro voice, MusicGen music.
+# Needs these under Allowed domains: huggingface.co, *.huggingface.co, *.hf.co, download.pytorch.org
 python3 -m venv "$VENV" || true
 "$VENV/bin/pip" install -q --upgrade pip || true
 "$VENV/bin/pip" install -q "scrapling[fetchers]" kokoro-onnx soundfile numpy || true &
@@ -33,7 +33,11 @@ SKILLS=$!
 
 wait $PY_LIGHT
 # MusicGen runs after the light installs so pip doesn't fight over the same venv.
-"$VENV/bin/pip" install -q transformers torch || true
+# CPU-only PyTorch: the PyPI build is the CUDA one, about 6 GB, which pushed this script
+# to 11m43s and past the ~5 minute limit for the environment cache. If the CPU index is
+# unreachable, MusicGen is skipped rather than falling back to that download.
+"$VENV/bin/pip" install -q torch --index-url https://download.pytorch.org/whl/cpu &&
+  "$VENV/bin/pip" install -q transformers || true
 
 wait $WHISPER $SKILLS
 exit 0
