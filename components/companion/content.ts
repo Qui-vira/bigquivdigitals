@@ -209,10 +209,9 @@ export const FIT = {
   notTitle: "Not for you if",
   not: [
     "You want one click to a finished video, with no decisions",
-    "You have never edited and want a first editing course",
     "You will not read the plan before you approve it",
-    "You plan to copy a reference you have no right to use",
     "You cannot or will not pay for a Claude plan",
+    // "first editing course" and "copy a reference you have no right to use" removed by the owner, 19 Oct 2026
   ],
 } as const;
 
