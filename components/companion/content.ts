@@ -222,10 +222,7 @@ export const LIMITS = {
     "It needs a paid Claude plan that can run Claude Code. Plan limits apply. Which plan is enough for heavy projects is still being tested",
     "It is built for Windows first. Mac is not tested yet. A Mac installer is written but has not been run on a Mac",
     "The result depends on your reference, your script and what you approve",
-    "It does not replace your judgement on colour. Colour grading still needs a human eye",
-    "It does not always deliver. That is why the rescue command exists",
-    "It promises no views, no sales and no income. No result is claimed for any video",
-    "Reference rights are yours to hold. Downloading a video from a social platform may breach that platform's terms",
+    // items 4 to 7 (colour, rescue command, no results promised, reference rights) removed by the owner, 19 Oct 2026
   ],
 } as const;
 
