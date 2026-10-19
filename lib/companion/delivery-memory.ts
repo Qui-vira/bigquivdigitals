@@ -1,6 +1,7 @@
 /** Test double: MemoryStore plus the adapter-only DeliveryStore operations. Not for production. */
 import { MemoryStore } from "./testing/memory-store";
 import type { DeliveryStore, EmailState, OrderEventRow, OrderListFilter, OrderListRow } from "./runtime";
+import type { Order, OrderStatus } from "./types";
 
 export class DeliveryMemoryStore extends MemoryStore implements DeliveryStore {
   emailState = new Map<string, EmailState>();
@@ -39,6 +40,14 @@ export class DeliveryMemoryStore extends MemoryStore implements DeliveryStore {
     }
     rows.sort((a, b) => b.order.createdAt.getTime() - a.order.createdAt.getTime());
     return rows.slice(0, filter.limit ?? 300);
+  }
+
+  async listOrdersByEmail(email: string, statuses: OrderStatus[], limit: number): Promise<Order[]> {
+    return [...this.orders.values()]
+      .filter((o) => o.email === email && statuses.includes(o.status))
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, limit)
+      .map((o) => ({ ...o }));
   }
 
   async listEvents(orderId: string): Promise<OrderEventRow[]> {

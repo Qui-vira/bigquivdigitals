@@ -8,6 +8,7 @@ const pageLinks = [
   { href: "/portfolio", label: "Work" },
   { href: "/ugc", label: "UGC" },
   { href: "/contact", label: "Contact" },
+  { href: "/my-purchases", label: "My purchases" },
   { href: "/greatwork-waitlist", label: "The Great Work Waitlist" },
   { href: "/aimastery-waitlist", label: "AI Mastery Waitlist" },
   { href: "/terms", label: "Terms" },

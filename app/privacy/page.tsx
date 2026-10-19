@@ -33,6 +33,12 @@ const SECTIONS: readonly LegalSection[] = [
     ],
   },
   {
+    heading: "Sign-in link for My purchases",
+    paragraphs: [
+      "If you ask for a sign-in link on My purchases, we use your email only to send you that link. The link expires after 30 minutes.",
+    ],
+  },
+  {
     heading: "What we do not store",
     paragraphs: [
       "We do not store your card number or bank login. Flutterwave handles those on its own payment page.",

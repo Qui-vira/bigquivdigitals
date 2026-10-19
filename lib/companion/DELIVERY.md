@@ -30,6 +30,8 @@ Run tests: `npx tsx --test lib/companion/*.test.ts`
 ## Env var names used
 `RESEND_API_KEY`, `COMPANION_OWNER_EMAIL` (default contact@bigquivdigitals.com), `COURSE_BOT_TOKEN` and `TELEGRAM_ADMIN_CHAT_ID` (existing Telegram pattern), `ORDER_IP_SALT`, `COMPANION_BLOB_TOKEN`, `COMPANION_FILE_KEY`, `NEXT_PUBLIC_SITE_URL` (default https://bigquivdigitals.com).
 
+`COMPANION_LINK_SECRET` (My purchases sign-in links, see `purchases-link.ts`): a random string of at least 32 characters, used for nothing else. When it is unset or shorter, no sign-in link is sent and no link verifies (fail closed). Generate one with `node -e "console.log(require('crypto').randomBytes(32).toString('base64url'))"`. Changing it signs out every open My purchases link.
+
 ## Behaviour notes
 - `deliverOrder` is idempotent once an email has succeeded. Concurrent first calls are prevented by `markOrderPaid` returning `won` to exactly one caller.
 - A failed email: order stays `paid`, `email_sent_at` null and `last_email_error` set (admin shows a red "Delivery failed" badge), owner alerted. Calling `deliverOrder` again retries.

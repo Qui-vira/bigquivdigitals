@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ContactList } from "@/components/companion/ContactList";
 import { ThanksStatus } from "@/components/companion/ThanksStatus";
 import { CHECKOUT, SUPPORT_LINE } from "@/components/companion/content";
@@ -41,6 +42,13 @@ export default async function ThanksPage({
         <h2 className="font-display text-[22px] font-bold text-ink">Support contacts</h2>
         <ContactList className="mt-4" />
         <p className="mt-6 text-[17px] font-semibold text-ink">{SUPPORT_LINE}</p>
+        <p className="mt-4 text-[16px] text-ink">
+          Need your download or receipt later? Go to{" "}
+          <Link href="/my-purchases" className="paper-link font-semibold text-ink">
+            My purchases
+          </Link>
+          .
+        </p>
       </div>
     </PaperSection>
   );
