@@ -7,7 +7,6 @@ import { CompanionJsonLd } from "@/components/companion/JsonLd";
 import {
   AFTER,
   CHECKOUT,
-  CREDITS,
   EXPERTISE,
   FIT,
   FLAGS,
@@ -475,28 +474,9 @@ export function CompanionV3({ view }: { view: PriceView }) {
 
         {/* 15. Proof slot. Hidden by default; nothing is written for it yet. */}
 
-        {/* 16. Credits */}
-        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="credits-h">
-          <div className="v3-wrap v3-cpn-narrow">
-            <h2 id="credits-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-              {CREDITS.heading}
-            </h2>
-            <p className="v3-cpn-credits__intro">{CREDITS.intro}</p>
-            <ul className="v3-cpn-credits">
-              {CREDITS.items.map((c) => (
-                <li key={c}>{c}</li>
-              ))}
-            </ul>
-            <Lines lines={[CREDITS.thirdParty, CREDITS.notAffiliated]} className="v3-cpn-lines--small" />
-            <nav aria-label="Legal" className="v3-cpn-legal">
-              {LEGAL_LINKS.map((l) => (
-                <Link key={l.href} href={l.href} className="v3-link">
-                  {l.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </section>
+        {/* 16. Credits: off the page (owner, 19 Oct 2026: "they are meant to be in the
+            document"). The full credits ship in the download; the not-affiliated line
+            is on /terms, and Terms, Privacy and Licence are in the site footer. */}
       </div>
     </PriceProvider>
   );
