@@ -270,7 +270,8 @@ export function CompanionV3({ view }: { view: PriceView }) {
             <Bullets items={INSIDE.items} className="v3-cpn-bullets--two" />
 
             <div className="v3-cpn-cards">
-              {[INSIDE.installer, INSIDE.doctor, INSIDE.rescue, INSIDE.reconstruct].map((b) => (
+              {/* the installer and doctor cards are setup detail: off the page (owner, 19 Oct 2026) */}
+              {[INSIDE.rescue, INSIDE.reconstruct].map((b) => (
                 <div key={b.title} className="v3-cpn-card" data-fade>
                   <h3 className="v3-h3">{b.title}</h3>
                   <div className="v3-cpn-lines">
@@ -297,7 +298,6 @@ export function CompanionV3({ view }: { view: PriceView }) {
                 <Lines lines={INSIDE.aeLines} />
               </div>
             </div>
-            <p className="v3-cpn-extras">{INSIDE.extras}</p>
           </div>
         </section>
 

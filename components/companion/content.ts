@@ -117,9 +117,7 @@ export const INSIDE = {
   heading: "What is inside the download",
   items: [
     "3 skills: motion-studio (the staged workflow), motion-reconstruct, and motion-rescue (the repair command)",
-    "39 built-in modules for HyperFrames, captions, audio, media sourcing, reference analysis, motion graphics, explainer and launch videos, and design checks",
-    "An installer for Windows, run with one command",
-    "A doctor check that re-tests every tool, package, skill and hook",
+    "39 built-in modules for captions, audio, media sourcing, reference analysis, motion graphics, explainer and launch videos, and design checks",
     "A rescue command, /motion-rescue, for when something fails",
     "Reconstruct mode, for rebuilding a reference you have the right to copy",
     "Any aspect ratio you choose",
@@ -164,13 +162,12 @@ export const INSIDE = {
     "You set the ratio and the size once in your profile. The whole workflow follows it.",
   ],
   ratios: ["9:16", "4:5", "1:1", "16:9", "A custom size"],
-  aeHeading: "With or without After Effects",
+  // Owner, 19 Oct 2026: no tool names on the page (people can look them up). Code is "code".
+  aeHeading: "With or without your editing app",
   aeLines: [
-    "The default route is code. HyperFrames is the default. Remotion is the other code route.",
-    "You need neither After Effects nor DaVinci Resolve.",
-    "If you own them, say so in your profile and the system can use them.",
-    "If you do not, every After Effects step is changed to HyperFrames, Remotion or FFmpeg. You approve the new route first.",
-    "Limit: rotoscoping and true 3D camera moves with depth of field have no good code equivalent. Those parts go to paid generation or are redesigned at Gate 1.",
+    "The default route is code.",
+    "You do not need an editing app.",
+    "If you own one, say so in your profile and the system can use it.",
   ],
   extras:
     "3 optional extra skills are downloaded by the installer from their creators' own pages. They add to the 39 built-in modules. If you are offline, skip them. The pack works without them.",
@@ -219,7 +216,7 @@ export const LIMITS = {
   heading: "What it does not do",
   items: [
     "It needs a paid Claude plan that can run Claude Code. Plan limits apply. Which plan is enough for heavy projects is still being tested",
-    "It is built for Windows first. Mac is not tested yet. A Mac installer is written but has not been run on a Mac",
+    "It is built for Windows first. Mac is not tested yet",
     "The result depends on your reference, your script and what you approve",
     // items 4 to 7 (colour, rescue command, no results promised, reference rights) removed by the owner, 19 Oct 2026
   ],
@@ -250,7 +247,7 @@ export const PRICE = {
   heading: "Price",
   product: "TheEditCompanion by BigQuiv Digitals",
   covers: [
-    "The download: 3 skills, 39 built-in modules, installer, doctor and rescue command",
+    "The download: 3 skills, 39 built-in modules and the rescue command",
     "A START-HERE guide, an install guide and a quick-start card",
     "Install support from our team for 30 days after you buy",
     "Updates are not promised",
@@ -292,10 +289,9 @@ export const AFTER = {
     "You get the download: one folder named TheEditCompanion",
     "README.txt and START-HERE.pdf. Read these first",
     "A guides folder with the install guide and the quick-start card",
-    "The installer files you run to set up",
     "The 3 skills: motion-studio, motion-reconstruct and motion-rescue",
     "Docs with resources, credits and notices",
-    "The doctor check and the rescue command",
+    "The rescue command",
     "Install support from us for 30 days after you buy. Updates are not promised",
   ],
   contactsTitle: "Support contacts",
@@ -315,17 +311,12 @@ export const EXPERTISE = {
 export const CREDITS = {
   heading: "Credits",
   intro: "TheEditCompanion by BigQuiv Digitals uses tools and methods from other creators. We credit them.",
-  items: [
-    "Bundled under their own licences: HyperFrames and related modules by HeyGen, Inc. (Apache-2.0). impeccable by Paul Bakaus (Apache-2.0). ui-ux-pro-max by NextLevelBuilder (MIT)",
-    "Required tools: HyperFrames by HeyGen. Remotion by the Remotion team. FFmpeg by the FFmpeg project. faster-whisper by SYSTRAN. yt-dlp by its contributors. Scrapling by D4Vinci",
-    "Optional extras are downloaded from their creators' own pages",
-    "Methods used with credit, in our own words: Sanji Nai-Chien, Mitchel Dumlao, Samson (@bolu_visuals1), Kane Kallaway, Higgsfield",
-    "The full credits are in the download",
-  ],
+  // Owner, 19 Oct 2026: tool names off the page. The full credits and every licence ship in the download.
+  items: ["Open-source tools and methods from other creators, each under its own licence", "The full credits are in the download"],
   thirdParty:
     "The resources named on the credit pages are third-party resources owned by their creators. They are not included or resold, apart from the licensed software and fonts listed in the credits.",
   notAffiliated:
-    "Not affiliated: TheEditCompanion by BigQuiv Digitals is not affiliated with Anthropic, HeyGen or Remotion. Claude is a product of Anthropic.",
+    "Not affiliated: TheEditCompanion by BigQuiv Digitals is not affiliated with Anthropic. Claude is a product of Anthropic.",
 } as const;
 
 export const LEGAL_LINKS = [
