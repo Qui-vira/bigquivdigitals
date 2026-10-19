@@ -15,7 +15,7 @@ import { Mesh, MeshBasicMaterial, PlaneGeometry, ShaderMaterial, type Texture } 
 import { createStage, loadTexture, loop, range, type SceneFactory } from "../kit";
 
 // Where he stands, in visible-height units from the centre (desktop, then phone).
-const AT = { x: 0.2, y: -0.02, phoneY: 0.05 };
+const AT = { x: 0.2, y: -0.02, phoneY: 0.12 }; // phones: high enough to clear the hook and the offer line under it
 
 const vertex = /* glsl */ `
   varying vec2 vUv;

@@ -2,6 +2,9 @@
 
 /* the hook stops a gutter short of his photo (review, 19 Oct: "exactly" and "did." touched his collar) */
 @media (min-width: 761px) { .v3-home .v3-intro__line { font-size: clamp(2.6rem, 5.3vw, 5.1rem); } }
+/* the line under the hook is the offer itself, so phones keep it (shared hero CSS hides the note there) */
+.v3-home .v3-intro__note { max-width: 40ch; font-size: 1.0625rem; line-height: 1.55; color: var(--g-text); }
+@media (max-width: 760px) { .v3-home .v3-intro__note { display: block; order: -1; font-size: 1rem; } }
 
 .v3-home__receipts { position: absolute; left: 0; right: 0; bottom: 6svh; padding: 0 var(--v3-gutter); opacity: 0; color: var(--g-text); z-index: 3; }
 .v3-home__receipts ul { list-style: none; margin: 0 auto; padding: 0; max-width: var(--v3-max); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; }

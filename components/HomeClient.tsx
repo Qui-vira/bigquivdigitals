@@ -27,8 +27,9 @@ interface HomeClientProps {
  * BigQuiv Digitals website comps canvas; motion: MOTION-PLAN.md).
  *
  * Every word is the owner's own copy from the live page, word for word. Only
- * the design changed. Structure: the stage (his photo, still, on navy; four
- * beats: the hook, "Same skills.", "One move.", the receipts, then his four
+ * the design changed. Structure: the stage (his photo, still, on navy; the Day 12
+ * offer since 19 Oct 2026: "Great tech. Poor marketing. No attention.", "3,000
+ * students.", "Script. Film. Edit.", the receipts, then his four
  * latest challenge reels orbit him), the UGC challenge (raw take against the
  * reel, every day so far), the builds (Headline Wall), the
  * problem (the site's one glitch line), the offer (navy panel), the process
@@ -137,20 +138,24 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
         particles
         label="Big Quiv"
       >
+        {/* The Day 12 offer (owner, 19 Oct 2026: "focus on that day 12 offer"). Every
+            line is his, from the Day 12 caption and take (Shot-Lists/Day-12-Offer.md). */}
         <div className="v3-intro">
           <h1 className="v3-intro__line v3-display" data-lift>
-            Your next skill is going to end <span className="mark">exactly like the last one did.</span>
+            Great tech. Poor marketing. <span className="mark">No attention.</span>
           </h1>
           <div className="v3-intro__row" data-intro-rest>
             <div className="v3-intro__actions">
-              <Link href="/greatwork-waitlist" className="v3-btn v3-btn--lg" data-flood>
-                Join the waitlist <Arrow />
-              </Link>
-              <a href={calendlyUrl} className="v3-link">
-                Hire me
+              <a href={calendlyUrl} className="v3-btn v3-btn--lg">
+                Let&rsquo;s work together <Arrow />
               </a>
+              <Link href="/theeditcompanion" className="v3-link" data-flood>
+                Get the skill
+              </Link>
             </div>
-            <p className="v3-intro__note">The Great Work opens soon. The list goes first.</p>
+            <p className="v3-intro__note">
+              I turn complex crypto, AI, and fintech products into content people understand, trust, and want to try.
+            </p>
             <span className="v3-intro__cue" aria-hidden="true">
               <i />
               Scroll
@@ -159,17 +164,18 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
         </div>
 
         <h2 className="v3-ghost" data-ghost="0.17,0.235,0.33,0.37" data-side="left">
-          Same skills.
+          3,000 students.
         </h2>
         <p className="v3-aside" data-at="0.2,0.25,0.32,0.36" data-side="left">
-          Mine stopped ending that way in 2022, when I got my first seven-figure naira dev job.
+          I&rsquo;ve been in Web3 for years. I&rsquo;ve taught over 3,000 students, so breaking down complicated things is
+          something I&rsquo;m already used to.
         </p>
 
         <h2 className="v3-ghost" data-ghost="0.38,0.445,0.52,0.56" data-side="left">
-          One move.
+          Script. Film. Edit.
         </h2>
         <p className="v3-aside" data-at="0.41,0.46,0.51,0.55" data-side="left">
-          Now I have built the thing that fixes yours.
+          I write my scripts, shoot my videos, and edit everything myself.
         </p>
 
         <h2 className="v3-ghost" data-ghost="0.585,0.64,0.72,0.76" data-side="left">
@@ -192,15 +198,15 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
         )}
 
         <p className="v3-aside" data-at="0.8,0.85,0.95,0.99" data-side="center" style={{ bottom: "auto", top: "14svh" }}>
-          The Great Work opens soon. The list goes first.
+          That&rsquo;s what I do.
         </p>
         <div className="v3-endcta" data-at="0.82,0.87,0.96,1">
-          <Link href="/greatwork-waitlist" className="v3-btn" data-flood>
-            Join the waitlist <Arrow />
-          </Link>
-          <a href={calendlyUrl} className="v3-link">
-            Hire me
+          <a href={calendlyUrl} className="v3-btn">
+            Let&rsquo;s work together <Arrow />
           </a>
+          <Link href="/theeditcompanion" className="v3-link" data-flood>
+            Get the skill
+          </Link>
         </div>
       </Stage>
 
