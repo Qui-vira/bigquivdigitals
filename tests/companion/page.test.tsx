@@ -258,7 +258,8 @@ test("founders end line only when the product row has a date; never a timer or p
 
 test("owner-fixed lines and contacts are present, exactly", () => {
   const t = visibleText(html);
-  assert.ok(t.includes(INSTALL_STATUS));
+  // the requirements section (and its install status) left the sales page on 19 Oct 2026, owner's call; the line itself is unchanged
+  assert.ok(!t.includes(INSTALL_STATUS));
   assert.equal(INSTALL_STATUS, "Tested on Windows 11 in a controlled setup. Not yet tested on a brand new computer. Mac is not tested yet.");
   assert.ok(t.includes(SUPPORT_LINE));
   assert.ok(t.includes("Message us to pay by crypto"));

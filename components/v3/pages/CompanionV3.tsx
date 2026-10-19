@@ -15,12 +15,10 @@ import {
   HOW,
   HOW_TO_BUY,
   INSIDE,
-  INSTALL_STATUS,
   LEGAL_LINKS,
   LIMITS,
   PRICE,
   PROBLEMS,
-  REQUIREMENTS,
   ROLES,
   SUPPORT_LINE,
   WHAT_IT_IS,
@@ -355,30 +353,9 @@ export function CompanionV3({ view }: { view: PriceView }) {
           </div>
         </section>
 
-        {/* 9. Requirements */}
-        <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="req-h">
-          <div className="v3-wrap">
-            <h2 id="req-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-              {REQUIREMENTS.heading}
-            </h2>
-            <div className="v3-cpn-status">
-              <h3 className="v3-h3">{REQUIREMENTS.statusTitle}</h3>
-              <p className="v3-cpn-status__line">{INSTALL_STATUS}</p>
-              <p>{REQUIREMENTS.help}</p>
-            </div>
-            <div className="v3-cpn-split">
-              <div>
-                <h3 className="v3-h3">{REQUIREMENTS.onYourComputer}</h3>
-                <Bullets items={REQUIREMENTS.list} />
-              </div>
-              <div>
-                <h3 className="v3-h3">{REQUIREMENTS.optionalTitle}</h3>
-                <Bullets items={REQUIREMENTS.optional} />
-              </div>
-            </div>
-            <p className="v3-cpn-extras">{REQUIREMENTS.notIncluded}</p>
-          </div>
-        </section>
+        {/* 9. Requirements: removed from the sales page by the owner, 19 Oct 2026
+            ("they are for the setup only"). REQUIREMENTS and INSTALL_STATUS stay in
+            components/companion/content.ts for the setup guide. */}
 
         {/* 10. Price: a navy panel, the anchor stack */}
         <section className="v3-section v3-section--navy v3-grain" data-nav="navy" data-panel aria-labelledby="price-h">
