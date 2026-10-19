@@ -64,3 +64,11 @@
 .v3-ba--reel { aspect-ratio: 9 / 16; background: var(--v3-navy); }
 .v3-ba--reel .v3-ba__layer > video, .v3-ba--reel .v3-ba__layer > img { display: block; object-fit: cover; }
 .v3-ba--reel .v3-ba__divider { background: var(--v3-bone); }
+
+/* sound on the reel before/after (components/v3/ReelBeforeAfter.tsx) */
+.v3-reelba { position: relative; }
+.v3-reelba__sound { position: absolute; top: 12px; right: 12px; z-index: 3; display: inline-flex; align-items: center; gap: 0.4rem; min-height: 44px; padding: 0 0.85rem; border: 0; border-radius: 999px; background: rgba(27, 36, 51, 0.82); color: var(--v3-bone); font: 600 0.8125rem/1 var(--v3-body); letter-spacing: 0.02em; cursor: pointer; transition: background-color 180ms ease, transform 140ms var(--v3-ease-out); }
+.v3-reelba__sound svg { width: 18px; height: 18px; }
+.v3-reelba__sound[aria-pressed="true"] { background: var(--v3-gold); color: var(--v3-ink); }
+.v3-reelba__sound:active { transform: scale(0.96); }
+.v3-reelba__sound:focus-visible { outline: 3px solid var(--v3-gold); outline-offset: 2px; }

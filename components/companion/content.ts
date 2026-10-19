@@ -216,7 +216,7 @@ export const LIMITS = {
   heading: "What it does not do",
   items: [
     "It needs a paid Claude plan that can run Claude Code. Plan limits apply. Which plan is enough for heavy projects is still being tested",
-    "It is built for Windows first. Mac is not tested yet",
+    // "Windows first, Mac not tested" removed by the owner, 19 Oct 2026: it is for Windows and Mac; the how is in the setup
     "The result depends on your reference, your script and what you approve",
     // items 4 to 7 (colour, rescue command, no results promised, reference rights) removed by the owner, 19 Oct 2026
   ],
@@ -329,11 +329,11 @@ export const LEGAL_LINKS = [
 export const META = {
   title: "TheEditCompanion: Claude Code Video Pack | BigQuiv Digitals",
   descriptionFounders:
-    "TheEditCompanion takes your reference and script to a finished video with Claude Code. You approve the plan first. Windows first. $38 founders price.",
+    "TheEditCompanion takes your reference and script to a finished video with Claude Code. You approve the plan first. Windows and Mac. $38 founders price.",
   descriptionRegular:
-    "TheEditCompanion takes your reference and script to a finished video with Claude Code. You approve the plan first. Windows first. $113.",
+    "TheEditCompanion takes your reference and script to a finished video with Claude Code. You approve the plan first. Windows and Mac. $113.",
   ogTitle: "TheEditCompanion by BigQuiv Digitals",
   ogDescription:
     "Take your reference and your own script to a finished video with Claude Code. You approve the plan before anything is built.",
-  twitterDescription: "Claude Code video pack. Reference in. Plan approved by you. Video out. Windows first.",
+  twitterDescription: "Claude Code video pack. Reference in. Plan approved by you. Video out. Windows and Mac.",
 } as const;

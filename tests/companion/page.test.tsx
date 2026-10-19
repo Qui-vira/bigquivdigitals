@@ -151,7 +151,7 @@ test("metadata: lengths, canonical, indexable", async () => {
     else process.env.NEXT_PHASE = savedPhase;
   });
   assert.equal(String(m.title).length, 59);
-  assert.equal(String(m.description).length, 149);
+  assert.equal(String(m.description).length, 151);
   assert.equal(m.alternates?.canonical, "/theeditcompanion");
   assert.equal(m.robots, undefined, "no noindex");
   assert.equal(m.openGraph?.title, "TheEditCompanion by BigQuiv Digitals");

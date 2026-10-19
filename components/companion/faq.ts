@@ -17,7 +17,7 @@ export const FAQ: readonly FaqItem[] = [
   },
   {
     question: "Does it work on Windows or Mac?",
-    answer: "Windows first. Mac is not tested yet.",
+    answer: "Both. The setup covers it.",
   },
   {
     question: "Do I need a paid Claude plan?",
