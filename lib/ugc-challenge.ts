@@ -55,10 +55,19 @@ export const CHALLENGE_DAYS: ChallengeDay[] = [
   { day: 12, title: "What I do for brands", file: "ugc-day12" },
 ];
 
-/** Raw take next to the finished reel, the same seconds on both sides. */
+/**
+ * Raw take next to the finished reel, the same seconds on both sides. Days 3, 7
+ * and 9 were lined up by audio cross-correlation of the reel against the raw
+ * take (scratchpad align.py, 19 Oct 2026) and checked frame by frame. Days 2
+ * and 6 were left out: their "raw" files already carried an edit.
+ * Home and /ugc show the first two; the TheEditCompanion page shows all five.
+ */
 export const BEFORE_AFTER = [
   { day: 12, title: "What I do for brands", before: "ugc-d12-before", after: "ugc-d12-after" },
   { day: 11, title: "Questions for Elon's Roadster", before: "ugc-d11-before", after: "ugc-d11-after" },
+  { day: 9, title: "Out of storage on day 9", before: "ugc-d9-before", after: "ugc-d9-after" },
+  { day: 7, title: "Get paid before you shoot", before: "ugc-d7-before", after: "ugc-d7-after" },
+  { day: 3, title: "A brand paying for your opinion", before: "ugc-d3-before", after: "ugc-d3-after" },
 ];
 
 export const INSTAGRAM = "https://www.instagram.com/big_quiv/";

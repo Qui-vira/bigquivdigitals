@@ -57,7 +57,7 @@ export function UgcChallenge({ headingId = "ugc-challenge-heading" }: { headingI
         </div>
 
         <div className="v3-ugcc__pairs">
-          {BEFORE_AFTER.map((p) => (
+          {BEFORE_AFTER.slice(0, 2).map((p) => (
             <figure key={p.day} className="v3-ugcc__pair" data-fade>
               <ReelBeforeAfter before={p.before} after={p.after} label={`Day ${p.day}: raw take and finished reel`} />
               <figcaption>

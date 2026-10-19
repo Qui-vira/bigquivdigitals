@@ -27,6 +27,7 @@ import { metaDescription, type PriceView } from "@/components/companion/product"
 import { Stage } from "@/components/v3/stage/Stage";
 import { Arrow } from "@/components/v3/Arrow";
 import { ReelBeforeAfter } from "@/components/v3/ReelBeforeAfter";
+import { BEFORE_AFTER } from "@/lib/ugc-challenge";
 import { RunCard } from "@/components/v3/fx/RunCard";
 import { CompanionPrice } from "./CompanionPrice";
 import "./companion.css";
@@ -205,9 +206,38 @@ export function CompanionV3({ view }: { view: PriceView }) {
                 before="ugc-d12-before"
                 after="ugc-d12-after"
                 label="Compare the raw take with the finished video"
+                beforeLabel="What I filmed"
+                afterLabel="What Claude made"
               />
               <figcaption>Day 12 of my UGC challenge: the raw take, and the finished reel.</figcaption>
             </figure>
+          </div>
+        </section>
+
+        {/* 3b. What I filmed. What Claude made. Owner, 19 Oct 2026: "Put a lot", the way
+            @tenfoldmarc shows his. More real pairs from the UGC challenge, same seconds on
+            both sides (lib/ugc-challenge.ts). */}
+        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="pairs-h">
+          <div className="v3-wrap">
+            <h2 id="pairs-h" className="v3-h2 v3-display v3-cpn-h2 v3-cpn-h2--wide" data-split>
+              What I filmed. What Claude made.
+            </h2>
+            <div className="v3-cpn-wall">
+              {BEFORE_AFTER.filter((p) => p.day !== 12).map((p) => (
+                <figure key={p.day} className="v3-cpn-wall__item" data-fade>
+                  <ReelBeforeAfter
+                    before={p.before}
+                    after={p.after}
+                    label={`Day ${p.day}: what I filmed and what Claude made`}
+                    beforeLabel="What I filmed"
+                    afterLabel="What Claude made"
+                  />
+                  <figcaption>
+                    <span className="v3-cpn-wall__day">Day {p.day}</span> {p.title}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
           </div>
         </section>
 
