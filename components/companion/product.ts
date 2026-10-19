@@ -6,7 +6,7 @@ import { PAGE_PATH, META, PRODUCT_NAME, PRODUCT_SLUG } from "./content";
 
 /**
  * Fallback product, used whenever the product row cannot be read. Values are the owner's
- * decisions of 15 Oct 2026: N89,000 founders, then N129,000, with $67 and $97 shown as a
+ * decisions of 19 Oct 2026: N50,000 founders, then N150,000, with $38 and $113 shown as a
  * reference. No end date, no cap: the founders price stays on, no counter is shown.
  */
 export const FALLBACK_PRODUCT: Product = {
@@ -14,12 +14,12 @@ export const FALLBACK_PRODUCT: Product = {
   name: PRODUCT_NAME,
   active: true,
   currencyBase: "NGN",
-  foundersMinor: 8_900_000,
-  regularMinor: 12_900_000,
+  foundersMinor: 5_000_000,
+  regularMinor: 15_000_000,
   foundersEndsAt: null,
   foundersCap: null,
-  displayUsdFoundersMinor: 6700,
-  displayUsdRegularMinor: 9700,
+  displayUsdFoundersMinor: 3800,
+  displayUsdRegularMinor: 11300,
   linkTtlHours: 168,
   maxDownloads: 5,
   allowManualTransfer: false,
@@ -75,7 +75,7 @@ function formatUsd(minor: number | null): string | null {
 
 export type PriceView = {
   tier: "founders" | "regular";
-  /** What is charged now, e.g. "N89,000". */
+  /** What is charged now, e.g. "N50,000". */
   amount: string;
   foundersAmount: string;
   regularAmount: string;

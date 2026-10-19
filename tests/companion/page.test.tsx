@@ -125,7 +125,7 @@ test("no review or rating fields in JSON-LD", () => {
   blocks.forEach((b, i) => walk(b, `ld${i}`));
   const product = blocks.find((b) => b["@type"] === "Product") as { offers: Record<string, unknown> };
   assert.equal(product.offers.priceCurrency, "NGN");
-  assert.equal(product.offers.price, "89000");
+  assert.equal(product.offers.price, "50000");
   assert.ok(!("priceValidUntil" in product.offers));
 });
 
@@ -156,7 +156,7 @@ test("metadata: lengths, canonical, indexable", async () => {
   assert.equal(m.robots, undefined, "no noindex");
   assert.equal(m.openGraph?.title, "TheEditCompanion by BigQuiv Digitals");
   assert.equal(m.twitter?.title, "TheEditCompanion by BigQuiv Digitals");
-  assert.equal(metaDescription(priceView({ ...FALLBACK_PRODUCT, foundersMinor: 0 }, new Date("2030-01-01"))).includes("$97"), false);
+  assert.equal(metaDescription(priceView({ ...FALLBACK_PRODUCT, foundersMinor: 0 }, new Date("2030-01-01"))).includes("$113"), false);
 });
 
 test("product read: throws at request time, constants only during the production build", async () => {
@@ -170,8 +170,8 @@ test("product read: throws at request time, constants only during the production
     await assert.rejects(() => loadProduct());
     process.env.NEXT_PHASE = "phase-production-build";
     const p = await loadProduct();
-    assert.equal(p.foundersMinor, 8_900_000);
-    assert.equal(p.regularMinor, 12_900_000);
+    assert.equal(p.foundersMinor, 5_000_000);
+    assert.equal(p.regularMinor, 15_000_000);
   } finally {
     if (savedUrl !== undefined) process.env.DATABASE_URL = savedUrl;
     if (savedPhase === undefined) delete process.env.NEXT_PHASE;
@@ -180,12 +180,12 @@ test("product read: throws at request time, constants only during the production
 });
 
 test("page renders from a product value without a database; naira prices and dollar reference shown", () => {
-  assert.equal(view.amount, "N89,000");
-  assert.equal(view.regularAmount, "N129,000");
+  assert.equal(view.amount, "N50,000");
+  assert.equal(view.regularAmount, "N150,000");
   const t = visibleText(html);
-  assert.ok(t.includes("Get TheEditCompanion for N89,000"));
-  assert.ok(t.includes("Pay N89,000"));
-  assert.ok(t.includes("$67") && t.includes("$97"), "dollar reference shown");
+  assert.ok(t.includes("Get TheEditCompanion for N50,000"));
+  assert.ok(t.includes("Pay N50,000"));
+  assert.ok(t.includes("$38") && t.includes("$113"), "dollar reference shown");
 });
 
 test("live tier: the cached page switches to regular at the founders end instant, never back", () => {
@@ -253,7 +253,7 @@ test("founders end line only when the product row has a date; never a timer or p
   assert.ok(!/places? left|spots? left/i.test(cappedText), "a cap never becomes a visible place count");
   const regular = priceView({ ...FALLBACK_PRODUCT, foundersEndsAt: new Date("2026-10-01T00:00:00Z") }, NOW);
   assert.equal(regular.tier, "regular");
-  assert.equal(regular.amount, "N129,000");
+  assert.equal(regular.amount, "N150,000");
 });
 
 test("owner-fixed lines and contacts are present, exactly", () => {

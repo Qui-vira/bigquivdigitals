@@ -24,9 +24,9 @@ export type Product = {
   name: string;
   active: boolean;
   currencyBase: Currency;
-  /** Kobo. 8_900_000 = N89,000. */
+  /** Kobo. 5_000_000 = N50,000. */
   foundersMinor: number;
-  /** Kobo. 12_900_000 = N129,000. */
+  /** Kobo. 15_000_000 = N150,000. */
   regularMinor: number;
   /** Optional. Founders price stops at this instant (exclusive). */
   foundersEndsAt: Date | null;

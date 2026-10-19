@@ -5,8 +5,8 @@ Sealed module. Pure logic over a small `CompanionStore` interface (`store.ts`). 
 Run tests: `npx tsx --test lib/companion/*.test.ts`
 
 ## Owner decisions baked in (15 Oct 2026)
-- Charged in NAIRA only, integer KOBO. Founders 8,900,000 kobo (N89,000), regular 12,900,000 kobo (N129,000). `Currency = "NGN"`.
-- USD ($67 / $97) is display only: `Product.displayUsdFoundersMinor` / `displayUsdRegularMinor` (cents). Never charged, never checked.
+- Charged in NAIRA only, integer KOBO. Founders 5,000,000 kobo (N50,000), regular 15,000,000 kobo (N150,000) (owner, 19 Oct 2026; set on the live row with scripts/companion-price.mjs). `Currency = "NGN"`.
+- USD ($38 / $113, at N1,331.62 per $1 on 19 Oct 2026) is display only: `Product.displayUsdFoundersMinor` / `displayUsdRegularMinor` (cents). Never charged, never checked.
 - Founders window = `foundersEndsAt` timestamp (owner sets at go-live, +30 days) and optional `foundersCap` (default null). Neither set: founders price stays, no counter. Never fake scarcity.
 - Support = 30 days from `paid_at` (`support_until`). No update promise.
 

@@ -342,9 +342,9 @@ export const LEGAL_LINKS = [
 export const META = {
   title: "TheEditCompanion: Claude Code Video Pack | BigQuiv Digitals",
   descriptionFounders:
-    "TheEditCompanion takes your reference and script to a finished video with Claude Code. You approve the plan first. Windows first. $67 founders price.",
+    "TheEditCompanion takes your reference and script to a finished video with Claude Code. You approve the plan first. Windows first. $38 founders price.",
   descriptionRegular:
-    "TheEditCompanion takes your reference and script to a finished video with Claude Code. You approve the plan first. Windows first. $97.",
+    "TheEditCompanion takes your reference and script to a finished video with Claude Code. You approve the plan first. Windows first. $113.",
   ogTitle: "TheEditCompanion by BigQuiv Digitals",
   ogDescription:
     "Take your reference and your own script to a finished video with Claude Code. You approve the plan before anything is built.",
