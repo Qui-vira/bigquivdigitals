@@ -8,7 +8,13 @@ export const metadata = {
 
 # I built a pharmacy platform that never makes a claim about a drug.
 
+<Lede>
+
 Peaceway Online is a Lagos pharmacy. I built and delivered the platform at no fee, so that there would be a working healthcare build I could show to other pharmacies, clinics and laboratories. It is live at [peacewayonline.com](https://peacewayonline.com).
+
+</Lede>
+
+<Part>
 
 ## The problem
 
@@ -24,7 +30,13 @@ A pharmacy can fix all three. Most have no way to show it online.
   href="https://peacewayonline.com"
 />
 
+</Part>
+
+<Part layout="grid">
+
 ## What I built
+
+<Pair>
 
 **Three doors, not one.** Customers, staff and suppliers each get their own entry point. A wholesaler and a patient should never see the same screen.
 
@@ -35,6 +47,10 @@ A pharmacy can fix all three. Most have no way to show it online.
   tier="Personal"
 />
 
+</Pair>
+
+<Pair>
+
 **A request flow that admits reality.** You tell it the medicine, strength and how soon you need it. Today, within 24 hours, this week, or just checking. It replies that someone will confirm stock and call you back, because that is what actually happens.
 
 <Evidence
@@ -44,6 +60,10 @@ A pharmacy can fix all three. Most have no way to show it online.
   tier="Personal"
 />
 
+</Pair>
+
+<Pair wide>
+
 **Ordering inside Telegram.** Search the inventory, pick an item, give delivery details, confirm. I walked a real order through it end to end.
 
 <Evidence
@@ -51,7 +71,12 @@ A pharmacy can fix all three. Most have no way to show it online.
   alt="Telegram order confirmation from the Peaceway bot. One item, AC-Drex Tablet at N350. Subtotal N350, delivery to Igando N700, payment fee N5, total N1,055, with Confirm Order, Back and Cancel buttons."
   claim="An order walked end to end through the live bot, search to confirmation. N1,055 total, itemised before anything irreversible."
   tier="Personal"
+  zoom={{ x: 0.13, y: 0.527, scale: 1.6 }}
 />
+
+</Pair>
+
+<Pair wide>
 
 **A reason to come back.** Medication reminders. Customers track daily doses, which brings them to the platform on days they are not buying anything.
 
@@ -62,7 +87,13 @@ A pharmacy can fix all three. Most have no way to show it online.
   tier="Personal"
 />
 
-<PullQuote>If you sell health products in Nigeria, your marketing problem and your compliance problem are the same problem.</PullQuote>
+</Pair>
+
+</Part>
+
+<PullQuote mark="the same problem.">If you sell health products in Nigeria, your marketing problem and your compliance problem are the same problem.</PullQuote>
+
+<Part>
 
 ## The part most people miss
 
@@ -82,14 +113,21 @@ So the system never makes a claim about a drug. Search the inventory and restric
   alt="Telegram inventory search results listing products with dosage strengths. Every visible row shows the words ask pharmacist in place of a price."
   claim="Restricted items route to a pharmacist instead of showing a price."
   tier="Personal"
+  labels={[{ x: 0.66, y: 0.296, px: 0.83, py: 0.12, text: "ask pharmacist" }]}
 />
 
 Every promise on the site is about the business. Genuine supply, pharmacist access, delivery across Lagos. Not one of them is a claim about what a medicine does, because that claim belongs to the regulator and to the pharmacist, never to the marketing.
 
 Designing it that way from the start is cheaper than being told to take it down later.
 
+</Part>
+
+<Part>
+
 ## Why this matters to you
 
 If you sell health products in Nigeria, your marketing problem and your compliance problem are the same problem. Most people find that out after they have already spent the money.
 
 I build this for pharmacies, clinics, labs and diagnostic centres.
+
+</Part>

@@ -20,6 +20,9 @@ export const WHATS_IN_ZIP = "TheEditCompanion.zip (about 11 MB). It holds START-
 
 export type Rendered = { subject: string; html: string; text: string };
 
+export const MY_PURCHASES_PATH = "/my-purchases";
+export const MY_PURCHASES_LINE = "Need your download or receipt again? Go to My purchases:";
+
 function contactsText(): string {
   return Object.values(CONTACTS).map((c) => `${c.label}: ${c.value}`).join("\n");
 }
@@ -61,6 +64,7 @@ export function renderDelivery(i: DeliveryEmailInput): Rendered {
   ].join("\n");
   const termsUrl = `${SITE_URL}/terms`;
   const licenceUrl = `${SITE_URL}/licence`;
+  const purchasesUrl = `${SITE_URL}${MY_PURCHASES_PATH}`;
   const hashLine = `SHA-256 of TheEditCompanion.zip: ${DELIVERY_FILE_SHA256} (${DELIVERY_FILE_BYTES.toLocaleString("en-US")} bytes)`;
   const hashHow = "To check it on Windows, run: certutil -hashfile TheEditCompanion.zip SHA256";
   const consentBlock = [
@@ -98,6 +102,8 @@ export function renderDelivery(i: DeliveryEmailInput): Rendered {
     "Receipt:",
     receipt,
     "",
+    `${MY_PURCHASES_LINE} ${purchasesUrl}`,
+    "",
     consentBlock,
     `Terms: ${termsUrl}`,
     `Licence: ${licenceUrl}`,
@@ -117,6 +123,7 @@ export function renderDelivery(i: DeliveryEmailInput): Rendered {
       `<p>${escapeHtml(POLICY_LINE)} ${supportLine}</p>` +
       `<h3>Check your download</h3><p style="word-break:break-all">${escapeHtml(hashLine)}</p><p>${escapeHtml(hashHow)}</p>` +
       `<h3>Receipt</h3><p style="white-space:pre-line">${escapeHtml(receipt)}</p>` +
+      `<p>${escapeHtml(MY_PURCHASES_LINE)} <a href="${purchasesUrl}">My purchases</a></p>` +
       `<p style="font-size:14px;color:#555;white-space:pre-line">${escapeHtml(consentBlock)}</p>` +
       `<p><a href="${termsUrl}">Terms</a> | <a href="${licenceUrl}">Licence</a></p>` +
       `<h3>Contact us</h3><ul>${contactsHtml()}</ul>`,
@@ -181,4 +188,27 @@ export function renderTransferReceived(o: Order): Rendered {
       `<p>${escapeHtml(POLICY_LINE)}</p><h3>Contact us</h3><ul>${contactsHtml()}</ul>`,
   );
   return { subject: "Order received: we are checking your transfer", text, html };
+}
+
+/** The "My purchases" sign-in link. Sent only when the email has a paid or refunded order. */
+export function renderPurchasesLink(viewUrl: string, minutes: number): Rendered {
+  const text = [
+    "Hi,",
+    "",
+    "Here is your sign-in link for My purchases on bigquivdigitals.com:",
+    viewUrl,
+    "",
+    `The link works for ${minutes} minutes. If you did not ask for it, you can ignore this email.`,
+    "",
+    "Contact us:",
+    contactsText(),
+  ].join("\n");
+  const html = shell(
+    `<p>Hi,</p>` +
+      `<p>Here is your sign-in link for My purchases on bigquivdigitals.com.</p>` +
+      `<p style="text-align:center;margin:24px 0"><a href="${escapeHtml(viewUrl)}" style="display:inline-block;padding:14px 28px;background:#111;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold">See my purchases</a></p>` +
+      `<p style="font-size:14px;color:#555">The link works for ${minutes} minutes. If you did not ask for it, you can ignore this email.</p>` +
+      `<h3>Contact us</h3><ul>${contactsHtml()}</ul>`,
+  );
+  return { subject: "Your sign-in link for My purchases", text, html };
 }

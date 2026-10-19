@@ -1,0 +1,4 @@
+# v3 rebuild: research, review captures and texture sources stay local
+research/
+.impeccable/
+scripts/hero3d/*.png

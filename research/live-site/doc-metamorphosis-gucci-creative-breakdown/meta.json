@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/metamorphosis-gucci-creative-breakdown",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "METAMORPHOSIS | BigQuiv Digitals",
+  "description": "Creative Breakdown by Big Quiv A luxury product film where matter refuses to stay in one state. This is not a tutorial prompt. It is a high-level…",
+  "canonical": "https://bigquivdigitals.com/doc/metamorphosis-gucci-creative-breakdown",
+  "open_graph": {
+    "og:title": "METAMORPHOSIS | BigQuiv Digitals",
+    "og:description": "Creative Breakdown by Big Quiv A luxury product film where matter refuses to stay in one state. This is not a tutorial prompt. It is a high-level…",
+    "og:url": "https://bigquivdigitals.com/doc/metamorphosis-gucci-creative-breakdown",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "METAMORPHOSIS",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "METAMORPHOSIS | BigQuiv Digitals",
+    "twitter:description": "Creative Breakdown by Big Quiv A luxury product film where matter refuses to stay in one state. This is not a tutorial prompt. It is a high-level…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

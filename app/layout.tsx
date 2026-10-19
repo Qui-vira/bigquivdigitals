@@ -2,9 +2,12 @@ import type { Metadata, Viewport } from "next";
 import { SITE_URL } from "@/lib/site";
 import localFont from "next/font/local";
 import "./globals.css";
+import "./v3.css";
+import "./v3-shared.css";
 import { PublicNavbar, PublicWrapper } from "@/components/PublicShell";
 import { FooterServer } from "@/components/FooterServer";
 import { OrganizationJsonLd } from "@/components/StructuredData";
+import { OpenerMarkup } from "@/components/v3/Opener";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -35,6 +38,18 @@ const display = localFont({
     { path: "./fonts/BricolageGrotesque-700.woff2", weight: "700", style: "normal" },
   ],
   variable: "--font-display-face",
+  display: "swap",
+});
+
+/**
+ * Bricolage Grotesque, full variable font (opsz 12-96, wdth 75-100, wght
+ * 200-800), latin subset from Google Fonts, self-hosted for the same reason as
+ * above. The v3 public pages set headlines at 800 and condense them with
+ * font-stretch, which the two static cuts above cannot do.
+ */
+const displayVar = localFont({
+  src: [{ path: "./fonts/BricolageGrotesque-var.woff2", weight: "200 800", style: "normal" }],
+  variable: "--font-bricolage",
   display: "swap",
 });
 
@@ -127,32 +142,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${body.variable} ${didone.variable} ${typewriter.variable} ${hand.variable}`}>
-      <head>
-        {/*
-          The hero is the largest contentful paint on the homepage and both
-          plates are needed before the reveal can composite, so neither is
-          lazy-loaded. Preloaded as avif at the two sizes the canvas actually
-          picks; the 1024 pair is 29 KB total.
-        */}
-        {/* The chrome plate is only ever fetched by the WebGL engine, which
-            loads it with crossOrigin="anonymous" (a texture must be CORS-clean).
-            Without the same attribute here the preload's credentials mode did
-            not match, Chrome discarded it and downloaded the plate a second
-            time. The base plate is also painted by the <picture>, a plain
-            request, so its preload stays without the attribute. */}
-        {/* Breakpoints must match pickSrc() in components/HeroReveal.tsx.
-            Both key on CSS pixels; mismatching them downloads the hero twice.
-            The base plate is the homepage LCP element since the paper
-            redesign framed it as a print, so its preload is high priority. */}
-        <link rel="preload" as="image" type="image/avif" fetchPriority="high" href="/hero/king-base-1024.avif" media="(max-width: 900px)" />
-        <link rel="preload" as="image" type="image/avif" crossOrigin="anonymous" href="/hero/king-chrome-1024.avif" media="(max-width: 900px)" />
-        <link rel="preload" as="image" type="image/avif" fetchPriority="high" href="/hero/king-base-1600.avif" media="(min-width: 901px) and (max-width: 1600px)" />
-        <link rel="preload" as="image" type="image/avif" crossOrigin="anonymous" href="/hero/king-chrome-1600.avif" media="(min-width: 901px) and (max-width: 1600px)" />
-        <link rel="preload" as="image" type="image/avif" fetchPriority="high" href="/hero/king-base-2560.avif" media="(min-width: 1601px)" />
-        <link rel="preload" as="image" type="image/avif" crossOrigin="anonymous" href="/hero/king-chrome-2560.avif" media="(min-width: 1601px)" />
-      </head>
+    <html lang="en" suppressHydrationWarning className={`${display.variable} ${displayVar.variable} ${body.variable} ${didone.variable} ${typewriter.variable} ${hand.variable}`}>
       <body id="top" className="min-h-screen bg-bg-primary font-sans text-text-primary antialiased">
+        <OpenerMarkup />
         {/* JSON-LD. In the root layout so it is present on every route, and in
             the SSR HTML so a crawler sees it without executing anything. */}
         <OrganizationJsonLd />

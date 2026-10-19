@@ -1,0 +1,26 @@
+/* Terms, Privacy, Licence (Builder D). Plain, fast, no motion: one reading
+   layout on cloud. components/companion/LegalPage.tsx keeps its markup and
+   logic; this file restyles it from outside, scoped under .v3-legal. */
+
+.v3-legal > section { background: var(--v3-cloud) !important; color: var(--v3-ink); }
+.v3-legal > section > div { max-width: 820px; padding: calc(72px + clamp(2.5rem, 6vw, 5rem)) var(--v3-gutter) clamp(4rem, 8vw, 7rem) !important; }
+.v3-legal [role="note"] { display: inline-flex; align-items: center; gap: 0.6rem; margin: 0 0 1.75rem; padding: 0 !important; border: 0 !important; background: none !important; font-family: var(--v3-body) !important; font-size: 0.8125rem !important; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--v3-ink-2) !important; }
+.v3-legal [role="note"]::before { content: ""; width: 28px; height: 2px; background: var(--v3-gold); }
+.v3-legal h1 { margin: 0; font-family: var(--v3-display) !important; font-weight: 800 !important; font-stretch: 88%; font-size: clamp(2.8rem, 6.4vw, 4.5rem) !important; line-height: 0.92 !important; letter-spacing: -0.03em !important; color: var(--v3-navy) !important; }
+.v3-legal > section > div > p { font-family: var(--v3-body) !important; margin-top: 1rem; font-size: 1.0625rem !important; line-height: 1.7 !important; color: var(--v3-ink-2) !important; max-width: 64ch; }
+.v3-legal > section > div > p:nth-of-type(2) { margin-top: 1.25rem; font-size: 0.875rem !important; color: var(--v3-ink-2) !important; font-variant-numeric: tabular-nums; }
+.v3-legal > section > div > p:nth-of-type(3) { margin-top: 1.5rem; padding-bottom: 2rem; border-bottom: 2px solid var(--v3-navy); font-size: 1.1875rem !important; color: var(--v3-ink) !important; }
+.v3-legal section section { padding-top: 2rem; scroll-margin-top: 96px; }
+.v3-legal section section + section { margin-top: 0 !important; border-top: 1px solid var(--v3-rule); }
+.v3-legal h2 { font-family: var(--v3-display) !important; font-weight: 700 !important; font-stretch: 92%; font-size: clamp(1.4rem, 2.2vw, 1.75rem) !important; line-height: 1.15 !important; letter-spacing: -0.015em; color: var(--v3-navy) !important; }
+.v3-legal section section p, .v3-legal section section li { font-size: 1.0625rem !important; line-height: 1.75 !important; color: var(--v3-ink-2) !important; max-width: 66ch; }
+.v3-legal section section li::marker { color: var(--v3-gold-deep); }
+.v3-legal [class*="border-t-"] { margin-top: 3.5rem; padding-top: 2rem; border-top: 2px solid var(--v3-navy) !important; }
+.v3-legal ul.space-y-2 li { display: grid !important; grid-template-columns: 7rem minmax(0, 1fr); align-items: baseline; gap: 0.75rem; padding: 0.55rem 0; border-bottom: 1px solid var(--v3-rule); margin: 0 !important; }
+/* 44px tap targets (review, 19 Oct) */
+.v3-legal ul.space-y-2 li > a { display: inline-flex; align-items: center; min-height: 44px; }
+.v3-legal ul.space-y-2 li > span { font-family: var(--v3-body) !important; font-size: 0.8125rem !important; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--v3-ink-2) !important; }
+.v3-legal .paper-link { font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; color: var(--v3-navy) !important; text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; text-decoration-color: #e8a33d99; background: none !important; box-shadow: none !important; }
+@media (hover: hover) { .v3-legal .paper-link:hover { text-decoration-color: var(--v3-gold); } }
+.v3-legal nav[aria-label="Legal"] { gap: 0.5rem 2rem !important; }
+.v3-legal nav[aria-label="Legal"] a { display: inline-flex; align-items: center; min-height: 44px; }

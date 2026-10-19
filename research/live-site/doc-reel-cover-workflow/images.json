@@ -1,0 +1,25 @@
+{
+  "url": "https://bigquivdigitals.com/doc/reel-cover-workflow",
+  "images": [
+    {
+      "alt": "The frame I started from",
+      "src": "/docs/reel-cover/1-frame.jpg",
+      "original_path": "/docs/reel-cover/1-frame.jpg",
+      "absolute_url": "https://bigquivdigitals.com/docs/reel-cover/1-frame.jpg"
+    },
+    {
+      "alt": "The cover it made",
+      "src": "/docs/reel-cover/2-cover.jpg",
+      "original_path": "/docs/reel-cover/2-cover.jpg",
+      "absolute_url": "https://bigquivdigitals.com/docs/reel-cover/2-cover.jpg"
+    },
+    {
+      "alt": "What the profile grid keeps. The dark strips get cut.",
+      "src": "/docs/reel-cover/3-grid-crop.jpg",
+      "original_path": "/docs/reel-cover/3-grid-crop.jpg",
+      "absolute_url": "https://bigquivdigitals.com/docs/reel-cover/3-grid-crop.jpg"
+    }
+  ],
+  "picture_sources": [],
+  "videos": []
+}

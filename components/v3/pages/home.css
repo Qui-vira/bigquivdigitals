@@ -1,0 +1,48 @@
+/* Home (components/HomeClient.tsx). Shared pieces: app/v3-shared.css. */
+
+/* the hook stops a gutter short of his photo (review, 19 Oct: "exactly" and "did." touched his collar) */
+@media (min-width: 761px) { .v3-home .v3-intro__line { font-size: clamp(2.6rem, 5.3vw, 5.1rem); } }
+
+.v3-home__receipts { position: absolute; left: 0; right: 0; bottom: 6svh; padding: 0 var(--v3-gutter); opacity: 0; color: var(--g-text); z-index: 3; }
+.v3-home__receipts ul { list-style: none; margin: 0 auto; padding: 0; max-width: var(--v3-max); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; }
+.v3-home__receipts li { border-top: 2px solid var(--g-text); padding-top: 0.9rem; background: color-mix(in srgb, var(--g-ground) 72%, transparent); }
+.v3-home__receipt-v { display: block; font-family: var(--v3-display); font-weight: 800; font-stretch: 85%; font-size: clamp(2.2rem, 4.4vw, 4rem); line-height: 1; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+.v3-home__receipt-l { display: block; margin-top: 0.4rem; font-size: 0.9375rem; color: var(--g-soft); }
+.v3-home__receipts p { max-width: var(--v3-max); margin: 1rem auto 0; font-size: 0.9375rem; color: var(--g-soft); }
+@media (max-width: 760px) { .v3-home__receipts ul { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* desktop: his photo stands still on the right, so the numbers keep to the left half */
+@media (min-width: 761px) { .v3-home__receipts ul, .v3-home__receipts p { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: min(620px, 46vw); margin-left: max(0px, calc((100vw - var(--v3-max)) / 2)); margin-right: 0; } }
+
+.v3-home__builds-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
+.v3-home__builds-head .v3-h2 { max-width: 12ch; }
+.v3-home__builds { margin-top: 4rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem 3.5rem; }
+@media (max-width: 760px) { .v3-home__builds { grid-template-columns: minmax(0, 1fr); } .v3-home__builds > * { margin-top: 0 !important; } }
+
+.v3-home__problem { max-width: 1100px; }
+.v3-home__glitch { margin: 0; font-size: clamp(2.6rem, 6.4vw, 5.75rem); line-height: 0.95; color: var(--v3-navy); }
+.v3-home__problem-cols { margin-top: 3.5rem; padding-top: 2rem; border-top: 2px solid var(--v3-navy); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem; }
+.v3-home__problem-cols p { margin: 0; font-size: 1.1875rem; line-height: 1.7; color: var(--v3-ink-2); }
+@media (max-width: 760px) { .v3-home__problem-cols { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; } }
+
+.v3-home__offer { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 4.5rem; align-items: start; }
+.v3-home__offer-line { margin: 1.75rem 0 0; max-width: 22ch; font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: clamp(1.5rem, 2.4vw, 1.9rem); line-height: 1.15; color: var(--v3-gold); }
+.v3-home__offer-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--v3-rule-bone); }
+.v3-home__offer-list li { padding-top: 1.35rem; padding-bottom: 1.35rem; border-bottom: 1px solid var(--v3-rule-bone); font-size: 1.125rem; line-height: 1.6; color: var(--v3-bone); }
+.v3-home__offer-list li::before { top: 1.55rem; }
+.v3-home__offer-list li::after { top: 1.72rem; }
+.v3-home__offer-foot { margin-top: 4.5rem; display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 3rem; align-items: center; }
+.v3-home__offer-foot > p { margin: 0; max-width: 52ch; font-size: 1.1875rem; line-height: 1.7; color: var(--v3-bone); }
+.v3-home__offer-note { margin: 1rem 0 0; max-width: 40ch; font-size: 0.9375rem; color: var(--v3-ash); }
+@media (max-width: 900px) { .v3-home__offer, .v3-home__offer-foot { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; } }
+
+.v3-home__close { padding-bottom: 0; }
+.v3-home__close-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 3rem; align-items: end; }
+.v3-home__close-grid > :first-child { padding-bottom: clamp(4rem, 8vw, 7.5rem); }
+.v3-home__close-h { margin: 0; font-size: clamp(3rem, 7vw, 6.5rem); line-height: 0.9; color: var(--v3-bone); }
+.v3-home__close-p { margin: 2rem 0 2.25rem; max-width: 50ch; font-size: 1.1875rem; line-height: 1.7; color: var(--v3-ash); }
+.v3-home__close-alt { margin-top: 3.5rem; padding-top: 1.75rem; border-top: 1px solid var(--v3-rule-bone); display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; color: var(--v3-bone); }
+.v3-home__close-alt p { margin: 0; max-width: 46ch; font-size: 1rem; line-height: 1.6; color: var(--v3-ash); }
+.v3-home__close-photo { align-self: end; }
+.v3-home__close-photo img { display: block; width: 100%; height: auto; -webkit-mask-image: linear-gradient(to top, transparent 0, #000 16%); mask-image: linear-gradient(to top, transparent 0, #000 16%); }
+@media (max-width: 900px) { .v3-home__close-grid { grid-template-columns: minmax(0, 1fr); } .v3-home__close-photo { max-width: 420px; margin: 0 auto; } .v3-home__close-alt { flex-direction: column; align-items: flex-start; } }
+

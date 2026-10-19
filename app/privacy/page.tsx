@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/components/v3/pages/legal.css";
 import { LegalPage, type LegalSection } from "@/components/companion/LegalPage";
 
 export const metadata: Metadata = {
@@ -30,6 +31,12 @@ const SECTIONS: readonly LegalSection[] = [
     heading: "What we store when you start a checkout, even if you do not pay",
     paragraphs: [
       "Each time you send the checkout form with a valid email address, a name and both boxes ticked, we store your email address and the hour of the attempt, even if you never finish paying. We use it only to limit repeated attempts to 5 per email address per hour, which stops abuse. Records older than 24 hours are deleted automatically the next time anyone starts a checkout.",
+    ],
+  },
+  {
+    heading: "Sign-in link for My purchases",
+    paragraphs: [
+      "If you ask for a sign-in link on My purchases, we use your email only to send you that link. The link expires after 30 minutes.",
     ],
   },
   {
@@ -86,11 +93,13 @@ const SECTIONS: readonly LegalSection[] = [
 
 export default function PrivacyPage() {
   return (
-    <LegalPage
-      title="Privacy"
-      updated="19 October 2026"
-      intro="This page says what BigQuiv Digitals stores when you buy TheEditCompanion, who handles it, and how to ask for it to be deleted."
-      sections={SECTIONS}
-    />
+    <div className="v3 v3-legal" data-nav="cloud">
+      <LegalPage
+        title="Privacy"
+        updated="19 October 2026"
+        intro="This page says what BigQuiv Digitals stores when you buy TheEditCompanion, who handles it, and how to ask for it to be deleted."
+        sections={SECTIONS}
+      />
+    </div>
   );
 }

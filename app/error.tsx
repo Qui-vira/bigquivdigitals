@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { BrutalButton, PaperSection, Sticker, Tape } from "@/components/ui-paper";
+import { Arrow } from "@/components/v3/Arrow";
+import "@/components/v3/pages/notfound.css";
 
 /**
- * Root error boundary. Public routes get the paper note; the admin area
+ * Root error boundary. Public routes get the v3 card on navy (comp: NotFound.dc.html,
+ * the error state); no 3D here, so the page that broke loads nothing heavy. The admin area
  * (out of scope for the redesign) keeps its original dark layout exactly.
  * Copy is unchanged in both.
  */
@@ -55,46 +57,25 @@ export default function Error({
   }
 
   return (
-    <div className="paper-scope overflow-x-clip bg-paper text-ink">
-      <PaperSection ground="grid" pad="none" width="mid" innerClassName="pb-32 pt-28 md:pb-40 md:pt-36" aria-labelledby="error-heading">
-        <div className="relative mx-auto max-w-[620px]">
-          <div
-            className="relative border-[3px] border-ink bg-paper px-6 py-12 shadow-brutal-lg sm:px-12 sm:py-14"
-            style={{ rotate: "1.2deg" }}
-          >
-            <Tape className="-top-3.5 left-10" tilt={-6} width={100} />
-            <Tape className="-top-3.5 right-10" tilt={5} width={100} />
-            <Sticker shape="label" tone="gold" tilt={-3} decorative={false} reveal={false}>
-              Error
-            </Sticker>
-            <h1
-              id="error-heading"
-              className="mt-7 font-didone text-[clamp(2.6rem,6.4vw,4rem)] font-semibold leading-[0.98] tracking-[-0.01em] text-ink text-balance"
-            >
-              Something broke on my end.
-            </h1>
-            <p className="mt-5 max-w-[44ch] text-lg leading-relaxed text-ink-soft">
-              Not your fault. Try again, and if it keeps happening tell me directly and I will fix it.
-            </p>
-
-            <div className="mt-10 flex flex-wrap items-center gap-x-5 gap-y-5">
-              <BrutalButton onClick={reset} arrow={false}>
-                Try again
-              </BrutalButton>
-              <BrutalButton href="/contact" variant="paper">
-                Tell me about it
-              </BrutalButton>
-            </div>
-
-            {error.digest && (
-              <p className="mt-9 border-t-2 border-dashed border-ink/40 pt-4 font-typewriter text-[13px] text-ink-muted">
-                Ref: {error.digest}
-              </p>
-            )}
+    <div className="v3 v3-err">
+      <section className="v3-section v3-section--navy v3-grain v3-err__wrap" data-nav="navy" aria-labelledby="error-heading">
+        <div className="v3-err__card">
+          <p className="v3-err__label">Error</p>
+          <h1 id="error-heading" className="v3-display v3-err__h">
+            Something broke on my end.
+          </h1>
+          <p className="v3-err__p">Not your fault. Try again, and if it keeps happening tell me directly and I will fix it.</p>
+          <div className="v3-err__actions">
+            <button type="button" onClick={reset} className="v3-btn v3-btn--lg">
+              Try again
+            </button>
+            <Link href="/contact" className="v3-link">
+              Tell me about it <Arrow className="v3-err__arrow" />
+            </Link>
           </div>
-          <Sticker shape="starburst" tone="paper" size={92} tilt={-12} reveal={false} className="absolute -bottom-10 -left-6 sm:-left-12" />
+          {error.digest && <p className="v3-err__ref">Ref: {error.digest}</p>}
         </div>
-      </PaperSection>
+      </section>
     </div>
   );
 }

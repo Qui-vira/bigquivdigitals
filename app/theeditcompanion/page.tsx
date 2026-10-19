@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { CompanionPage } from "@/components/companion/CompanionPage";
+import { CompanionV3 } from "@/components/v3/pages/CompanionV3";
 import { META, PAGE_PATH } from "@/components/companion/content";
 import { loadProduct, metaDescription, priceView } from "@/components/companion/product";
 
 /**
  * /theeditcompanion: the TheEditCompanion product page. LISTED and indexable (owner, 15 Oct):
- * in the sitemap, canonical set, no noindex. Follows the live paper design.
+ * in the sitemap, canonical set, no noindex. v3 layout (components/v3/pages/CompanionV3.tsx);
+ * components/companion/CompanionPage.tsx is the same page in the paper design, kept untouched.
  *
  * The price shown here is display only. The charged price is recomputed on the server at
  * order creation. If the product row cannot be read, loadProduct() falls back to constants
@@ -42,5 +43,5 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function TheEditCompanionPage() {
   const view = priceView(await loadProduct());
-  return <CompanionPage view={view} />;
+  return <CompanionV3 view={view} />;
 }

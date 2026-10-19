@@ -1,6 +1,6 @@
 /**
  * Page checks for /theeditcompanion and the legal pages. No server, no env, no database.
- * Run: npx tsx --test tests/companion/page.test.tsx
+ * Run: npx tsx --import ./tests/css-stub.mjs --test tests/companion/page.test.tsx
  *
  * Proves: one H1; FAQ JSON-LD equals the visible FAQ (and the FAQ in SEO-AND-META.md); no em
  * or en dashes in rendered strings; every sentence on the page exists in the copy files or is

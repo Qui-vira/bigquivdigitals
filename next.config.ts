@@ -11,6 +11,9 @@ const nextConfig: NextConfig = {
   // review and has been reported as an artifact twice. Off.
   devIndicators: false,
   images: {
+    // 90 is for the zoomable evidence screenshots on the /work pages
+    // (components/work/Evidence.tsx), where small text has to stay sharp.
+    qualities: [75, 90],
     // Explicit allowlist. This was previously hostname "**", which let the
     // image optimizer fetch and resize from any host on the internet and
     // turned the deployment into an open image proxy billed to this account.
@@ -37,6 +40,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/pricing", destination: "/services", permanent: true },
+      // Common typo of the buyers' purchases page.
+      { source: "/my-purchase", destination: "/my-purchases", permanent: true },
       // /okx is the bio link for the 60-day challenge. It is spoken aloud in
       // the episodes as "my OKX link in bio", so the path can never change —
       // only where it points.

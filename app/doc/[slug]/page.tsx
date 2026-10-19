@@ -2,12 +2,12 @@ import { cache } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { getArticle } from "@/lib/articles-db";
 import { mdToHtml, splitTitle } from "@/lib/doc-markdown";
 import { SITE_NAME } from "@/lib/site";
-import { BrutalButton, CheckerStrip, HandNote, MonoLabel, Sticker } from "@/components/ui-paper";
-import { ReadingProgress } from "@/components/longread/ReadingProgress";
+import { ReadProgress } from "@/components/v3/fx/ReadProgress";
+import { PromptTypeIn } from "@/components/v3/fx/PromptTypeIn";
+import { Arrow } from "@/components/v3/Arrow";
 import "./doc.css";
 import CopyButtons from "./CopyButtons";
 import DocGate from "./DocGate";
@@ -86,16 +86,17 @@ export async function generateMetadata({
 }
 
 /**
- * The CTA document reader, on paper (redesign 2026-10).
+ * The CTA document reader, v3 (rebuild approved 19 Oct 2026; comp: DocArticle.dc.html).
  *
- * The reading experience is the point: one column at about 68 characters,
- * Karla at 18px, a clear heading scale, prompt boxes and tables framed as
- * hard-edged objects, images as prints. The body styles live in doc.css.
+ * No stage: a calm reading page in the same system. A cloud header band with
+ * the way back, the keyword, the title and its source video; then one column
+ * at about 68 characters on paper, Karla at 18px. A gold reading-progress bar
+ * runs under the nav, and prompt boxes type their text in once (#30). The
+ * body styles live in doc.css.
  *
  * Every article opens with a markdown `# title`. That line is lifted out of
- * the rendered body and set in the grid-paper header band as the page's h1,
- * so the title and the reading column are two separate objects. The words
- * are the article's own, unchanged.
+ * the rendered body and set in the header as the page's h1. The words are
+ * the article's own, unchanged.
  */
 export default async function DocPage({
   params,
@@ -120,60 +121,35 @@ export default async function DocPage({
   const { titleHtml, bodyHtml } = splitTitle(mdToHtml(article.content));
 
   return (
-    <div className="paper-scope relative isolate overflow-x-clip bg-paper pt-[67px] text-ink md:pt-[75px]">
-      <ReadingProgress />
+    <div className="v3 v3-doc">
+      <ReadProgress />
+      <PromptTypeIn />
 
-      {/* ───────── Header band: grid paper, the way back, the title ───────── */}
-      <header className="relative bg-grid-paper">
-        <div className="mx-auto w-full max-w-[960px] px-4 pb-16 pt-6 sm:px-6 md:pb-24 md:pt-8">
-          <Link
-            href="/articles"
-            className="paper-link inline-flex min-h-[44px] items-center gap-2 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink"
-          >
-            <ArrowLeft className="h-4 w-4" strokeWidth={2.5} aria-hidden="true" />
+      {/* ───────── Header band: the way back, the keyword, the title ───────── */}
+      <header className="v3-doc__head v3-grain" data-nav="cloud">
+        <div className="v3-doc__head-in">
+          <Link href="/articles" className="v3-doc__back">
+            <Arrow className="v3-doc__back-arrow" />
             All Articles
           </Link>
 
-          <div className="relative mt-10 md:mt-14">
-            {article.cta_keyword && (
-              <div className="mb-7">
-                <Sticker shape="label" tone="gold" tilt={-2} decorative={false} reveal={false}>
-                  {article.cta_keyword}
-                </Sticker>
-              </div>
-            )}
+          <div className="v3-doc__title-wrap">
+            {article.cta_keyword && <p className="v3-doc__key">{article.cta_keyword}</p>}
             {titleHtml ? (
-              <h1
-                className="doc-title max-w-[18ch] font-didone text-[clamp(2.6rem,6.6vw,4.9rem)] font-semibold leading-[0.98] tracking-[-0.008em] text-ink text-balance"
-                dangerouslySetInnerHTML={{ __html: titleHtml }}
-              />
+              <h1 className="doc-title v3-display v3-doc__title" dangerouslySetInnerHTML={{ __html: titleHtml }} />
             ) : (
-              <h1 className="doc-title max-w-[18ch] font-didone text-[clamp(2.6rem,6.6vw,4.9rem)] font-semibold leading-[0.98] tracking-[-0.008em] text-ink text-balance">
-                {article.title}
-              </h1>
+              <h1 className="doc-title v3-display v3-doc__title">{article.title}</h1>
             )}
-            {article.video_title && (
-              <MonoLabel as="p" caps={false} size="md" tone="soft" className="mt-7 max-w-[60ch]">
-                From: {article.video_title}
-              </MonoLabel>
-            )}
-            <HandNote
-              load
-              delay={500}
-              arrow="down-left"
-              arrowAt="end"
-              tilt={-4}
-              className="absolute -bottom-16 right-0 hidden lg:inline-flex"
-            >
+            {article.video_title && <p className="v3-doc__from">From: {article.video_title}</p>}
+            <p className="v3-hand v3-doc__hand" aria-hidden="true">
               start here
-            </HandNote>
+            </p>
           </div>
         </div>
-        <CheckerStrip />
       </header>
 
       {/* ───────── The reading column ───────── */}
-      <div className="mx-auto w-full max-w-[960px] px-4 pb-24 pt-14 sm:px-6 md:pb-32 md:pt-20">
+      <div className="v3-doc__body" data-nav="cloud">
         {/* A gated article ships no body: DocGate fetches it after the server checks the code word. */}
         {article.gated ? (
           <DocGate slug={slug} />
@@ -182,21 +158,16 @@ export default async function DocPage({
         )}
         <CopyButtons />
 
-        <footer className="doc-sign mx-auto mt-20 flex flex-col gap-8 border-t-[3px] border-ink pt-8 sm:flex-row sm:items-end sm:justify-between">
-          <p className="flex items-baseline gap-3">
-            <span className="font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink">By</span>
-            <a
-              href="https://x.com/_Quivira"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="paper-link font-hand text-[2.1rem] font-bold leading-none text-ink"
-            >
+        <footer className="doc-sign v3-doc__sign">
+          <p>
+            <span>By</span>
+            <a href="https://x.com/_Quivira" target="_blank" rel="noopener noreferrer">
               @big_quiv
             </a>
           </p>
-          <BrutalButton href="/articles" variant="paper" size="sm" className="self-start sm:self-auto">
-            All Articles
-          </BrutalButton>
+          <Link href="/articles" className="v3-btn v3-btn--navy">
+            All Articles <Arrow />
+          </Link>
         </footer>
       </div>
     </div>

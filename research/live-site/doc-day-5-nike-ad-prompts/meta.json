@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/day-5-nike-ad-prompts",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Day 5, 30 Free Ads for My Favorite Brands | BigQuiv Digitals",
+  "description": "Updated note: the Kling 3.0 prompt has been shortened to fit the 2500-character limit. Day 5 of making 30 free ads for my favorite brands.",
+  "canonical": "https://bigquivdigitals.com/doc/day-5-nike-ad-prompts",
+  "open_graph": {
+    "og:title": "Day 5, 30 Free Ads for My Favorite Brands | BigQuiv Digitals",
+    "og:description": "Updated note: the Kling 3.0 prompt has been shortened to fit the 2500-character limit. Day 5 of making 30 free ads for my favorite brands.",
+    "og:url": "https://bigquivdigitals.com/doc/day-5-nike-ad-prompts",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "Day 5, 30 Free Ads for My Favorite Brands",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Day 5, 30 Free Ads for My Favorite Brands | BigQuiv Digitals",
+    "twitter:description": "Updated note: the Kling 3.0 prompt has been shortened to fit the 2500-character limit. Day 5 of making 30 free ads for my favorite brands.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

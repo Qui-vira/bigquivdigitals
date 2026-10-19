@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { FlutterwaveButton } from "./FlutterwaveButton";
 import { formatPrice } from "@/lib/format-price";
 import { BlockradarPayment } from "./BlockradarPayment";
+import "@/components/v3/pages/course.css";
 
 interface PaymentModalProps {
   isOpen: boolean;
@@ -93,45 +94,34 @@ export function PaymentModal({
   }
 
   return (
-    <div
-      className="paper-scope fixed inset-0 z-[9999] flex items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="pay-title"
-    >
+    <div className="v3-pay" role="dialog" aria-modal="true" aria-labelledby="pay-title">
       {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-ink/55"
-        onClick={onClose}
-      />
+      <div className="v3-pay__backdrop" onClick={onClose} />
 
-      {/* Modal: a framed sheet of paper with a hard shadow. */}
-      <div className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-md overflow-y-auto border-[3px] border-ink bg-paper p-6 text-ink shadow-[10px_10px_0_0_#E8A33D] motion-safe:animate-[paper-drop_0.4s_cubic-bezier(0.16,1,0.3,1)_both] sm:p-7">
+      {/* Modal: a paper sheet on a navy veil (v3 rebuild, visual only). */}
+      <div className="v3-pay__sheet">
         {/* Header */}
-        <div className="mb-6 flex items-start justify-between gap-4 border-b-2 border-dashed border-ink/40 pb-5">
+        <div className="v3-pay__head">
           <div>
-            <p className="font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-ink-soft">Complete your purchase</p>
-            <h3 id="pay-title" className="mt-1.5 font-display text-lg font-bold tracking-[-0.01em] text-ink">{serviceName}</h3>
-            <p className="mt-1 font-didone text-[2.75rem] font-semibold leading-none text-ink tabular-nums">
-              {formatPrice(amount, currency)}
-            </p>
+            <p className="v3-pay__kicker">Complete your purchase</p>
+            <h3 id="pay-title" className="v3-pay__name">{serviceName}</h3>
+            <p className="v3-pay__amount">{formatPrice(amount, currency)}</p>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="grid h-11 w-11 shrink-0 cursor-pointer place-items-center border-[3px] border-ink bg-paper text-ink shadow-brutal-sm transition-[background-color,translate,box-shadow] duration-150 hover:bg-gold-tint active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
-          >
-            <X className="h-5 w-5" strokeWidth={2.5} />
+          <button type="button" onClick={onClose} aria-label="Close" className="v3-pay__close">
+            <X className="h-5 w-5" strokeWidth={2.25} />
           </button>
         </div>
 
         {paymentStatus === "success" ? (
           /* Success state */
-          <div className="py-8 text-center" role="status">
-            <div className="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-full border-[3px] border-ink bg-gold text-3xl font-bold text-ink shadow-brutal-sm">✓</div>
-            <p className="font-display text-xl font-bold text-ink">Payment Confirmed!</p>
-            <p className="mt-2 text-sm text-ink-soft">
+          <div className="v3-pay__ok" role="status">
+            <div className="v3-pay__ok-mark" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none">
+                <path d="M4 10.5 8.2 14.5 16 5.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="square" />
+              </svg>
+            </div>
+            <p className="v3-pay__ok-h">Payment Confirmed!</p>
+            <p className="v3-pay__ok-p">
               {calPaidUrl
                 ? "Opening your booking link in a moment..."
                 : "Check your email for next steps."}
@@ -141,8 +131,8 @@ export function PaymentModal({
           <>
             {/* Email input */}
             <div className="mb-5">
-              <label htmlFor="pay-email" className="mb-2 block font-typewriter text-[12px] font-bold uppercase tracking-[0.08em] text-ink">
-                Your Email <span className="normal-case tracking-normal text-ink-soft">(for receipt + access)</span>
+              <label htmlFor="pay-email" className="v3-pay__label">
+                Your Email <span>(for receipt + access)</span>
               </label>
               <input
                 id="pay-email"
@@ -153,26 +143,21 @@ export function PaymentModal({
                 placeholder="you@example.com"
                 aria-invalid={emailError ? true : undefined}
                 aria-describedby={emailError ? "pay-email-error" : undefined}
-                className="min-h-[48px] w-full border-[3px] border-ink bg-paper px-3.5 py-2.5 text-base text-ink placeholder:text-ink-muted"
+                className="v3-input w-full"
               />
               {emailError && (
-                <p id="pay-email-error" role="alert" className="mt-2 inline-block border-2 border-ink bg-gold-tint px-2 py-0.5 text-sm font-semibold text-ink">
+                <p id="pay-email-error" role="alert" className="v3-pay__err">
                   {emailError}
                 </p>
               )}
             </div>
 
             {/* Tab switcher */}
-            <div className="mb-5 flex gap-2">
+            <div className="v3-tabs">
               <button
                 type="button"
                 onClick={() => setTab("fiat")}
                 aria-pressed={tab === "fiat"}
-                className={`min-h-[44px] flex-1 cursor-pointer border-[3px] border-ink px-4 py-2 font-typewriter text-[13px] font-bold uppercase tracking-[0.06em] transition-colors ${
-                  tab === "fiat"
-                    ? "bg-ink text-paper"
-                    : "bg-paper text-ink hover:bg-gold-tint"
-                }`}
               >
                 Card / Bank
               </button>
@@ -181,11 +166,6 @@ export function PaymentModal({
                   type="button"
                   onClick={() => setTab("crypto")}
                   aria-pressed={tab === "crypto"}
-                  className={`min-h-[44px] flex-1 cursor-pointer border-[3px] border-ink px-4 py-2 font-typewriter text-[13px] font-bold uppercase tracking-[0.06em] transition-colors ${
-                    tab === "crypto"
-                      ? "bg-ink text-paper"
-                      : "bg-paper text-ink hover:bg-gold-tint"
-                  }`}
                 >
                   Crypto (USDC/BUSD)
                 </button>
@@ -211,7 +191,7 @@ export function PaymentModal({
               />
             )}
 
-            <p className="mt-5 text-center font-typewriter text-[12px] text-ink-muted">
+            <p className="v3-pay__foot">
               Secured by Flutterwave &amp; Blockradar · 256-bit SSL
             </p>
           </>

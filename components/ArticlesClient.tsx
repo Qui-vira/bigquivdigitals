@@ -1,5 +1,7 @@
-import { HandMark, HandNote, MonoLabel, PaperSection, Sticker } from "@/components/ui-paper";
-import { IndexCard, type IndexCardProps } from "@/components/articles/IndexCard";
+import Link from "next/link";
+import { Stage } from "@/components/v3/stage/Stage";
+import { Arrow } from "@/components/v3/Arrow";
+import "@/components/v3/pages/articles.css";
 
 interface Article {
   slug: string;
@@ -10,120 +12,91 @@ interface Article {
   created_at: string | null;
 }
 
-/** How each card sits on the board, cycled. Tilts stay within +-2.2deg so titles read straight. */
-const BOARD: Array<Pick<IndexCardProps, "tilt" | "attach" | "stickerTone">> = [
-  { tilt: -1.4, attach: "pin", stickerTone: "gold" },
-  { tilt: 1.8, attach: "tape", stickerTone: "tint" },
-  { tilt: -0.8, attach: "none", stickerTone: "soft" },
-  { tilt: 1.2, attach: "clip", stickerTone: "gold" },
-  { tilt: -2.1, attach: "tape-corners", stickerTone: "tint" },
-  { tilt: 0.7, attach: "none", stickerTone: "soft" },
-  { tilt: -1.1, attach: "tape", stickerTone: "gold" },
-];
-
 /**
- * /articles on paper (redesign 2026-10): a white header with the title and
- * the line under it, then the articles pinned to a grid-paper board as ruled
- * index cards, newest first and largest.
+ * /articles, v3 (rebuild approved 19 Oct 2026; comp: Articles.dc.html).
  *
- * Rendered on the server now (the name is historical). The only client code
- * is each card's drop-in, in components/articles/IndexCard.tsx.
+ * A short navy stage with the document stack (scene "docStack"): the top three
+ * sheets carry the three newest articles and deal out as the page scrolls, then
+ * the index on cloud, every article in live order, newest first and largest.
+ * Titles rise into place (#44); cards lift and tilt towards the mouse.
  *
- * Copy is unchanged: the "Articles" title, the line under it and the empty
- * state. The sticker and pen note are labels and state no facts.
+ * Rendered on the server (the name is historical). Copy is unchanged: the
+ * "Articles" title, the line under it and the empty state.
  */
-export function ArticlesClient({ articles }: { articles: Article[] }) {
-  return (
-    <div className="paper-scope overflow-x-clip bg-paper pt-[67px] text-ink md:pt-[75px]">
-      <PaperSection ground="paper" pad="none" checker="bottom" aria-labelledby="articles-heading">
-        <div className="relative grid gap-10 pb-16 pt-14 md:grid-cols-[1fr_auto] md:items-end md:pb-24 md:pt-20">
-          <div>
-            <h1
-              id="articles-heading"
-              className="font-didone text-[clamp(4.25rem,15vw,6rem)] font-semibold leading-[0.9] tracking-[-0.01em] text-ink"
-            >
-              <HandMark kind="underline" load delay={300}>
-                Articles
-              </HandMark>
-            </h1>
-            <MonoLabel as="p" caps={false} size="md" tone="soft" className="mt-8 max-w-[44ch] text-[16px] leading-relaxed">
-              Exclusive breakdowns, frameworks, and guides from @big_quiv.
-            </MonoLabel>
-          </div>
+const LINE_LEAD = "Exclusive breakdowns, frameworks, and guides from ";
+const HANDLE = "@big_quiv";
 
-          {/* A small stack of blank index cards, the same cards the board
-              below is made of. Decorative. */}
-          <div aria-hidden="true" className="relative hidden h-[230px] w-[360px] md:block">
-            {[
-              { tilt: -9, x: 40, y: 34 },
-              { tilt: 5, x: 92, y: 22 },
-              { tilt: -2, x: 64, y: 44 },
-            ].map((c, i) => (
-              <span
-                key={i}
-                className="load-drop absolute block h-[150px] w-[230px] border-[3px] border-ink bg-paper shadow-brutal"
-                style={
-                  {
-                    left: c.x,
-                    top: c.y,
-                    rotate: `${c.tilt}deg`,
-                    "--rv-delay": `${i * 90}ms`,
-                    backgroundImage:
-                      "linear-gradient(var(--color-gold), var(--color-gold)), repeating-linear-gradient(to bottom, transparent 0 21px, var(--color-grid-line) 21px 22px)",
-                    backgroundSize: "100% 3px, 100% 100%",
-                    backgroundPosition: "0 38px, 0 44px",
-                    backgroundRepeat: "no-repeat, repeat",
-                  } as React.CSSProperties
-                }
-              />
-            ))}
-            <Sticker
-              shape="wavy"
-              tone="gold"
-              size={60}
-              tilt={-8}
-              reveal={false}
-              className="load-settle absolute -top-4 right-0"
-              delay={350}
-            >
-              read me
-            </Sticker>
-            <Sticker shape="starburst" tone="paper" size={72} tilt={14} reveal={false} className="load-settle absolute left-0 top-2" delay={450} />
-            <HandNote load delay={700} arrow="down-left" arrowAt="end" tilt={-6} className="absolute -bottom-20 -right-2">
-              pick one
-            </HandNote>
+export function ArticlesClient({ articles }: { articles: Article[] }) {
+  const latest = articles[0];
+  const sheets = articles.slice(0, 3).map((a) => ({ k: a.cta_keyword, t: a.title }));
+
+  return (
+    <div className="v3 v3-articles">
+      <Stage scene="docStack" params={{ sheets }} ground="navy" height={300} heightPhone={260} mark="ARTICLES" fallback="/v3/stills/docStack.webp" label="Articles">
+        <div className="v3-intro v3-art-intro">
+          <h1 id="articles-heading" className="v3-intro__line v3-display" data-lift>
+            Articles
+          </h1>
+          <div className="v3-art-intro__row" data-intro-rest>
+            <p className="v3-art-intro__line">
+              {LINE_LEAD}
+              <span className="mark">{HANDLE}</span>.
+            </p>
+            {latest && (
+              <Link href={`/doc/${latest.slug}`} className="v3-btn v3-btn--lg v3-art-intro__btn">
+                <span>{latest.title}</span> <Arrow />
+              </Link>
+            )}
           </div>
         </div>
-      </PaperSection>
 
-      <PaperSection ground="grid" pad="lg" aria-label="All articles">
-        {articles.length > 0 ? (
-          <ul className="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-12 lg:gap-y-16">
-            {articles.map((article, i) => {
-              const pose = BOARD[i % BOARD.length];
-              const featured = i === 0;
-              return (
-                <li key={article.slug} className={featured ? "sm:col-span-2" : undefined}>
-                  <IndexCard
-                    href={`/doc/${article.slug}`}
-                    title={article.title}
-                    keyword={article.cta_keyword}
-                    from={article.video_title}
-                    views={article.views}
-                    featured={featured}
-                    delay={(i % 3) * 70}
-                    {...pose}
-                  />
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <div className="mx-auto max-w-[560px] border-[3px] border-ink bg-paper p-10 text-center shadow-brutal">
-            <p className="text-lg text-ink-soft">No articles yet. Check back soon.</p>
-          </div>
+        <h2 className="v3-ghost" data-ghost="0.14,0.2,0.32,0.38" data-side="high" aria-hidden="true">
+          Articles
+        </h2>
+        {latest && (
+          <h2 className="v3-ghost v3-art-ghost-title" data-ghost="0.44,0.5,0.66,0.72" data-side="high" aria-hidden="true">
+            {latest.title}
+          </h2>
         )}
-      </PaperSection>
+        <p className="v3-aside v3-art-aside" data-at="0.76,0.82,0.97,1" data-side="center">
+          {LINE_LEAD}
+          {HANDLE}.
+        </p>
+      </Stage>
+
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" data-panel aria-label="All articles">
+        <div className="v3-wrap">
+          {articles.length > 0 ? (
+            <ul className="v3-art-grid">
+              {articles.map((article, i) => (
+                <li key={article.slug} className={i === 0 ? "is-featured" : undefined}>
+                  <Link href={`/doc/${article.slug}`} className="v3-art-card" data-tilt>
+                    <div className="v3-art-card__head">
+                      {article.cta_keyword ? <span className="v3-art-card__key">{article.cta_keyword}</span> : <span />}
+                      <span className="v3-art-card__go" aria-hidden="true">
+                        <Arrow className="v3-art-card__arrow" />
+                      </span>
+                    </div>
+                    <h2 className="v3-display v3-art-card__title" data-split>
+                      {article.title}
+                    </h2>
+                    {article.video_title && <p className="v3-art-card__from">From: {article.video_title}</p>}
+                    {article.views != null && article.views > 0 && (
+                      <p className="v3-art-card__views">
+                        {article.views.toLocaleString()} {article.views === 1 ? "view" : "views"}
+                      </p>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="v3-art-empty">
+              <p>No articles yet. Check back soon.</p>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

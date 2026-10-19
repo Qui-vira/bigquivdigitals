@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { WaitlistForm } from "@/components/WaitlistForm";
-import { HandMark, MonoLabel, PaperSection, Sticker, Tape } from "@/components/ui-paper";
+import { FILMS } from "@/lib/films";
+import { Stage } from "@/components/v3/stage/Stage";
+import { Arrow } from "@/components/v3/Arrow";
+import "@/components/v3/pages/course.css";
+import "@/components/v3/pages/waitlist.css";
 
 /**
  * One question, answered: why join.
@@ -36,89 +40,86 @@ import { HandMark, MonoLabel, PaperSection, Sticker, Tape } from "@/components/u
  *   equivalent has been committed to here, so nothing is claimed. Add it the day
  *   it is decided and it becomes the third reason.
  *
- * PAPER REDESIGN 2026-10-05: one statement and one framed form on grid paper.
- * The cap still comes from the server (AIMASTERY_FREE_CAP) and appears only
- * where the copy already put it. Rendered inside the layout's <main>, so the
- * root here is a div (it was a nested <main>).
+ * V3 REBUILD 2026-10-19 (comp: AIMasteryWaitlist.dc.html). Form first: the
+ * statement and the form sit on the navy stage before any scroll, the AI
+ * Mastery phone small beside them (scenes/phone.ts, preset "small", posters
+ * only so nothing slows the sign-up). The cap still comes from the server
+ * (AIMASTERY_FREE_CAP) and appears only where the copy already put it.
+ * Rendered inside the layout's <main>, so the root here is a div.
  */
+
+/** The phone shows posters only: a waitlist never waits on a video. */
+const PHONE_PARAMS = {
+  preset: "small",
+  label: "AI Mastery",
+  films: [FILMS.burgerking, FILMS.gucci, FILMS.lexus].map((f) => ({ img: f.img, title: f.title, runtime: f.runtime })),
+  at: [0, 0.4, 0.7],
+};
+
 export function AiMasteryWaitlistClient({ cap }: { cap: number }) {
   const [joined, setJoined] = useState(false);
 
   return (
-    <div className="paper-scope overflow-x-clip bg-paper text-ink">
-      <PaperSection
-        as="header"
-        ground="grid"
-        pad="none"
-        width="mid"
-        aria-labelledby="aimw-title"
-        innerClassName="pb-24 pt-[calc(4rem+2.75rem)] md:pb-32 md:pt-[calc(4.5rem+4.5rem)]"
-      >
-        <Sticker shape="label" tone="gold" tilt={-3} decorative={false} reveal={false} className="load-settle">
-          AI Mastery
-        </Sticker>
-
-        <h1
-          id="aimw-title"
-          className="load-drop relative mt-8 font-didone text-[clamp(3.6rem,13vw,8.6rem)] font-semibold leading-[0.9] tracking-[-0.01em] text-ink"
-        >
-          {`Free for the first ${cap}.`}
-          <Sticker
-            shape="starburst"
-            tone="gold"
-            size={110}
-            tilt={14}
-            reveal={false}
-            className="load-settle ml-[0.1em] size-[0.6em]! align-top"
-          />
-        </h1>
-
-        <div className="mt-12 grid gap-x-14 gap-y-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start">
-          <div>
-            <p className="text-lg leading-relaxed text-ink-soft md:text-xl">
-              I said I would earn{" "}
-              <span className="font-semibold text-ink">
-                <HandMark kind="underline" load delay={900}>
-                  $10,000 in 60 days
-                </HandMark>
-              </span>{" "}
-              using nothing but this skill. In public. Starting from zero.
-            </p>
-            <p className="mt-5 text-lg leading-relaxed text-ink-soft md:text-xl">
-              The first <span className="hl-mark font-semibold text-ink">{cap} people on this list</span> get the class
-              free. Not a discount. Free.
-            </p>
-          </div>
-
-          <div className="relative border-[3px] border-ink bg-paper p-6 pt-10 shadow-brutal-lg [rotate:-0.8deg] sm:p-8 sm:pt-11">
-            <Tape className="-top-3.5 left-10" tilt={-5} />
-            <WaitlistForm source="aimastery-waitlist" onSuccess={() => setJoined(true)} compact />
-
-            {joined ? (
-              <p
-                role="status"
-                className="flex items-start gap-3 border-[3px] border-ink bg-gold-tint px-4 py-3 font-semibold leading-relaxed text-ink shadow-brutal-sm"
-              >
-                <span
-                  aria-hidden="true"
-                  className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-ink bg-gold text-sm font-bold"
-                >
-                  ✓
-                </span>
-                You are in. Nothing else to do. When it opens, you hear from me first.
-              </p>
-            ) : (
-              <MonoLabel as="p" caps={false} tone="soft" className="mt-5 text-[14px] leading-relaxed">
-                Email only. It is not open yet, so there is nothing to pay.
-              </MonoLabel>
-            )}
+    <div className="v3 v3-course v3-wl-page">
+      <Stage scene="phone" params={PHONE_PARAMS} ground="navy" height={400} heightPhone={360} mark="FREE" label="AI Mastery waitlist">
+        <div className="v3-cintro">
+          <div className="v3-cintro__main v3-aimw">
+            <h1 id="aimw-title" className="v3-cintro__h v3-aimw__h v3-display" data-lift>
+              {`Free for the first ${cap}.`}
+            </h1>
+            <div className="v3-aimw__rest" data-intro-rest>
+              <div className="v3-aimw__copy">
+                <p>
+                  I said I would earn <span className="mark">$10,000 in 60 days</span> using nothing but this skill. In
+                  public. Starting from zero.
+                </p>
+                <p>
+                  The first <b>{cap} people on this list</b> get the class free. Not a discount. Free.
+                </p>
+              </div>
+              <div className="v3-aimw__form">
+                <WaitlistForm source="aimastery-waitlist" onSuccess={() => setJoined(true)} compact />
+                {joined ? (
+                  <p role="status" className="v3-wl__done">
+                    <span aria-hidden="true" className="v3-wl__tick">
+                      <svg viewBox="0 0 20 20" fill="none">
+                        <path d="M4 10.5 8.2 14.5 16 5.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="square" />
+                      </svg>
+                    </span>
+                    You are in. Nothing else to do. When it opens, you hear from me first.
+                  </p>
+                ) : (
+                  <p className="v3-formnote">Email only. It is not open yet, so there is nothing to pay.</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
-        <p className="mt-16 max-w-[62ch] border-t-[3px] border-ink pt-6 font-typewriter text-[14px] leading-relaxed text-ink-soft">
-          Day 60 is 22 October 2026. You will know either way, because I am posting the number every week until then.
+        <h2 className="v3-ghost" data-ghost="0.17,0.22,0.38,0.42" data-side="left">
+          In public. Starting from zero.
+        </h2>
+        <h2 className="v3-ghost" data-ghost="0.45,0.5,0.65,0.69" data-side="right">
+          Not a discount. Free.
+        </h2>
+        <p className="v3-wl-page__endline v3-display" data-at="0.8,0.85,0.97,1">
+          Day 60 is 22 October 2026.
         </p>
-      </PaperSection>
+        <div className="v3-endcta" data-at="0.82,0.87,0.98,1">
+          <a href="#top" className="v3-btn v3-btn--lg">
+            Join the waitlist <Arrow />
+          </a>
+        </div>
+      </Stage>
+
+      {/* ───────── DAY 60, and the form again ───────── */}
+      <section className="v3-section v3-section--paper v3-wl-page__day" data-nav="cloud" data-panel aria-label="Day 60">
+        <div className="v3-wrap">
+          <p className="v3-wl-page__day-p v3-title" data-fade>
+            Day 60 is 22 October 2026. You will know either way, because I am posting the number every week until then.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

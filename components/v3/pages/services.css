@@ -1,0 +1,88 @@
+/* Services (components/ServicesClient.tsx). Shared pieces: app/v3-shared.css. */
+
+.v3-svc__h1 { max-width: 13ch; }
+.v3-svc .v3-ghost.v3-svc__part { font-size: clamp(2.6rem, 5.6vw, 5.6rem); }
+.v3-svc__endcta { flex-direction: column; gap: 1rem; }
+.v3-svc__endcta p { margin: 0; max-width: 40ch; text-align: center; font-size: 0.9375rem; color: var(--g-soft); }
+
+/* The problem: the copy, and five invoices that get struck through */
+.v3-svc__problem { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: clamp(3rem, 7vw, 7rem); align-items: center; }
+.v3-svc__problem-lead { margin: 0; max-width: 52ch; font-size: clamp(1.1875rem, 1.6vw, 1.375rem); line-height: 1.6; color: var(--v3-ink); }
+.v3-svc__problem-body { margin: 1.5rem 0 0; max-width: 56ch; font-size: 1.0625rem; line-height: 1.75; color: var(--v3-ink-2); }
+.v3-svc__problem-claim { margin: 2.75rem 0 0; padding-top: 2rem; border-top: 2px solid var(--v3-navy); max-width: 16ch; font-size: clamp(2.2rem, 4vw, 3.6rem); line-height: 0.96; color: var(--v3-navy); }
+.v3-svc__slips { position: relative; padding-top: 3rem; }
+.v3-svc__slips ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.v3-svc__slip {
+  display: flex; align-items: center; gap: 0.85rem; min-height: 60px; padding: 0 1.25rem;
+  background: var(--v3-paper); border-radius: var(--v3-radius); box-shadow: 0 0 0 1px var(--v3-rule), var(--v3-shadow);
+  font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: 1.0625rem; color: var(--v3-navy);
+  transform: translateX(calc((var(--i) - 2) * 0.9rem)) rotate(calc((var(--i) - 2) * 0.5deg));
+  transition: opacity 500ms ease, color 500ms ease;
+}
+.v3-svc__slip svg { width: 20px; height: 20px; flex: none; color: var(--v3-ink-2); }
+.v3-svc__slip:has(.is-struck) { color: color-mix(in srgb, var(--v3-navy) 55%, transparent); }
+.v3-svc__slip [data-strike] { background-size: 0% 0.14em; padding: 0 0.15em; }
+.v3-svc__slip [data-strike].is-struck { background-size: 100% 0.14em; }
+.v3-svc__one { margin: 1.25rem 0 0; display: grid; place-items: center; min-height: 64px; border-radius: var(--v3-radius); background: var(--v3-navy); color: var(--v3-bone); font-family: var(--v3-display); font-weight: 800; font-stretch: 88%; font-size: 1.375rem; letter-spacing: -0.01em; }
+.v3-svc__hand { position: absolute; right: 0; top: -0.25rem; }
+@media (max-width: 900px) {
+  .v3-svc__problem { grid-template-columns: minmax(0, 1fr); }
+  .v3-svc__slip { transform: none; }
+}
+
+/* What it includes: a sticky head with the tick counter, the five parts ticking */
+.v3-svc__includes { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(2.5rem, 6vw, 6rem); align-items: start; }
+.v3-svc__includes-head { position: sticky; top: 112px; }
+.v3-svc__includes-head .v3-h2 { max-width: 11ch; }
+.v3-svc__count { margin: 2rem 0 0; display: inline-flex; align-items: center; min-height: 40px; padding: 0 0.9rem; border-radius: var(--v3-radius); border: 1px solid var(--v3-rule-bone); font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: 1rem; color: var(--v3-gold); font-variant-numeric: tabular-nums; }
+.v3-svc__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--v3-rule-bone); }
+.v3-svc__list li { padding: 1.75rem 0 1.75rem 3rem; border-bottom: 1px solid var(--v3-rule-bone); color: var(--v3-bone); transition: opacity 300ms ease; }
+.v3-svc__list li:not(.is-done) { opacity: 0.62; }
+.v3-svc__list li::before { top: 1.95rem; }
+.v3-svc__list li::after { top: 2.12rem; }
+.v3-svc__list .v3-h3 { font-size: clamp(1.4rem, 2vw, 1.75rem); }
+.v3-svc__list p { margin: 0.75rem 0 0; max-width: 58ch; font-size: 1.0625rem; line-height: 1.7; color: var(--v3-ash); }
+@media (max-width: 900px) {
+  .v3-svc__includes { grid-template-columns: minmax(0, 1fr); }
+  .v3-svc__includes-head { position: relative; top: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .v3-svc__list li:not(.is-done) { opacity: 1; } }
+
+/* UI World (#9): the flat grid is the default; .is-3d builds the world */
+.v3-uiworld { position: relative; z-index: 2; max-width: var(--v3-max); margin: clamp(4rem, 8vw, 7rem) auto 0; }
+.v3-uiworld__world { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.v3-uiworld__win { margin: 0; border-radius: var(--v3-radius); overflow: hidden; background: var(--v3-navy-2); box-shadow: 0 0 0 1px var(--v3-rule-bone), 0 24px 48px -18px rgba(12, 16, 26, 0.55); }
+.v3-uiworld__bar { display: flex; gap: 6px; align-items: center; height: 28px; padding: 0 12px; background: var(--v3-navy-3); }
+.v3-uiworld__bar i { width: 8px; height: 8px; border-radius: 50%; background: rgba(242, 237, 231, 0.28); }
+.v3-uiworld__win img { display: block; width: 100%; height: auto; aspect-ratio: var(--ar); }
+.v3-uiworld.is-3d { height: 100svh; max-width: none; margin: clamp(4rem, 8vw, 7rem) calc(-1 * var(--v3-gutter)) 0; display: grid; place-items: center; perspective: 1600px; overflow: hidden; }
+.v3-uiworld.is-3d .v3-uiworld__world { display: block; position: relative; width: min(1200px, 92vw); height: 78svh; transform-style: preserve-3d; }
+.v3-uiworld.is-3d .v3-uiworld__win { position: absolute; left: 50%; top: 50%; width: min(620px, 44vw); will-change: transform, opacity; backface-visibility: hidden; }
+.v3-uiworld.is-3d .v3-uiworld__win[data-lead] { width: min(780px, 56vw); z-index: 2; }
+@media (max-width: 760px) { .v3-uiworld__world { grid-template-columns: minmax(0, 1fr); } }
+
+/* Where people start: four doors that stack (#45) */
+.v3-svc__doors-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem 4rem; align-items: end; padding-bottom: 2rem; border-bottom: 2px solid var(--v3-navy); }
+.v3-svc__doors-head .v3-lede { margin: 0; }
+.v3-svc__doors { list-style: none; margin: 3rem 0 0; padding: 0; display: grid; gap: 1.5rem; }
+.v3-svc__doors li { position: sticky; top: calc(104px + var(--i) * 1.25rem); transform-origin: 50% 0; opacity: 1 !important; }
+.v3-svc__doors li .v3-svc__door { box-shadow: 0 0 0 1px var(--v3-rule), 0 -10px 30px -18px rgba(18, 23, 34, 0.35), var(--v3-shadow); }
+.v3-svc__door { display: grid; grid-template-columns: 6rem minmax(0, 1fr); gap: 1.5rem; padding: clamp(1.75rem, 3vw, 2.75rem); min-height: 15rem; border-radius: var(--v3-radius); background: var(--v3-cloud); box-shadow: 0 0 0 1px var(--v3-rule), var(--v3-shadow); color: var(--v3-ink); transition: background-color 220ms ease; }
+.v3-svc__doors li:nth-child(even) .v3-svc__door { background: var(--v3-paper); }
+@media (hover: hover) and (pointer: fine) { .v3-svc__door:hover .v3-case__arrow { transform: translateX(4px); } }
+.v3-svc__door-n { font-family: var(--v3-display); font-weight: 800; font-stretch: 80%; font-size: clamp(3rem, 5vw, 4.5rem); line-height: 0.85; color: var(--v3-gold-deep); font-variant-numeric: tabular-nums; }
+.v3-svc__door-body { display: flex; flex-direction: column; align-items: flex-start; }
+.v3-svc__door-t { font-family: var(--v3-display); font-weight: 800; font-stretch: 88%; font-size: clamp(1.75rem, 3vw, 2.6rem); line-height: 1; letter-spacing: -0.025em; color: var(--v3-navy); }
+.v3-svc__door-d { margin-top: 0.85rem; max-width: 56ch; font-size: 1.125rem; line-height: 1.65; color: var(--v3-ink-2); }
+.v3-svc__door .v3-case__go { margin-top: 1.5rem; }
+@media (max-width: 760px) {
+  .v3-svc__doors-head { grid-template-columns: minmax(0, 1fr); }
+  .v3-svc__doors li { top: calc(88px + var(--i) * 0.75rem); }
+  .v3-svc__door { grid-template-columns: minmax(0, 1fr); gap: 0.75rem; min-height: 0; }
+}
+
+/* The close */
+.v3-svc__close-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 3rem; align-items: end; }
+.v3-svc__close-h { margin: 0; font-size: clamp(3rem, 7vw, 6rem); line-height: 0.9; color: var(--v3-bone); max-width: 12ch; }
+.v3-svc__close-note { margin: 1.25rem 0 0; max-width: 38ch; font-size: 1rem; line-height: 1.6; color: var(--v3-ash); }
+@media (max-width: 900px) { .v3-svc__close-grid { grid-template-columns: minmax(0, 1fr); } }

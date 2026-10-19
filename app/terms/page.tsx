@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/components/v3/pages/legal.css";
 import { LegalPage, type LegalSection } from "@/components/companion/LegalPage";
 import { INSTALL_STATUS } from "@/components/companion/content";
 
@@ -84,11 +85,13 @@ const SECTIONS: readonly LegalSection[] = [
 
 export default function TermsPage() {
   return (
-    <LegalPage
-      title="Terms of sale"
-      updated="15 October 2026"
-      intro="These are the terms for buying TheEditCompanion from BigQuiv Digitals. They are written in plain words on purpose."
-      sections={SECTIONS}
-    />
+    <div className="v3 v3-legal" data-nav="cloud">
+      <LegalPage
+        title="Terms of sale"
+        updated="15 October 2026"
+        intro="These are the terms for buying TheEditCompanion from BigQuiv Digitals. They are written in plain words on purpose."
+        sections={SECTIONS}
+      />
+    </div>
   );
 }

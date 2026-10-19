@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/alpha-3-cleared-tokens",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "The ALPHA: 3 SEC-Cleared Tokens | BigQuiv Digitals",
+  "description": "You asked for the alpha. Here it is. AVAX : Scalable L1. Enterprise adoption accelerating. SEC cleared. LINK : The oracle layer DeFi literally cannot…",
+  "canonical": "https://bigquivdigitals.com/doc/alpha-3-cleared-tokens",
+  "open_graph": {
+    "og:title": "The ALPHA: 3 SEC-Cleared Tokens | BigQuiv Digitals",
+    "og:description": "You asked for the alpha. Here it is. AVAX : Scalable L1. Enterprise adoption accelerating. SEC cleared. LINK : The oracle layer DeFi literally cannot…",
+    "og:url": "https://bigquivdigitals.com/doc/alpha-3-cleared-tokens",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "The ALPHA: 3 SEC-Cleared Tokens",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "The ALPHA: 3 SEC-Cleared Tokens | BigQuiv Digitals",
+    "twitter:description": "You asked for the alpha. Here it is. AVAX : Scalable L1. Enterprise adoption accelerating. SEC cleared. LINK : The oracle layer DeFi literally cannot…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

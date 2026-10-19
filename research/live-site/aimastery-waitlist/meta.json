@@ -1,0 +1,21 @@
+{
+  "url": "https://bigquivdigitals.com/aimastery-waitlist",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "AI Mastery waitlist | BigQuiv Digitals",
+  "description": "A small private list. First access when it opens, and the class is free for the first 100.",
+  "canonical": "https://bigquivdigitals.com/aimastery-waitlist",
+  "open_graph": {
+    "og:title": "AI Mastery waitlist",
+    "og:description": "Make ads, films and content with AI. No camera, no crew, no budget.",
+    "og:url": "https://bigquivdigitals.com/aimastery-waitlist",
+    "og:type": "website"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "AI Mastery waitlist",
+    "twitter:description": "Make ads, films and content with AI. No camera, no crew, no budget.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

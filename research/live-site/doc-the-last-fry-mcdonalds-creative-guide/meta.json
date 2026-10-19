@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/the-last-fry-mcdonalds-creative-guide",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Day 4 Creative Guide: The Last Fry | BigQuiv Digitals",
+  "description": "A McDonald's spec concept by Big Quiv One fry left. Shot like a $50,000 commercial. This guide breaks down the concept, structure, visual direction…",
+  "canonical": "https://bigquivdigitals.com/doc/the-last-fry-mcdonalds-creative-guide",
+  "open_graph": {
+    "og:title": "Day 4 Creative Guide: The Last Fry | BigQuiv Digitals",
+    "og:description": "A McDonald's spec concept by Big Quiv One fry left. Shot like a $50,000 commercial. This guide breaks down the concept, structure, visual direction…",
+    "og:url": "https://bigquivdigitals.com/doc/the-last-fry-mcdonalds-creative-guide",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "Day 4 Creative Guide: The Last Fry",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Day 4 Creative Guide: The Last Fry | BigQuiv Digitals",
+    "twitter:description": "A McDonald's spec concept by Big Quiv One fry left. Shot like a $50,000 commercial. This guide breaks down the concept, structure, visual direction…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

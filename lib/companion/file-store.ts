@@ -81,7 +81,8 @@ export class VercelBlobFileStore implements FileStore {
   }
 
   private token(): string {
-    const t = env(BLOB_TOKEN_VAR);
+    // Tolerate a pasted .env line (BLOB_READ_WRITE_TOKEN="vercel_blob_rw_...") as well as the bare token.
+    const t = env(BLOB_TOKEN_VAR).replace(/^[A-Z_]+\s*=\s*/, "").replace(/^["']|["']$/g, "").trim();
     if (!t) {
       console.error(`[companion] ${BLOB_TOKEN_VAR} is not set: downloads are disabled until the private store token is added`);
       throw new FileStoreNotConfiguredError(BLOB_TOKEN_VAR);

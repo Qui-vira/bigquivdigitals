@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Link from "next/link";
 import { PortfolioShowcase } from "@/components/PortfolioShowcase";
-import { BrutalButton, HandMark, HandNote, MonoLabel, PaperSection, PhotoPrint, Sticker } from "@/components/ui-paper";
+import { Stage } from "@/components/v3/stage/Stage";
+import { Arrow } from "@/components/v3/Arrow";
+import "@/components/v3/pages/portfolio.css";
 
 export const metadata: Metadata = {
   title: "Proof of Work | BigQuiv Digitals",
@@ -10,88 +12,94 @@ export const metadata: Metadata = {
   alternates: { canonical: "/portfolio" },
 };
 
+/**
+ * /portfolio (Work), v3 (rebuild approved 19 Oct 2026; comp: Portfolio.dc.html;
+ * motion: MOTION-PLAN.md section 3). Copy is the live page's, word for word.
+ *
+ * ⚠ NO EXPLAINER PARAGRAPH UNDER THE HEADLINE. One listed the builds and the
+ * films and a second described the page's own standards. His ruling on both,
+ * 2026-09-12: "this is not needed". The cut line also claimed "nothing is
+ * behind a login", which stopped being true when the PharmaOS card started
+ * pointing at its sign-in screen. Do not reinstate that sentence.
+ *
+ * The stage is a device rack (scenes/deviceRack.ts) that turns to each build as
+ * its name lands, with the real screens on its devices.
+ */
+
+const BEATS = [
+  { t: "MedBand", at: "0.1,0.15,0.25,0.29" },
+  { t: "Peaceway Online", at: "0.31,0.36,0.45,0.49" },
+  { t: "Nigeria Business Cost Intelligence", at: "0.51,0.56,0.65,0.69" },
+  { t: "PharmaOS", at: "0.71,0.75,0.84,0.87" },
+];
+
 export default function PortfolioPage() {
   return (
-    <div className="paper-scope overflow-x-clip bg-paper text-ink">
-      <PaperSection ground="grid" pad="none" innerClassName="pb-20 pt-28 md:pb-28 md:pt-36" aria-labelledby="portfolio-heading">
-        <div className="relative">
-          <MonoLabel
-            as="p"
-            className="inline-flex border-[3px] border-ink bg-paper px-3 py-1.5 shadow-brutal-sm"
-          >
-            Proof of Work / 04 builds / 06 films
-          </MonoLabel>
-          {/*
-            ⚠ NO EXPLAINER PARAGRAPH HERE. One listed the four builds and the six
-            films, which the cards directly below already show, and a second
-            described the page's own standards. His ruling on both, 2026-09-12:
-            "this is not needed". The headline carries it and the work answers it.
-
-            The cut line also claimed "nothing is behind a login", which stopped
-            being true the moment the PharmaOS card started pointing at its
-            sign-in screen. Do not reinstate that sentence.
-          */}
-          <h1
-            id="portfolio-heading"
-            className="mt-9 max-w-[13ch] font-didone text-[clamp(3.3rem,8.6vw,6rem)] font-semibold leading-[0.92] tracking-[-0.012em] text-ink text-balance"
-          >
-            I built these. <HandMark kind="underline" load delay={500}>Open any one</HandMark> of them.
+    <div className="v3 v3-workpage">
+      <Stage
+        scene="deviceRack"
+        params={{
+          right: "/proof/portfolio/medband.webp",
+          left: "/proof/peaceway/00-homepage-hero.webp",
+          laptop: "/proof/nbci/02-powerbi-fuel-and-power.webp",
+          laptop2: "/proof/portfolio/pharmaos.webp",
+        }}
+        ground="navy"
+        height={600}
+        heightPhone={520}
+        mark="PROOF OF WORK"
+        label="Proof of work"
+      >
+        <div className="v3-intro">
+          <h1 id="portfolio-heading" className="v3-intro__line v3-display v3-workpage__h1" data-lift>
+            I built these. <span className="mark">Open any one of them.</span>
           </h1>
-
-          {/* The scrapbook corner: three of the real captures from the cards
-              below, pinned in a pile, with a tag and a burst. Decorative
-              (the same images carry their alt text on the cards). */}
-          <div aria-hidden="true" className="pointer-events-none absolute right-0 top-0 hidden w-[44%] max-w-[520px] lg:block">
-            <div className="relative aspect-[1.25/1]">
-              <PhotoPrint tilt={-7} attach="tape" mat="thin" reveal={false} className="load-drop absolute left-[2%] top-[14%] w-[58%]">
-                <div className="relative aspect-[16/10]">
-                  <Image src="/proof/portfolio/pharmaos.webp" alt="" fill sizes="300px" className="object-cover object-top" />
-                </div>
-              </PhotoPrint>
-              <PhotoPrint tilt={5} attach="pin" mat="thin" reveal={false} className="load-drop absolute right-[2%] top-[2%] w-[56%]">
-                <div className="relative aspect-[16/10]">
-                  <Image src="/proof/portfolio/medband.webp" alt="" fill sizes="300px" className="object-cover object-top" />
-                </div>
-              </PhotoPrint>
-              <PhotoPrint tilt={-2} attach="clip" mat="thin" reveal={false} className="load-drop absolute bottom-[4%] left-[24%] w-[60%]">
-                <div className="relative aspect-[16/10]">
-                  <Image src="/proof/peaceway/00-homepage-hero.webp" alt="" fill sizes="320px" className="object-cover object-top" />
-                </div>
-              </PhotoPrint>
-              <Sticker shape="starburst" tone="gold" size={118} tilt={12} reveal={false} className="load-settle absolute -right-6 bottom-[16%]" />
-              <Sticker shape="wavy" tone="soft" size={48} tilt={-9} reveal={false} className="load-settle absolute -left-8 bottom-[6%]" textClassName="text-[13px]">
-                my work!
-              </Sticker>
+          <div className="v3-intro__row" data-intro-rest>
+            <div className="v3-intro__actions">
+              <Link href="/contact" className="v3-btn v3-btn--lg">
+                Start a project <Arrow />
+              </Link>
+              <p className="v3-label v3-workpage__tally">Proof of Work / 04 builds / 06 films</p>
             </div>
+            <span className="v3-intro__cue" aria-hidden="true">
+              <i />
+              Scroll
+            </span>
           </div>
-          <HandNote load delay={800} arrow="down-left" arrowAt="below" tilt={-5} size="lg" className="absolute bottom-[-5rem] left-[40%] hidden lg:inline-flex" arrowClassName="ml-10">
-            pick a tab
-          </HandNote>
         </div>
-      </PaperSection>
 
-      <PaperSection ground="paper" checker="top" pad="lg" aria-label="Portfolio projects">
-        <PortfolioShowcase />
-      </PaperSection>
+        {BEATS.map((b) => (
+          <p key={b.t} className="v3-ghost v3-workpage__beat" data-ghost={b.at} data-side="left" aria-hidden="true">
+            {b.t}
+          </p>
+        ))}
 
-      <PaperSection ground="grid" pad="lg" aria-labelledby="portfolio-cta-heading">
-        <div className="grid gap-10 md:grid-cols-[1fr_auto] md:items-end md:gap-14">
+        <div className="v3-endcta" data-at="0.89,0.93,1.1,1.2">
+          <Link href="/contact" className="v3-btn">
+            Start a project <Arrow />
+          </Link>
+        </div>
+      </Stage>
+
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" data-panel aria-label="Portfolio projects">
+        <div className="v3-wrap">
+          <PortfolioShowcase />
+        </div>
+      </section>
+
+      <section className="v3-section v3-section--navy v3-grain v3-workpage__close" data-nav="navy" aria-labelledby="portfolio-cta-heading">
+        <div className="v3-wrap v3-workpage__close-grid">
           <div>
-            <MonoLabel as="p" tone="gold-deep">
-              Have a similar problem?
-            </MonoLabel>
-            <h2
-              id="portfolio-cta-heading"
-              className="mt-5 max-w-[18ch] font-didone text-[clamp(2.4rem,5.4vw,4.4rem)] font-semibold leading-[0.98] tracking-[-0.01em] text-ink text-balance"
-            >
-              Bring me the outcome. I will tell you what it takes to build it.
+            <p className="v3-title v3-workpage__ask">Have a similar problem?</p>
+            <h2 id="portfolio-cta-heading" className="v3-display v3-workpage__close-h" data-split>
+              Bring me the outcome. I will tell you what it takes to <span className="mark">build it.</span>
             </h2>
           </div>
-          <BrutalButton href="/contact" size="lg" className="w-fit">
-            Start a project
-          </BrutalButton>
+          <Link href="/contact" className="v3-btn v3-btn--lg">
+            Start a project <Arrow />
+          </Link>
         </div>
-      </PaperSection>
+      </section>
     </div>
   );
 }

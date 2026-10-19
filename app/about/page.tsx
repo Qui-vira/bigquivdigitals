@@ -1,4 +1,4 @@
-import { getAboutValues, getAboutEcosystem, getAboutContent, getMarqueeItems, getMilestones } from "@/lib/queries";
+import { getAboutValues, getAboutEcosystem, getAboutContent, getMarqueeItems, getMilestones, getSetting } from "@/lib/queries";
 import { AboutClient } from "@/components/AboutClient";
 
 export const revalidate = 60;
@@ -11,12 +11,13 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const [values, ecosystem, content, marqueeItems, milestones] = await Promise.all([
+  const [values, ecosystem, content, marqueeItems, milestones, calendlyUrl] = await Promise.all([
     getAboutValues(),
     getAboutEcosystem(),
     getAboutContent(),
     getMarqueeItems("about"),
     getMilestones(),
+    getSetting("calendly_url"),
   ]);
 
   return (
@@ -26,6 +27,7 @@ export default async function AboutPage() {
       ecosystem={ecosystem}
       marqueeItems={marqueeItems}
       milestones={milestones}
+      calendlyUrl={calendlyUrl}
     />
   );
 }

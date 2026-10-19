@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@/components/v3/pages/legal.css";
 import { LegalPage, type LegalSection } from "@/components/companion/LegalPage";
 
 export const metadata: Metadata = {
@@ -46,11 +47,13 @@ const SECTIONS: readonly LegalSection[] = [
 
 export default function LicencePage() {
   return (
-    <LegalPage
-      title="Licence"
-      updated="15 October 2026"
-      intro="This is the licence for TheEditCompanion by BigQuiv Digitals. It says who may use it and how."
-      sections={SECTIONS}
-    />
+    <div className="v3 v3-legal" data-nav="cloud">
+      <LegalPage
+        title="Licence"
+        updated="15 October 2026"
+        intro="This is the licence for TheEditCompanion by BigQuiv Digitals. It says who may use it and how."
+        sections={SECTIONS}
+      />
+    </div>
   );
 }

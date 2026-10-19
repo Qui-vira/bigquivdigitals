@@ -1,6 +1,7 @@
 "use client";
 
 import { useId, useRef, useState } from "react";
+import "@/components/v3/pages/course.css";
 
 /**
  * Email capture for The Great Work waitlist.
@@ -101,12 +102,11 @@ export function WaitlistForm({
     // say the same thing twice.
     if (onSuccess) return null;
     return (
-      <p
-        role="status"
-        className={`inline-flex items-center gap-3 border-[3px] border-ink bg-gold-tint px-4 py-3 text-base font-semibold text-ink shadow-brutal-sm ${className}`}
-      >
-        <span aria-hidden="true" className="grid h-7 w-7 shrink-0 place-items-center rounded-full border-2 border-ink bg-gold text-sm font-bold">
-          ✓
+      <p role="status" className={`v3-wl__done ${className}`}>
+        <span aria-hidden="true" className="v3-wl__tick">
+          <svg viewBox="0 0 20 20" fill="none">
+            <path d="M4 10.5 8.2 14.5 16 5.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="square" />
+          </svg>
         </span>
         {message}
       </p>
@@ -114,11 +114,11 @@ export function WaitlistForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className={`w-full ${className}`} noValidate>
+    <form onSubmit={onSubmit} className={`v3-wl ${className}`} noValidate>
       <label htmlFor={id} className="sr-only">
         Email address
       </label>
-      <div className={`flex w-full flex-col gap-4 sm:flex-row sm:gap-3 ${compact ? "sm:max-w-[460px]" : "sm:max-w-[540px]"}`}>
+      <div className={`v3-wl__row ${compact ? "v3-wl__row--compact" : "v3-wl__row--wide"}`}>
         <input
           ref={inputRef}
           id={id}
@@ -130,17 +130,16 @@ export function WaitlistForm({
           placeholder="your email"
           aria-describedby={message ? `${id}-msg` : undefined}
           aria-invalid={state === "error" || undefined}
-          className="min-h-[56px] min-w-0 flex-1 border-[3px] border-ink bg-paper px-4 py-3 text-base text-ink shadow-[inset_3px_3px_0_0_rgba(17,17,17,0.06)] placeholder:text-ink-muted"
+          className="v3-input"
         />
         {/* The single most important control on the site during a launch.
-            Paper button: hard shadow, lifts on hover, pushes in on press.
-            While sending it stops advertising itself, so the press reads as
-            registered. */}
+            v3 button: gold fill, presses to 97%. While sending it dims and
+            stops taking presses, so the press reads as registered. */}
         <button
           type="submit"
           disabled={state === "sending"}
           data-variant="primary"
-          className="min-h-[56px] shrink-0 cursor-pointer whitespace-nowrap border-[3px] border-ink bg-gold px-7 py-3 font-display text-base font-bold text-ink shadow-brutal transition-[translate,box-shadow,background-color] duration-150 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] hover:bg-gold-hover hover:shadow-[8px_8px_0_0_#111111] active:translate-x-[5px] active:translate-y-[5px] active:shadow-[1px_1px_0_0_#111111] disabled:pointer-events-none disabled:translate-x-[3px] disabled:translate-y-[3px] disabled:shadow-[2px_2px_0_0_#111111] disabled:opacity-70"
+          className="v3-btn v3-wl__btn"
         >
           {state === "sending" ? "Adding you…" : "Join the waitlist"}
         </button>
@@ -149,7 +148,7 @@ export function WaitlistForm({
         <p
           id={`${id}-msg`}
           role="alert"
-          className="mt-4 inline-block border-2 border-ink bg-gold-tint px-3 py-1.5 text-sm font-semibold text-ink"
+          className="v3-wl__msg"
         >
           {message}
         </p>

@@ -95,7 +95,7 @@ export default function DocGate({ slug }: { slug: string }) {
   if (restoring) {
     return (
       <div className="doc-page mx-auto" aria-busy="true">
-        <p className="font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink-muted">Opening…</p>
+        <p className="v3-gate__opening">Opening…</p>
       </div>
     );
   }
@@ -105,13 +105,13 @@ export default function DocGate({ slug }: { slug: string }) {
       <form
         onSubmit={onSubmit}
         noValidate
-        className="border-[3px] border-ink bg-paper p-5 shadow-brutal sm:p-7"
+        className="v3-gate"
       >
-        <label htmlFor={id} className="block font-display text-xl font-bold text-ink sm:text-2xl">
+        <label htmlFor={id} className="v3-gate__label">
           Enter the code word from the video
         </label>
-        <p className="mt-2 text-base text-ink-muted">It opens the full workflow and every prompt.</p>
-        <div className="mt-5 flex w-full flex-col gap-4 sm:flex-row sm:gap-3">
+        <p className="v3-gate__sub">It opens the full workflow and every prompt.</p>
+        <div className="v3-gate__row">
           <input
             id={id}
             type="text"
@@ -123,12 +123,12 @@ export default function DocGate({ slug }: { slug: string }) {
             placeholder="Code word"
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? `${id}-err` : undefined}
-            className="min-h-[56px] min-w-0 flex-1 border-[3px] border-ink bg-paper px-4 py-3 text-base text-ink shadow-[inset_3px_3px_0_0_rgba(17,17,17,0.06)] placeholder:text-ink-muted"
+            className="v3-gate__input"
           />
           <button
             type="submit"
             disabled={busy}
-            className="min-h-[56px] shrink-0 cursor-pointer whitespace-nowrap border-[3px] border-ink bg-gold px-7 py-3 font-display text-base font-bold text-ink shadow-brutal transition-[translate,box-shadow,background-color] duration-150 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] hover:bg-gold-hover hover:shadow-[8px_8px_0_0_#111111] active:translate-x-[5px] active:translate-y-[5px] active:shadow-[1px_1px_0_0_#111111] disabled:pointer-events-none disabled:translate-x-[3px] disabled:translate-y-[3px] disabled:shadow-[2px_2px_0_0_#111111] disabled:opacity-70"
+            className="v3-btn v3-btn--lg v3-gate__btn"
           >
             {busy ? "Checking…" : "Open it"}
           </button>
@@ -137,7 +137,7 @@ export default function DocGate({ slug }: { slug: string }) {
           <p
             id={`${id}-err`}
             role="alert"
-            className="mt-4 inline-block border-2 border-ink bg-gold-tint px-3 py-1.5 text-sm font-semibold text-ink"
+            className="v3-gate__err"
           >
             {error}
           </p>

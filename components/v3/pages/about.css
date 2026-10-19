@@ -1,0 +1,89 @@
+/* About (components/AboutClient.tsx). Shared pieces: app/v3-shared.css. */
+
+.v3-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.v3-about__h1 { max-width: 13ch; }
+.v3-about__intro { display: grid; gap: 1.25rem; }
+.v3-about__sub { margin: 0; max-width: 44ch; font-size: 1.0625rem; line-height: 1.6; color: var(--g-soft); white-space: pre-line; }
+.v3-about .v3-ghost.v3-about__beat { font-size: clamp(2.8rem, 6.2vw, 6.2rem); }
+
+/* What I Do, with the Frame Break (#14) and the note (#28) */
+.v3-about__what { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); gap: clamp(3rem, 7vw, 7rem); align-items: center; }
+.v3-about__what-p { margin: 2rem 0 0; padding-top: 1.5rem; border-top: 2px solid var(--v3-navy); max-width: 56ch; font-size: clamp(1.125rem, 1.4vw, 1.25rem); line-height: 1.7; color: var(--v3-ink); }
+.v3-about__services { list-style: none; margin: 2rem 0 0; padding: 0; border-top: 1px solid var(--v3-rule); }
+.v3-about__services li { display: flex; gap: 1.5rem; align-items: baseline; padding: 1rem 0; border-bottom: 1px solid var(--v3-rule); font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: 1.1875rem; color: var(--v3-navy); }
+.v3-about__services li span { font-size: 0.9375rem; color: var(--v3-gold-deep); font-variant-numeric: tabular-nums; }
+
+.v3-fb { position: relative; margin: 0; padding-top: 2.5rem; }
+.v3-fb__frame { position: absolute; left: 4%; right: 4%; bottom: 2.75rem; top: 44%; border-radius: 14px; background: var(--v3-navy); box-shadow: var(--v3-shadow); transform-origin: 50% 100%; overflow: hidden; }
+.v3-fb__frame::before { content: ""; position: absolute; inset: 0; background: url(/v3/grain.png) repeat; background-size: 200px 200px; opacity: 0.08; mix-blend-mode: soft-light; }
+.v3-fb__frame::after { content: ""; position: absolute; left: 1.5rem; right: 1.5rem; top: 1.5rem; height: 2px; background: var(--v3-gold); }
+.v3-fb__cut { --clip: 0%; position: relative; z-index: 1; margin-bottom: 2.75rem; transform-origin: 50% 100%; clip-path: inset(var(--clip) -20% 0 -20%); }
+.v3-fb__cut img { display: block; width: 100%; height: auto; -webkit-mask-image: linear-gradient(to top, transparent 0, #000 8%); mask-image: linear-gradient(to top, transparent 0, #000 8%); }
+.v3-fb__cap { position: absolute; left: 0; bottom: 0; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--v3-ink-2); }
+.v3-about__note { position: absolute; left: -0.5rem; top: 0; z-index: 2; color: var(--v3-gold-deep); }
+.v3-hw { display: inline-flex; align-items: flex-start; gap: 0.25rem; }
+.v3-hw__text { display: inline-block; }
+.v3-hw__arrow { width: 96px; height: 48px; margin-top: 0.9rem; color: var(--v3-gold-deep); }
+@media (max-width: 900px) {
+  .v3-about__what { grid-template-columns: minmax(0, 1fr); }
+  .v3-about__portrait { max-width: 520px; }
+}
+
+/* Section heads with their right-hand line */
+.v3-about__head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1rem 2rem; padding-bottom: 1.5rem; border-bottom: 2px solid var(--v3-navy); }
+.v3-about__head .v3-h2 { max-width: 16ch; }
+.v3-about__kicker { margin: 0; font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: 1.25rem; color: var(--v3-ink-2); }
+
+/* The timeline */
+.v3-about__timeline { list-style: none; margin: 0; padding: 0; }
+.v3-about__year { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1fr); gap: 2.5rem clamp(2rem, 4vw, 3.5rem); padding: clamp(3rem, 6vw, 4.5rem) 0; border-bottom: 1px solid var(--v3-rule); align-items: start; }
+.v3-about__year-side { position: sticky; top: 104px; }
+.v3-about__year-n { margin: 0; font-family: var(--v3-display); font-weight: 800; font-stretch: 80%; font-size: clamp(3.5rem, 6vw, 5.5rem); line-height: 0.85; letter-spacing: -0.03em; color: var(--v3-gold-deep); font-variant-numeric: tabular-nums; }
+.v3-about__year-side .v3-h3 { margin-top: 0.75rem; }
+.v3-about__photos { margin-top: 1.75rem; }
+.v3-about__photos.is-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+.v3-about__photo { border-radius: 14px; overflow: hidden; box-shadow: 0 0 0 1px var(--v3-rule), var(--v3-shadow); background: var(--v3-cloud); }
+.v3-about__photo img { display: block; width: 100%; height: auto; }
+.v3-scan { position: relative; }
+.v3-scan__line { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; margin-left: -1px; background: var(--v3-gold); opacity: 0; pointer-events: none; }
+.v3-about__year-col p { margin: 0 0 0.85rem; font-size: 1.0625rem; line-height: 1.7; color: var(--v3-ink-2); }
+.v3-about__year-col p.is-first { font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: 1.3rem; line-height: 1.3; color: var(--v3-navy); }
+.v3-about__year > .v3-about__year-col.is-wide { grid-column: span 2; max-width: 68ch; }
+@media (max-width: 1000px) {
+  .v3-about__year { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .v3-about__year-side { grid-column: 1 / -1; position: relative; top: auto; }
+  .v3-about__photos { max-width: 520px; }
+}
+@media (max-width: 700px) {
+  .v3-about__year { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .v3-about__year > .v3-about__year-col.is-wide { grid-column: auto; }
+}
+
+/* Beliefs on navy */
+.v3-about__beliefs { list-style: none; margin: 3rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 3.5rem; }
+.v3-about__beliefs li { padding: 2rem 0; border-top: 1px solid var(--v3-rule-bone); }
+.v3-about__beliefs p { margin: 0; white-space: pre-line; font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: clamp(1.5rem, 2.4vw, 2.1rem); line-height: 1.15; letter-spacing: -0.015em; color: var(--v3-bone); }
+@media (max-width: 760px) { .v3-about__beliefs { grid-template-columns: minmax(0, 1fr); } }
+
+/* Values */
+.v3-about__values { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 3rem; }
+.v3-about__values li { padding: 1.75rem 0 2rem; border-bottom: 1px solid var(--v3-rule); }
+.v3-about__values p { margin: 0.75rem 0 0; white-space: pre-line; font-size: 1.0625rem; line-height: 1.65; color: var(--v3-ink-2); }
+@media (max-width: 900px) { .v3-about__values { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .v3-about__values { grid-template-columns: minmax(0, 1fr); } }
+
+/* Marquee (only when the admin sets items) */
+.v3-about__marquee { overflow: hidden; background: var(--v3-navy); color: var(--v3-bone); padding: 1.1rem 0; }
+.v3-about__marquee-run { display: inline-flex; white-space: nowrap; animation: v3-about-marquee 40s linear infinite; }
+.v3-about__marquee-item { padding: 0 1.5rem; font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: 1.125rem; }
+.v3-about__marquee-item::after { content: "/"; margin-left: 3rem; color: var(--v3-gold); }
+@keyframes v3-about-marquee { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .v3-about__marquee-run { animation: none; } }
+
+/* Ecosystem */
+.v3-about__eco { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2.5rem 3rem; }
+.v3-about__eco .v3-case__tag { margin-top: 0; }
+.v3-about__eco-name { margin: 0; font-family: var(--v3-display); font-weight: 800; font-stretch: 88%; font-size: clamp(2rem, 3.2vw, 2.75rem); line-height: 1; letter-spacing: -0.025em; color: var(--v3-navy); }
+.v3-about__eco-d { margin: 0.9rem 0 0; white-space: pre-line; font-size: 1.0625rem; line-height: 1.65; color: var(--v3-ink-2); }
+@media (max-width: 900px) { .v3-about__eco { grid-template-columns: minmax(0, 1fr); } }

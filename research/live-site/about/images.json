@@ -1,0 +1,50 @@
+{
+  "url": "https://bigquivdigitals.com/about",
+  "images": [
+    {
+      "alt": "Big Quiv",
+      "src": "/_next/image?url=%2Fquivira-hero.png&w=3840&q=75",
+      "original_path": "/quivira-hero.png",
+      "absolute_url": "https://bigquivdigitals.com/quivira-hero.png",
+      "srcset": "/_next/image?url=%2Fquivira-hero.png&w=640&q=75 640w, /_next/image?url=%2Fquivira-hero.png&w=750&q=75 750w, /_next/image?url=%2Fquivira-hero.png&w=828&q=75 828w, /_next/image?url=%2Fquivira-hero.png&w=1080&q=75 1080w, /_next/image?url=%2Fquivira-hero.png&w=1200&q=75 1200w, /_next/image?url=%2Fquivira-hero.png&w=1920&q=75 1920w, /_next/image?url=%2Fquivira-hero.png&w=2048&q=75 2048w, /_next/image?url=%2Fquivira-hero.png&w=3840&q=75 3840w"
+    },
+    {
+      "alt": "The Beginning",
+      "src": "data:image/jpeg;base64 (inline, 38766 bytes)",
+      "original_path": null,
+      "absolute_url": null,
+      "note": "Inline base64 image embedded in the page HTML; no separate URL.",
+      "width": "1080",
+      "height": "720"
+    },
+    {
+      "alt": "Ophir Institute 2",
+      "src": "data:image/jpeg;base64 (inline, 41028 bytes)",
+      "original_path": null,
+      "absolute_url": null,
+      "note": "Inline base64 image embedded in the page HTML; no separate URL.",
+      "width": "600",
+      "height": "800"
+    },
+    {
+      "alt": "Ophir Institute 4",
+      "src": "/_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=3840&q=75",
+      "original_path": "/proof/ophir-cac-certificate.webp",
+      "absolute_url": "https://bigquivdigitals.com/proof/ophir-cac-certificate.webp",
+      "srcset": "/_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=384&q=75 384w, /_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=640&q=75 640w, /_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=750&q=75 750w, /_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=828&q=75 828w, /_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=1080&q=75 1080w, /_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=1200&q=75 1200w, /_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=1920&q=75 1920w, /_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=2048&q=75 2048w, /_next/image?url=%2Fproof%2Fophir-cac-certificate.webp&w=3840&q=75 3840w",
+      "width": "600",
+      "height": "800"
+    },
+    {
+      "alt": "Building Quivira",
+      "src": "data:image/jpeg;base64 (inline, 106863 bytes)",
+      "original_path": null,
+      "absolute_url": null,
+      "note": "Inline base64 image embedded in the page HTML; no separate URL.",
+      "width": "1080",
+      "height": "720"
+    }
+  ],
+  "picture_sources": [],
+  "videos": []
+}

@@ -53,3 +53,8 @@ scripts/send-reengagement.ts
 
 # Migration CSV exports (contain customer PII)
 .migrate/
+
+# v3 rebuild: heavy capture folders stay local
+/research/adewura-motion/
+/research/live-site/**/screenshot.png
+/.impeccable/review/

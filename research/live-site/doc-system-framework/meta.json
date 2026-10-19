@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/system-framework",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "The System Framework | BigQuiv Digitals",
+  "description": "You clicked because you want the system. Here it is. 3 layers. That is the entire framework. Before this system: After: The lesson: Systems beat…",
+  "canonical": "https://bigquivdigitals.com/doc/system-framework",
+  "open_graph": {
+    "og:title": "The System Framework | BigQuiv Digitals",
+    "og:description": "You clicked because you want the system. Here it is. 3 layers. That is the entire framework. Before this system: After: The lesson: Systems beat…",
+    "og:url": "https://bigquivdigitals.com/doc/system-framework",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "The System Framework",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "The System Framework | BigQuiv Digitals",
+    "twitter:description": "You clicked because you want the system. Here it is. 3 layers. That is the entire framework. Before this system: After: The lesson: Systems beat…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

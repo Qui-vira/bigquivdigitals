@@ -2,19 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowUpRight, ChevronDown } from "lucide-react";
 import { getIcon } from "@/lib/icons";
-import {
-  BrutalButton,
-  HandNote,
-  Highlighter,
-  PaperSection,
-  PhotoPrint,
-  SectionHead,
-  Sticker,
-  Tape,
-  cx,
-} from "@/components/ui-paper";
+import { Stage } from "@/components/v3/stage/Stage";
+import { CommentBubble } from "@/components/v3/fx/CommentBubble";
+import { Arrow } from "@/components/v3/Arrow";
+import "@/components/v3/pages/contact.css";
 
 interface ContactOption {
   icon: string;
@@ -31,127 +23,161 @@ interface ContactClientProps {
 }
 
 /**
- * /contact on the paper system (redesign 2026-10, phase 2).
+ * /contact, v3 (rebuild approved 19 Oct 2026; comp: Contact.dc.html; motion:
+ * MOTION-PLAN.md section 3).
  *
- * The statement and the three routes sit together at the top, the way a
- * printed portfolio closes: one big line, then how to reach the person.
- * The form keeps its exact behaviour (FormSubmit POST, the same hidden
- * fields, the same names, HTML validation, the same submitted state); only
- * its look changed. Copy is unchanged.
+ * The form keeps its exact behaviour: the FormSubmit POST to the same action,
+ * the same hidden fields, the same field names, ids and placeholders, HTML
+ * validation, the same submitted state. Only its look changed: it reads as a
+ * conversation (Comment Bubble, #12). Copy is the live page's, word for word.
+ *
+ * "What happens next" (#5 Checklist) lists the real flow after you get in
+ * touch. Those four steps and their heading are the homepage's own process
+ * copy (components/HomeClient.tsx STEPS), word for word; nothing is new.
+ *
+ * Stage: a calendar block flips to the booking day (scenes/calendar.ts).
  */
 
-const FIELD =
-  "block w-full border-[3px] border-ink bg-paper px-4 text-[16px] text-ink placeholder:text-ink-muted transition-[background-color,box-shadow] duration-150 focus:bg-gold-tint";
+const NEXT_STEPS = [
+  {
+    t: "Scope call",
+    d: "Thirty minutes. What you sell, who buys it, where people drop off. You leave with a plan whether or not you hire me.",
+  },
+  {
+    t: "Written scope",
+    d: "Deliverables and timeline in writing before anything starts, so nothing changes on you halfway through.",
+  },
+  {
+    t: "Seven-day sprint",
+    d: "Payment starts the work. At the end you get a report on what shipped and what moved.",
+  },
+  {
+    t: "Build out",
+    d: "We keep going in sprints, each one reported, until the system runs without me standing over it.",
+  },
+];
 
-const LABEL = "mb-2 block font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink";
-
-const ROW_TONE = ["bg-gold", "bg-gold-tint", "bg-paper"];
+function Ask({ htmlFor, children }: { htmlFor: string; children: string }) {
+  return (
+    <label htmlFor={htmlFor} className="v3-chat__ask">
+      {children}
+    </label>
+  );
+}
 
 export function ContactClient({ contactOptions, socialLinks, serviceOptions, formsubmitEmail }: ContactClientProps) {
   const [submitted, setSubmitted] = useState(false);
+  const booking = contactOptions.find((o) => /book a call/i.test(o.title));
 
   return (
-    <div className="paper-scope overflow-x-clip bg-paper text-ink">
-      {/* ───────── 1. THE STATEMENT ───────── */}
-      <PaperSection ground="grid" pad="none" innerClassName="pb-24 pt-28 md:pb-32 md:pt-36" aria-labelledby="contact-heading">
-        <div className="grid items-center gap-20 lg:grid-cols-[0.82fr_1.18fr] lg:gap-16">
-          {/* The print. Second on phones so the statement leads. */}
-          <div className="relative order-2 mx-auto w-full max-w-[300px] sm:max-w-[360px] lg:order-1">
-            <PhotoPrint tilt={-5} attach="pin" mat="polaroid" caption="Big Quiv" lift="self" reveal={false} className="load-drop">
-              <div className="relative aspect-[4/5] bg-black">
-                <Image
-                  src="/hero/king-base-1024.webp"
-                  alt="Big Quiv, founder of BigQuiv Digitals."
-                  fill
-                  priority
-                  sizes="(max-width: 640px) 300px, 360px"
-                  className="object-cover"
-                  style={{ objectPosition: "51% 30%" }}
-                />
-              </div>
-            </PhotoPrint>
-            <Sticker
-              shape="starburst"
-              tone="gold"
-              size={84}
-              tilt={-14}
-              reveal={false}
-              className="load-settle absolute -left-7 top-10 sm:-left-10"
-            />
-            <Sticker
-              shape="wavy"
-              tone="soft"
-              size={44}
-              tilt={9}
-              reveal={false}
-              className="load-settle absolute -bottom-6 -right-4 sm:-right-10"
-            >
-              say hi
-            </Sticker>
+    <div className="v3 v3-contact">
+      {/* ───────── STAGE: the calendar flips to the booking day ───────── */}
+      <Stage
+        scene="calendar"
+        params={{ note: booking?.description ?? "" }}
+        ground="navy"
+        height={560}
+        heightPhone={480}
+        mark="LET'S BUILD"
+        label="Contact"
+      >
+        <div className="v3-intro">
+          <h1 id="contact-heading" className="v3-intro__line v3-display v3-contact__h1" data-lift>
+            Let&apos;s build <span className="mark">something.</span>
+          </h1>
+          <div className="v3-intro__row" data-intro-rest>
+            <div className="v3-contact__intro">
+              <p className="v3-contact__sub">
+                Whether you need an ordering system, a build, or the whole thing run for you, the first step is a
+                conversation.
+              </p>
+              {booking && (
+                <div className="v3-intro__actions">
+                  <a href={booking.href} target="_blank" rel="noopener noreferrer" className="v3-btn v3-btn--lg">
+                    {booking.title} <Arrow />
+                  </a>
+                </div>
+              )}
+            </div>
+            <span className="v3-intro__cue" aria-hidden="true">
+              <i />
+              Scroll
+            </span>
           </div>
+        </div>
 
-          <div className="order-1 lg:order-2">
-            <h1
-              id="contact-heading"
-              className="font-didone text-[clamp(3.4rem,8.6vw,6rem)] font-semibold leading-[0.92] tracking-[-0.012em] text-ink"
-            >
-              Let&apos;s build <Highlighter load delay={450}>something.</Highlighter>
-            </h1>
-            <p className="mt-7 max-w-[46ch] text-lg leading-relaxed text-ink-soft md:text-xl">
-              Whether you need an ordering system, a build, or the whole thing run for you, the first step is a
-              conversation.
+        <p className="v3-ghost" data-ghost="0.1,0.14,0.22,0.26" data-side="left" aria-hidden="true">
+          Let&apos;s build something.
+        </p>
+        {booking && (
+          <>
+            <p className="v3-ghost" data-ghost="0.28,0.33,0.44,0.48" data-side="left" aria-hidden="true">
+              {booking.title}
             </p>
+            <p className="v3-ghost v3-contact__beat" data-ghost="0.5,0.55,0.65,0.69" data-side="left" aria-hidden="true">
+              {booking.description}
+            </p>
+          </>
+        )}
+        <p className="v3-ghost" data-ghost="0.72,0.77,0.86,0.9" data-side="left" aria-hidden="true">
+          Send a Message
+        </p>
 
-            {/* The routes, as ruled rows on one framed card. */}
-            <ul className="relative mt-10 border-[3px] border-ink bg-paper shadow-brutal-lg">
-              {contactOptions.map((opt, i) => {
+        <div className="v3-endcta" data-at="0.91,0.95,1.1,1.2">
+          {booking && (
+            <a href={booking.href} target="_blank" rel="noopener noreferrer" className="v3-btn">
+              {booking.title} <Arrow />
+            </a>
+          )}
+          <a href="#message-heading" className="v3-link">
+            Send a Message
+          </a>
+        </div>
+      </Stage>
+
+      {/* ───────── THE ROUTES ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" data-panel aria-label="Ways to reach me">
+        <div className="v3-wrap v3-contact__routes">
+          <figure className="v3-contact__photo">
+            <p className="v3-hand v3-contact__hand" aria-hidden="true">
+              say hi
+            </p>
+            <div className="v3-contact__photo-frame" data-reveal="clip">
+              <Image
+                src="/hero/king-base-1024.webp"
+                alt="Big Quiv, founder of BigQuiv Digitals."
+                fill
+                sizes="(max-width: 900px) 92vw, 560px"
+                style={{ objectFit: "cover", objectPosition: "51% 30%" }}
+              />
+            </div>
+            <figcaption>Big Quiv</figcaption>
+          </figure>
+
+          <div>
+            <ul className="v3-contact__list">
+              {contactOptions.map((opt) => {
                 const Icon = getIcon(opt.icon);
                 return (
-                  <li key={opt.title} className="border-b-[3px] border-ink last:border-b-0">
-                    <a
-                      href={opt.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group grid min-h-[76px] grid-cols-[4rem_1fr_auto] items-stretch transition-[background-color] duration-200 hover:bg-gold-tint focus-visible:bg-gold-tint sm:grid-cols-[4.75rem_1fr_auto]"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className={cx("flex items-center justify-center border-r-[3px] border-ink", ROW_TONE[i % ROW_TONE.length])}
-                      >
-                        <Icon className="h-6 w-6 text-ink" strokeWidth={2.25} />
+                  <li key={opt.title} data-fade>
+                    <a href={opt.href} target="_blank" rel="noopener noreferrer" className="v3-contact__row">
+                      <Icon aria-hidden="true" className="v3-contact__icon" strokeWidth={1.75} />
+                      <span>
+                        <span className="v3-contact__t">{opt.title}</span>
+                        <span className="v3-contact__d">{opt.description}</span>
                       </span>
-                      <span className="flex flex-col justify-center px-4 py-3 sm:px-6">
-                        <span className="font-display text-[1.15rem] font-bold tracking-[-0.01em] text-ink sm:text-[1.3rem]">
-                          {opt.title}
-                        </span>
-                        <span className="mt-0.5 whitespace-pre-line font-typewriter text-[12px] text-ink-soft [overflow-wrap:anywhere] sm:text-[14px]">
-                          {opt.description}
-                        </span>
-                      </span>
-                      <span aria-hidden="true" className="flex items-center pr-4 sm:pr-6">
-                        <ArrowUpRight
-                          className="h-6 w-6 text-ink transition-transform duration-200 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                          strokeWidth={2.5}
-                        />
-                      </span>
+                      <Arrow className="v3-contact__arrow" />
                     </a>
                   </li>
                 );
               })}
             </ul>
-
             {socialLinks.length > 0 && (
-              <ul className="mt-8 flex flex-wrap gap-3" aria-label="Social profiles">
+              <ul className="v3-contact__social" aria-label="Social profiles">
                 {socialLinks.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex min-h-[44px] items-center gap-1.5 border-2 border-ink bg-paper px-3.5 font-typewriter text-[13px] font-bold uppercase tracking-[0.06em] text-ink shadow-brutal-sm transition-[background-color,translate,box-shadow] duration-150 hover:-translate-x-px hover:-translate-y-px hover:bg-gold hover:shadow-[4px_4px_0_0_#111111]"
-                    >
+                    <a href={link.href} target="_blank" rel="noopener noreferrer">
                       {link.name}
-                      <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.75} />
                     </a>
                   </li>
                 ))}
@@ -159,64 +185,54 @@ export function ContactClient({ contactOptions, socialLinks, serviceOptions, for
             )}
           </div>
         </div>
-      </PaperSection>
+      </section>
 
-      {/* ───────── 2. THE FORM ─────────
-          A taped sheet on plain paper. Labels above every field, the focus
-          ring from paper-scope, the fill goes gold-tint while you type. */}
-      <PaperSection ground="paper" checker="top" pad="lg" width="mid" aria-labelledby="message-heading">
-        <div className="grid gap-12 lg:grid-cols-[0.78fr_1.22fr] lg:gap-16">
-          <div className="relative">
-            <SectionHead id="message-heading" title="Send a Message" size="md" />
-            <HandNote
-              arrow="down-right"
-              arrowAt="below"
-              tilt={-4}
-              size="lg"
-              className="mt-10 hidden lg:inline-flex"
-              arrowClassName="ml-24"
-            >
-              say it plainly
-            </HandNote>
+      {/* ───────── SEND A MESSAGE: the form as a conversation ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="message-heading">
+        <div className="v3-wrap v3-contact__send">
+          <div className="v3-contact__side" data-checklist>
+            <h2 id="message-heading" className="v3-h2 v3-display" data-split>
+              Send a Message
+            </h2>
+            <div className="v3-contact__next">
+              <div className="v3-contact__next-head">
+                <h3 className="v3-h3">Seven days to your first report.</h3>
+                <span className="v3-contact__count" aria-hidden="true" data-check-count>
+                  0 of 4
+                </span>
+              </div>
+              <ol>
+                {NEXT_STEPS.map((s) => (
+                  <li key={s.t} data-check>
+                    <span className="v3-contact__step-t">{s.t}</span>
+                    <span className="v3-contact__step-d">{s.d}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </div>
 
           {submitted ? (
-            <div
-              role="status"
-              className="relative self-start border-[3px] border-ink bg-gold-tint p-8 shadow-brutal-lg sm:p-10"
-              style={{ rotate: "-1deg" }}
-            >
-              <Tape className="-top-3.5 left-1/2 -translate-x-1/2" tilt={-3} />
-              <Sticker shape="starburst" tone="gold" size={76} tilt={14} className="absolute -right-6 -top-8" />
-              <p className="font-didone text-[2.4rem] font-semibold leading-none text-ink">Message sent.</p>
-              <p className="mt-4 text-lg text-ink-soft">I&apos;ll get back to you within 24 hours.</p>
+            <div role="status" className="v3-chat v3-chat--done">
+              <div className="v3-chat__reply">
+                <p className="v3-chat__reply-t">Message sent.</p>
+                <p>I&apos;ll get back to you within 24 hours.</p>
+              </div>
             </div>
           ) : (
-            <form
-              action={`https://formsubmit.co/${formsubmitEmail}`}
-              method="POST"
-              onSubmit={() => setSubmitted(true)}
-              className="relative border-[3px] border-ink bg-paper p-6 shadow-brutal-lg sm:p-9"
-            >
-              <Tape className="-top-3.5 left-10" tilt={-5} width={96} />
-              <Tape className="-top-3.5 right-10" tilt={4} width={96} />
+            <CommentBubble className="v3-chat">
+              <form action={`https://formsubmit.co/${formsubmitEmail}`} method="POST" onSubmit={() => setSubmitted(true)}>
+                <input type="hidden" name="_subject" value="New inquiry from bigquivdigitals.com" />
+                <input type="hidden" name="_captcha" value="false" />
+                <input type="hidden" name="_next" value="https://bigquivdigitals.com/contact" />
 
-              <input type="hidden" name="_subject" value="New inquiry from bigquivdigitals.com" />
-              <input type="hidden" name="_captcha" value="false" />
-              <input type="hidden" name="_next" value="https://bigquivdigitals.com/contact" />
-
-              <div className="grid gap-6 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="name" className={LABEL}>
-                    Name
-                  </label>
-                  <input type="text" id="name" name="name" required autoComplete="name" placeholder="Your name" className={cx(FIELD, "h-[52px]")} />
+                <div className="v3-chat__row" data-bubble>
+                  <Ask htmlFor="name">Name</Ask>
+                  <input type="text" id="name" name="name" required autoComplete="name" placeholder="Your name" className="v3-chat__field" />
                 </div>
 
-                <div>
-                  <label htmlFor="email" className={LABEL}>
-                    Email
-                  </label>
+                <div className="v3-chat__row" data-bubble>
+                  <Ask htmlFor="email">Email</Ask>
                   <input
                     type="email"
                     id="email"
@@ -224,58 +240,52 @@ export function ContactClient({ contactOptions, socialLinks, serviceOptions, for
                     required
                     autoComplete="email"
                     placeholder="you@example.com"
-                    className={cx(FIELD, "h-[52px]")}
+                    className="v3-chat__field"
                   />
                 </div>
-              </div>
 
-              <div className="mt-6">
-                <label htmlFor="service" className={LABEL}>
-                  Service
-                </label>
-                <div className="relative">
-                  <select id="service" name="service" required className={cx(FIELD, "h-[52px] cursor-pointer appearance-none pr-12")}>
-                    <option value="" disabled>
-                      Select a service
-                    </option>
-                    {serviceOptions.map((opt) => (
-                      <option key={opt} value={opt}>
-                        {opt}
+                <div className="v3-chat__row" data-bubble>
+                  <Ask htmlFor="service">Service</Ask>
+                  <div className="v3-chat__select">
+                    <select id="service" name="service" required className="v3-chat__field">
+                      <option value="" disabled>
+                        Select a service
                       </option>
-                    ))}
-                  </select>
-                  <span
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-y-0 right-0 flex w-12 items-center justify-center border-l-[3px] border-ink bg-gold"
-                  >
-                    <ChevronDown className="h-5 w-5 text-ink" strokeWidth={2.5} />
-                  </span>
+                      {serviceOptions.map((opt) => (
+                        <option key={opt} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <path d="m5.5 8 4.5 4.5L14.5 8" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
+                    </svg>
+                  </div>
                 </div>
-              </div>
 
-              <div className="mt-6">
-                <label htmlFor="message" className={LABEL}>
-                  Message
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  rows={5}
-                  required
-                  placeholder="Tell me about your project or what you need help with..."
-                  className={cx(FIELD, "resize-y py-3 leading-relaxed")}
-                />
-              </div>
+                <div className="v3-chat__row" data-bubble>
+                  <Ask htmlFor="message">Message</Ask>
+                  <textarea
+                    id="message"
+                    name="message"
+                    rows={5}
+                    required
+                    placeholder="Tell me about your project or what you need help with..."
+                    className="v3-chat__field v3-chat__area"
+                    data-bubble-type
+                  />
+                </div>
 
-              <div className="mt-8">
-                <BrutalButton type="submit" size="lg" arrow={false} className="w-full sm:w-auto">
-                  Send Message
-                </BrutalButton>
-              </div>
-            </form>
+                <div className="v3-chat__send" data-bubble>
+                  <button type="submit" className="v3-btn v3-btn--lg">
+                    Send Message <Arrow />
+                  </button>
+                </div>
+              </form>
+            </CommentBubble>
           )}
         </div>
-      </PaperSection>
+      </section>
     </div>
   );
 }

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { HandNote, PaperSection, Sticker } from "@/components/ui-paper";
+import { FILMS } from "@/lib/films";
+import { Stage } from "@/components/v3/stage/Stage";
+import "@/components/v3/pages/course.css";
+import "@/components/v3/pages/waitlist.css";
 
 /**
  * /waitlist — the chooser.
@@ -16,8 +19,11 @@ import { HandNote, PaperSection, Sticker } from "@/components/ui-paper";
  * clicked /waitlist before tonight may keep landing on /greatwork-waitlist
  * until their cache expires. Nothing to do about that; fresh clicks get this.
  *
- * PAPER REDESIGN 2026-10-05: the two doors are two framed tickets side by side.
- * Copy unchanged.
+ * V3 REBUILD 2026-10-19 (comp: Waitlist.dc.html). The two doors open the
+ * navy stage, where the AI Mastery phone and The Great Work's book stand side
+ * by side (scenes/book.ts, preset "pair"), turn toward each other, and take
+ * turns stepping forward as the line about the two rooms lands. The doors
+ * come back at the end of the stage. Copy unchanged.
  */
 export const metadata: Metadata = {
   title: "Join a waitlist | BigQuiv Digitals",
@@ -42,71 +48,68 @@ const doors = [
   },
 ];
 
-const DOOR_STYLE = [
-  { tilt: -1.4, tone: "bg-paper", tag: "gold" as const },
-  { tilt: 1.2, tone: "bg-gold-tint", tag: "paper" as const },
-];
+/** The pair on the stage: the phone shows a poster only, nothing plays here. */
+const PAIR_PARAMS = {
+  preset: "pair",
+  cover: { title: "The Great Work", by: "Big Quiv" },
+  phone: {
+    label: "AI Mastery",
+    films: [{ img: FILMS.burgerking.img, title: FILMS.burgerking.title, runtime: FILMS.burgerking.runtime }],
+  },
+};
+
+function Doors({ className = "" }: { className?: string }) {
+  return (
+    <div className={`v3-doors ${className}`}>
+      {doors.map((door) => (
+        <Link key={door.href} href={door.href} className="v3-door" data-cursor="View" data-flood>
+          <h2 className="v3-door__t v3-display">{door.eyebrow}</h2>
+          <p className="v3-door__promise">{door.promise}</p>
+          <p className="v3-door__detail">{door.detail}</p>
+          <span className="v3-door__go">
+            Join this waitlist <span aria-hidden="true">&rarr;</span>
+          </span>
+        </Link>
+      ))}
+    </div>
+  );
+}
 
 export default function WaitlistChooserPage() {
   return (
-    <div className="paper-scope overflow-x-clip bg-paper text-ink">
-      <PaperSection
-        as="header"
-        ground="grid"
-        pad="none"
-        aria-labelledby="chooser-title"
-        innerClassName="pb-24 pt-[calc(4rem+2.75rem)] md:pb-32 md:pt-[calc(4.5rem+4.5rem)]"
-      >
-        <Sticker shape="label" tone="gold" tilt={-3} decorative={false} reveal={false} className="load-settle">
-          Two courses, two lists
-        </Sticker>
-        <h1
-          id="chooser-title"
-          className="load-drop mt-7 font-didone text-[clamp(3.2rem,9vw,6.4rem)] font-semibold leading-[0.95] tracking-[-0.01em] text-ink text-balance"
-        >
-          Pick the one you came for.
-        </h1>
-        <p className="mt-7 max-w-[52ch] text-lg leading-relaxed text-ink-soft md:text-xl">
-          They are different rooms. One gives you a skill. The other turns the skill you already have into income.
-        </p>
-
-        <div className="relative mt-16 grid gap-x-12 gap-y-14 md:grid-cols-2">
-          <HandNote
-            arrow="down"
-            arrowAt="below"
-            tilt={-4}
-            className="absolute -top-16 left-1/2 hidden -translate-x-1/2 lg:inline-flex"
-            arrowClassName="ml-8 !w-[40px]"
-          >
-            one or the other
-          </HandNote>
-          {doors.map((door, i) => (
-            <Link
-              key={door.href}
-              href={door.href}
-              className={`group relative block border-[3px] border-ink p-7 pt-12 shadow-brutal transition-[translate,rotate,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1.5 hover:[rotate:0deg] hover:shadow-brutal-lg sm:p-9 sm:pt-14 ${DOOR_STYLE[i].tone}`}
-              style={{ rotate: `${DOOR_STYLE[i].tilt}deg` }}
-            >
-              <Sticker
-                shape="label"
-                tone={DOOR_STYLE[i].tag}
-                tilt={i === 0 ? -3 : 3}
-                decorative={false}
-                className="absolute -top-4 left-6"
-              >
-                {door.eyebrow}
-              </Sticker>
-              <p className="font-didone text-[clamp(1.9rem,3.6vw,2.6rem)] font-semibold leading-[1.08] text-ink">
-                {door.promise}
-              </p>
-              <p className="mt-5 text-base leading-relaxed text-ink-soft">{door.detail}</p>
-              <p className="mt-8 inline-flex items-center gap-2 border-b-[3px] border-ink pb-1 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink transition-[gap] duration-200 group-hover:gap-3.5">
-                Join this waitlist <span aria-hidden="true">&rarr;</span>
-              </p>
-            </Link>
-          ))}
+    <div className="v3 v3-course v3-wl-page v3-choose">
+      <Stage scene="book" params={PAIR_PARAMS} ground="navy" height={380} heightPhone={340} mark="PICK ONE" label="Join a waitlist">
+        <div className="v3-choose__intro">
+          <div className="v3-choose__top">
+            <h1 id="chooser-title" className="v3-choose__h v3-display" data-lift>
+              Pick the one you <span className="mark">came for.</span>
+            </h1>
+            <p className="v3-choose__p" data-intro-rest>
+              They are different rooms. One gives you a skill. The other turns the skill you already have into income.
+            </p>
+          </div>
+          <div className="v3-choose__bottom" data-intro-rest>
+            <p className="v3-hand v3-choose__hand" aria-hidden="true">
+              one or the other
+            </p>
+            <Doors />
+            <p className="v3-choose__label">Two courses, two lists</p>
+          </div>
         </div>
-      </PaperSection>
+
+        <h2 className="v3-ghost" data-ghost="0.13,0.18,0.36,0.4" data-side="high">
+          They are different rooms.
+        </h2>
+        <h2 className="v3-ghost" data-ghost="0.42,0.47,0.6,0.64" data-side="right">
+          One gives you a skill.
+        </h2>
+        <h2 className="v3-ghost v3-choose__ghost" data-ghost="0.67,0.71,0.84,0.88" data-side="left">
+          The other turns the skill you already have into income.
+        </h2>
+        <div className="v3-endcta v3-choose__end" data-at="0.88,0.92,0.99,1">
+          <Doors className="v3-doors--end" />
+        </div>
+      </Stage>
     </div>
   );
 }

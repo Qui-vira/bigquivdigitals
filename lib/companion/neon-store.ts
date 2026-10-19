@@ -491,6 +491,15 @@ export function createNeonCompanionStore(sql: SqlClient, clock: () => Date = () 
       }));
     },
 
+    async listOrdersByEmail(email, statuses, limit): Promise<Order[]> {
+      const n = Math.min(Math.max(Math.trunc(limit), 1), 200);
+      const rows = await sql.query(
+        "SELECT * FROM companion_orders WHERE email = $1 AND status = ANY($2::text[]) ORDER BY created_at DESC LIMIT $3",
+        [email, statuses, n],
+      );
+      return rows.map(mapOrder);
+    },
+
     async listEvents(orderId): Promise<OrderEventRow[]> {
       const rows = await sql.query(
         "SELECT at, actor, kind, detail FROM companion_order_events WHERE order_id = $1 ORDER BY at, id",

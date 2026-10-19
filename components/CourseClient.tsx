@@ -3,23 +3,26 @@
 import { useState } from "react";
 import Image from "next/image";
 import { PaymentModal } from "@/components/PaymentModal";
-import {
-  BrutalButton,
-  HandMark,
-  HandNote,
-  Highlighter,
-  MonoLabel,
-  PaperSection,
-  PhotoPrint,
-  SectionHead,
-  Sticker,
-  Tape,
-  cx,
-} from "@/components/ui-paper";
-import { MarkList, PriceLine, PriceTicket } from "@/components/course/CoursePaper";
+import { Stage } from "@/components/v3/stage/Stage";
+import { Arrow } from "@/components/v3/Arrow";
+import { KeywordSlam } from "@/components/v3/fx/KeywordSlam";
+import { LightsOut } from "@/components/v3/fx/LightsOut";
+import { TypeWall } from "@/components/v3/fx/TypeWall";
+import { MarkList, Price } from "@/components/course/V3Course";
+import "@/components/v3/pages/course.css";
+import "@/components/v3/pages/greatwork.css";
 
 /**
  * The Great Work sales page.
+ *
+ * V3 REBUILD 2026-10-19 (comp: GreatWork.dc.html on the website comps canvas;
+ * motion: MOTION-PLAN.md section 3). Same sections, same order, every word
+ * and every number unchanged; the payment flow (PaymentModal, Flutterwave,
+ * Blockradar) is unchanged and only restyled. The page opens on a navy stage
+ * where the course book opens page by page, one module per spread (the 3D
+ * object, components/v3/stage/scenes/book.ts). Effects: #22 keyword slam on
+ * the promise line, #4 spotlight (lights out) on the transformation, #15 type
+ * wall on the seven weeks.
  *
  * Section order follows 100launchscripts.com, which the owner picked as the
  * reference: hero, authority, origin story, what changes, problem/solution,
@@ -30,13 +33,6 @@ import { MarkList, PriceLine, PriceTicket } from "@/components/course/CoursePape
  * revenue claims. A countdown implies a deadline that has not been set, and
  * every number here has to be one somebody can check. The struck price carries
  * the urgency instead, and it is real — ₦15,000 is a pre-sell price.
- *
- * PAPER REDESIGN 2026-10-05. Light paper grounds, the promise in the condensed
- * Didone, the seven weeks as a numbered brutalist syllabus, the receipts as
- * pinned prints, the price as a framed gold ticket. Every word of copy and
- * every number is unchanged; the payment flow (PaymentModal, Flutterwave,
- * Blockradar) is unchanged and only restyled. Pen notes and sticker labels
- * are the only new words and none of them states a fact.
  *
  * ⚠ THIS IS A SYSTEM WITH LIVE WEEKLY SESSIONS, NOT A MODULE LIBRARY. Do not
  * rewrite it back into "seven modules you watch". The outline's own first line
@@ -230,536 +226,520 @@ const FINAL_LIST = [
 
 const TRANSFORMATION = ["Confusion", "Skill", "Proof", "Visibility", "Money", "Opportunities"];
 
-/** How each receipt print sits on the board. */
-const RECEIPT_LAYOUT = [
-  { tilt: -2, attach: "pin" as const },
-  { tilt: 1.6, attach: "tape" as const },
-  { tilt: -1.2, attach: "clip" as const },
-  { tilt: 2, attach: "pin" as const },
-  { tilt: 1.4, attach: "tape" as const },
-  { tilt: -1.8, attach: "pin" as const },
-  { tilt: 1.1, attach: "clip" as const },
-  { tilt: -1.5, attach: "tape" as const },
-];
+/** The book's pages, from this page's own copy (components/v3/stage/scenes/book.ts). */
+const BOOK_PARAMS = {
+  preset: "course",
+  cover: { title: "The Great Work", by: "Big Quiv" },
+  line: {
+    text: TRANSFORMATION.join(" → "),
+    body: "Seven modules that move you along that line in order, because the order is the point.",
+  },
+  modules: MODULES.map((m) => ({ n: m.n, t: m.t, one: m.one, aha: m.aha, instrument: m.instrument })),
+  labels: { week: "Week", leaveWith: "You leave with:", thinking: "You walk out thinking:" },
+};
 
-const DELIVERABLE_TONE = ["bg-gold-tint", "bg-paper", "bg-gold", "bg-paper", "bg-paper-alt"];
-const DELIVERABLE_TILT = [-1, 0.8, -0.6, 1, -0.8];
-
-const bodyLg = "text-lg leading-relaxed text-ink-soft";
+const BUY_LABEL = `Get instant access · ₦${PRICE.toLocaleString()}`;
 
 export function CourseClient() {
   const [payOpen, setPayOpen] = useState(false);
   const open = () => setPayOpen(true);
 
-  const cta = (label = `Get instant access · ₦${PRICE.toLocaleString()}`, className?: string) => (
-    <div className={cx("mt-10 flex flex-wrap items-center gap-x-6 gap-y-5", className)}>
-      {/* The label carries the price, so it is long: it may wrap on a phone
-          (never at desktop), and the button never grows past its column. */}
-      <BrutalButton onClick={open} size="lg" className="max-w-full whitespace-normal! text-left sm:whitespace-nowrap!">
-        {label}
-      </BrutalButton>
-      <PriceLine was={`₦${WAS.toLocaleString()}`} now={`₦${PRICE.toLocaleString()}`}>
+  const was = `₦${WAS.toLocaleString()}`;
+  const now = `₦${PRICE.toLocaleString()}`;
+
+  const buy = (className = "") => (
+    <div className={`v3-buy ${className}`}>
+      <button type="button" onClick={open} className="v3-btn v3-btn--lg">
+        {BUY_LABEL} <Arrow />
+      </button>
+      <Price was={was} now={now}>
         while it is being built · lifetime access
-      </PriceLine>
+      </Price>
     </div>
   );
 
   return (
-    <div className="paper-scope overflow-x-clip bg-paper text-ink">
-      {/* ───────── 1. HERO ─────────
-          The promise set huge across the page, the four paragraphs beside
-          the buy card, the card taped on like a ticket. */}
-      <PaperSection
-        as="header"
-        ground="grid"
-        pad="none"
-        aria-labelledby="gw-hero"
-        innerClassName="pb-20 pt-[calc(4rem+2.75rem)] md:pb-28 md:pt-[calc(4.5rem+4rem)]"
+    <div className="v3 v3-course v3-gw">
+      {/* ───────── STAGE: the book opens, one module per page ───────── */}
+      <Stage
+        scene="book"
+        params={BOOK_PARAMS}
+        ground="navy"
+        height={640}
+        heightPhone={560}
+        mark="GREAT WORK"
+        label="The Great Work"
       >
-        <Sticker shape="label" tone="gold" tilt={-3} decorative={false} reveal={false} className="load-settle">
-          The Great Work
-        </Sticker>
-        <h1
-          id="gw-hero"
-          className="load-drop mt-7 max-w-[15ch] font-didone text-[clamp(3.3rem,10.5vw,7.4rem)] font-semibold leading-[0.94] tracking-[-0.01em] text-ink text-balance"
-        >
-          You have a skill.{" "}
-          <br />
-          <Highlighter load delay={500}>It is not paying you.</Highlighter>
-        </h1>
-
-        <div className="mt-14 grid grid-cols-[minmax(0,1fr)] gap-x-16 gap-y-14 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-start">
-          <div className="max-w-[60ch]">
-            <p className="text-lg leading-relaxed text-ink-soft md:text-xl">
-              Everybody told you to learn a skill. Get the skill and you will be fine, they said. Nobody taught you the
-              part after.
-            </p>
-            <p className="mt-5 text-lg leading-relaxed text-ink-soft md:text-xl">
-              Where the people who pay actually are. What to say to them. How to show you can do the work before anyone
-              has hired you. And what happens when your one client goes quiet and your income goes quiet with him.
-            </p>
-            <p className="mt-6 font-display text-[1.3rem] font-bold leading-snug tracking-[-0.01em] text-ink md:text-[1.45rem]">
-              That is the part nobody built anything for. So I did, and we build it together, live, every week.
-            </p>
-          </div>
-
-          <div className="relative lg:mt-2">
-            <div className="relative border-[3px] border-ink bg-paper p-6 pt-9 shadow-brutal-lg [rotate:1.2deg] sm:p-8 sm:pt-10">
-              <Tape className="-top-3.5 left-10" tilt={-5} />
-              <MonoLabel as="p" tone="ink" className="font-bold">
-                While it is being built
-              </MonoLabel>
-              {cta(undefined, "mt-6")}
-            </div>
-            <Sticker
-              shape="starburst"
-              tone="gold"
-              size={112}
-              tilt={12}
-              className="absolute -top-14 right-1 sm:-right-8 sm:-top-12"
-              delay={200}
-            >
-              lifetime access
-            </Sticker>
-          </div>
-        </div>
-      </PaperSection>
-
-      {/* ───────── 2. AUTHORITY ───────── */}
-      <PaperSection ground="paper" checker="top" pad="lg" aria-labelledby="gw-authority">
-        <div className="grid items-center gap-x-16 gap-y-16 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
-          <div>
-            <SectionHead id="gw-authority" size="md" title="I have been teaching this a long time before it had a name" />
-            <p className={cx(bodyLg, "mt-8 max-w-[62ch]")}>
-              I run Ophir Digital Education Foundation, registered in Nigeria as{" "}
-              <span className="font-bold text-ink">CAC 9071886</span>. Over two thousand people have come through what I
-              teach. Before any of that I was a microbiologist, then a sales boy on ₦10,000 a month, so I am not guessing
-              about what it feels like to have something in your hands and no way to turn it into money.
-            </p>
-            <p className={cx(bodyLg, "mt-5 max-w-[62ch]")}>
-              The Great Work is not new material. It is the thing I have been teaching for years, finally packaged so you
-              can run it without me standing over you.
-            </p>
-          </div>
-          <div className="relative mx-auto w-full max-w-[360px]">
-            <PhotoPrint tilt={3} attach="tape-corners" mat="polaroid" caption="the early days" lift="self">
-              <div className="relative aspect-[4/5] bg-black">
-                <Image
-                  src="/about-journey.jpg"
-                  alt="A selfie of Big Quiv with classmates at his web design class graduation, at a church in Ekiti."
-                  fill
-                  sizes="360px"
-                  className="object-cover"
-                  style={{ objectPosition: "0% 50%" }}
-                />
-              </div>
-            </PhotoPrint>
-          </div>
-        </div>
-      </PaperSection>
-
-      {/* ───────── 3. THE TRANSFORMATION ─────────
-          The line itself, drawn as a chain of six tags. The words are the
-          same words in the same order; the arrows are the "→" of the copy. */}
-      <PaperSection ground="alt" pad="lg" aria-labelledby="gw-line">
-        <SectionHead id="gw-line" size="md" title="The whole thing in one line" />
-        <p className="sr-only">{TRANSFORMATION.join(" → ")}</p>
-        <ol aria-hidden="true" className="mt-12 flex flex-wrap items-center gap-x-2 gap-y-5 sm:gap-x-3">
-          {TRANSFORMATION.map((w, i) => (
-            <li key={w} className="flex items-center gap-2 sm:gap-3">
-              <span
-                className={cx(
-                  "inline-flex border-[3px] border-ink px-3 py-2 font-display text-[1.15rem] font-bold tracking-[-0.01em] text-ink shadow-brutal-sm sm:px-4 sm:text-[1.6rem] lg:text-[1.9rem]",
-                  i === TRANSFORMATION.length - 1 ? "bg-gold" : i === 0 ? "bg-paper-alt text-ink-soft" : "bg-paper"
-                )}
-                style={{ rotate: `${i % 2 === 0 ? -1.5 : 1.5}deg` }}
-              >
-                {w}
+        <div className="v3-cintro">
+          <div className="v3-cintro__main">
+            <h1 id="gw-hero" className="v3-cintro__h v3-display" data-lift>
+              You have a skill.{" "}
+              <span className="mark">
+                <KeywordSlam>It is not paying you.</KeywordSlam>
               </span>
-              {i < TRANSFORMATION.length - 1 && (
-                <span className="font-typewriter text-xl font-bold text-gold-deep sm:text-2xl">→</span>
-              )}
-            </li>
-          ))}
-        </ol>
-        <p className={cx(bodyLg, "mt-12 max-w-[64ch]")}>
-          Seven modules that move you along that line in order, because the order is the point. Proof before visibility.
-          Visibility before money. Most people try to sell from step one and then wonder why nobody answers.
-        </p>
-      </PaperSection>
-
-      {/* ───────── 4. WHAT CHANGES FOR YOU ───────── */}
-      <PaperSection ground="paper" pad="lg" aria-labelledby="gw-changes">
-        <SectionHead id="gw-changes" size="md" title="What changes for you" />
-        <MarkList items={CHANGES} mark="arrow" className="mt-10 grid max-w-[1080px] gap-x-12 gap-y-5 space-y-0 md:grid-cols-2" />
-        {cta()}
-      </PaperSection>
-
-      {/* ───────── 5. PROBLEM / SOLUTION ───────── */}
-      <PaperSection ground="grid" pad="lg" aria-labelledby="gw-problem">
-        <SectionHead id="gw-problem" size="md" title="So do not go and learn another skill yet" />
-        <div className="mt-10 grid max-w-[1080px] gap-x-14 gap-y-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-          <div>
-            <p className={bodyLg}>This is what most people do. Learn a skill. Post about it. Wait.</p>
-            <p className={cx(bodyLg, "mt-5")}>
-              Then nothing happens, so they decide the problem was the skill, and go and learn another one. Two years
-              later they have four skills and the same bank balance.
-            </p>
-            <p className="mt-10 font-didone text-[clamp(2.2rem,4.6vw,3.2rem)] font-semibold leading-[1.02] text-ink">
-              The skill was <HandMark kind="circle">never</HandMark> the problem.
-            </p>
+            </h1>
+            <div className="v3-cintro__rest" data-intro-rest>
+              <p className="v3-cintro__p">
+                Everybody told you to learn a skill. Get the skill and you will be fine, they said. Nobody taught you the
+                part after.
+              </p>
+              <div className="v3-cintro__buy">
+                <button type="button" onClick={open} className="v3-btn v3-btn--lg">
+                  {BUY_LABEL} <Arrow />
+                </button>
+                <div>
+                  <p className="v3-cintro__label">While it is being built</p>
+                  <Price was={was} now={now}>
+                    while it is being built · lifetime access
+                  </Price>
+                </div>
+                <span className="v3-chip">lifetime access</span>
+              </div>
+            </div>
           </div>
-          <div className="relative border-[3px] border-ink bg-paper p-6 shadow-brutal [rotate:0.8deg] sm:p-8">
-            <p className={bodyLg}>
-              I spoke to a developer this month who has built a live tax system a company paid him for every month, for
-              five months. Real money, real product. When that one client ran out of cash his income went to zero,
-              because everything he had ever built belonged to that one man. He does not need a fifth skill. He needs a
-              second buyer.
-            </p>
-            <p className="mt-5 text-lg leading-relaxed text-ink">
-              That is the gap. Not talent, not effort, not information. Nobody ever handed you the second half.
-            </p>
+          <span className="v3-intro__cue" data-intro-rest aria-hidden="true">
+            <i />
+            Scroll
+          </span>
+        </div>
+
+        <h2 className="v3-ghost" data-ghost="0.1,0.15,0.27,0.31" data-side="left">
+          The skill was never the problem.
+        </h2>
+        <h2 className="v3-ghost" data-ghost="0.33,0.37,0.48,0.52" data-side="right">
+          Proof before visibility.
+        </h2>
+        <h2 className="v3-ghost" data-ghost="0.53,0.565,0.76,0.8" data-side="high">
+          Seven parts. Seven weeks.
+        </h2>
+
+        <p className="v3-gw__endline v3-display" data-at="0.84,0.88,0.97,1">
+          You are not behind
+        </p>
+        <div className="v3-endcta" data-at="0.86,0.9,0.98,1">
+          <button type="button" onClick={open} className="v3-btn v3-btn--lg">
+            {BUY_LABEL} <Arrow />
+          </button>
+        </div>
+      </Stage>
+
+      {/* ───────── THE PART AFTER ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" data-panel aria-label="The part after">
+        <div className="v3-wrap v3-gw__after">
+          <p data-fade>
+            Where the people who pay actually are. What to say to them. How to show you can do the work before anyone has
+            hired you. And what happens when your one client goes quiet and your income goes quiet with him.
+          </p>
+          <p className="v3-gw__after-big v3-title" data-fade>
+            That is the part nobody built anything for. So I did, and we build it together, live, every week.
+          </p>
+        </div>
+      </section>
+
+      {/* ───────── AUTHORITY ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="gw-authority">
+        <div className="v3-wrap v3-gw__teach">
+          <div>
+            <h2 id="gw-authority" className="v3-h2 v3-display" data-split>
+              I have been teaching this a long time before it had a name
+            </h2>
+            <div className="v3-gw__teach-copy">
+              <p data-fade>
+                I run Ophir Digital Education Foundation, registered in Nigeria as <b>CAC 9071886</b>. Over two thousand
+                people have come through what I teach. Before any of that I was a microbiologist, then a sales boy on
+                ₦10,000 a month, so I am not guessing about what it feels like to have something in your hands and no way
+                to turn it into money.
+              </p>
+              <p data-fade>
+                The Great Work is not new material. It is the thing I have been teaching for years, finally packaged so you
+                can run it without me standing over you.
+              </p>
+            </div>
+          </div>
+          <figure className="v3-gw__photo" data-parallax="0.08">
+            <div className="v3-gw__photo-frame" data-reveal="clip">
+              <Image
+                src="/about-journey.jpg"
+                alt="A selfie of Big Quiv with classmates at his web design class graduation, at a church in Ekiti."
+                fill
+                sizes="(max-width: 900px) 80vw, 420px"
+                style={{ objectFit: "cover", objectPosition: "0% 50%" }}
+              />
+            </div>
+            <figcaption>the early days</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      {/* ───────── THE WHOLE THING IN ONE LINE: spotlight (#4) ───────── */}
+      <LightsOut className="v3-section v3-section--paper v3-gw__line" labelledBy="gw-line">
+        <div className="v3-wrap">
+          <h2 id="gw-line" className="v3-h2 v3-display v3-gw__line-h">
+            The whole thing in one line
+          </h2>
+          <ol className="v3-gw__chain" aria-label={TRANSFORMATION.join(" → ")} data-light-line>
+            {TRANSFORMATION.map((w, i) => (
+              <li key={w} data-light>
+                <span className={i === TRANSFORMATION.length - 1 ? "is-last" : undefined}>{w}</span>
+                {i < TRANSFORMATION.length - 1 && (
+                  <svg className="v3-gw__chain-arrow" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                    <path d="M3.5 10h12M11 5.5 15.5 10 11 14.5" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
+                  </svg>
+                )}
+              </li>
+            ))}
+          </ol>
+          <p className="v3-gw__line-p">
+            Seven modules that move you along that line in order, because the order is the point. Proof before visibility.
+            Visibility before money. Most people try to sell from step one and then wonder why nobody answers.
+          </p>
+        </div>
+      </LightsOut>
+
+      {/* ───────── WHAT CHANGES FOR YOU ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="gw-changes">
+        <div className="v3-wrap">
+          <h2 id="gw-changes" className="v3-h2 v3-display" data-split>
+            What changes for you
+          </h2>
+          <MarkList items={CHANGES} kind="arrow" className="v3-gw__changes" />
+          {buy()}
+        </div>
+      </section>
+
+      {/* ───────── PROBLEM / SOLUTION ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="gw-problem">
+        <div className="v3-wrap">
+          <h2 id="gw-problem" className="v3-h2 v3-display" data-split>
+            So do not go and learn another skill yet
+          </h2>
+          <div className="v3-gw__problem">
+            <div>
+              <p data-fade>This is what most people do. Learn a skill. Post about it. Wait.</p>
+              <p data-fade>
+                Then nothing happens, so they decide the problem was the skill, and go and learn another one. Two years
+                later they have four skills and the same bank balance.
+              </p>
+              <p className="v3-gw__never v3-display" data-fade>
+                The skill was <span className="v3-key">never</span> the problem.
+              </p>
+            </div>
+            <div className="v3-gw__story" data-fade>
+              <p>
+                I spoke to a developer this month who has built a live tax system a company paid him for every month, for
+                five months. Real money, real product. When that one client ran out of cash his income went to zero,
+                because everything he had ever built belonged to that one man. He does not need a fifth skill. He needs a
+                second buyer.
+              </p>
+              <p className="v3-gw__story-end">
+                That is the gap. Not talent, not effort, not information. Nobody ever handed you the second half.
+              </p>
+            </div>
           </div>
         </div>
-      </PaperSection>
+      </section>
 
-      {/* ───────── 6. WHAT MAKES THIS DIFFERENT ─────────
-          The callout leads and the syllabus follows. See the research note
-          inside: leading with the module list would sell the passive-lessons
-          format the audience said they are done with. */}
-      <PaperSection ground="paper" pad="lg" aria-labelledby="gw-different">
-        <SectionHead id="gw-different" size="md" title="What makes this different" />
-
-        {/*
+      {/* ───────── WHAT MAKES THIS DIFFERENT ─────────
           This block leads, and the module list follows it. The audience voted
           4-1 plus the Instagram poll majority for weekly calls over a
           done-for-you kit, and every live-support voter volunteered a reason
           while the single kit voter did not. Leading with a module list sells
           them the passive-lessons format the research says they are done with.
-          See LAUNCH-DAY-01/DAY-01-RESEARCH.md, FINAL TALLY.
-        */}
-        <div className="relative mt-12 max-w-[880px] border-[3px] border-ink bg-gold-tint p-6 pt-10 shadow-brutal [rotate:-0.6deg] sm:p-10 sm:pt-12">
-          <Tape className="-top-3.5 left-12" tilt={-4} />
-          <p className="font-typewriter text-[13px] font-bold uppercase tracking-[0.1em] text-ink">
-            You are not left alone with it
-          </p>
-          <p className="mt-5 font-didone text-[clamp(1.9rem,3.6vw,2.6rem)] font-semibold leading-[1.08] text-ink">
-            Seven parts. Seven weeks. One live session each, where we build that week&rsquo;s piece together.
-          </p>
-          <p className="mt-6 leading-relaxed text-ink-soft">
-            I asked people directly: a done-for-you kit, or live weekly sessions where we work through it together. It
-            was not close. One of them put it better than I could:{" "}
-            <em className="not-italic font-bold text-ink">&ldquo;weekly calls where we build it is better.&rdquo;</em>{" "}
-            Another said it would be{" "}
-            <em className="not-italic font-bold text-ink">
-              &ldquo;well tailored for those who need it, knowing what would really work or not.&rdquo;
-            </em>
-          </p>
-          <p className="mt-4 leading-relaxed text-ink-soft">
-            One person voted for the kit, and he was right about one thing, so let me say it plainly:{" "}
-            <span className="hl-mark text-ink">the templates still come. They just come inside the calls</span>, where I
-            can see your actual skill and your actual situation instead of handing you a blank worksheet and hoping.
-          </p>
-          <p className="mt-4 leading-relaxed text-ink-soft">
-            That last part is not a guess either. I sent the first tool to somebody who told me she did not know what her
-            skill was. She never filled it in. A blank worksheet is exactly what that person cannot use.
-          </p>
-        </div>
-
-        <div className="relative mt-24">
-          <h3 className="font-didone text-[clamp(2rem,4vw,2.9rem)] font-semibold leading-none text-ink">The seven weeks</h3>
-          <p className="mt-5 max-w-[64ch] leading-relaxed text-ink-soft">
-            Each one is a week, and each week is a session. In this order, because the order is the point. Every session
-            covers exactly one thing and most of them end with you holding an instrument you keep. You do not watch these.
-            We build them.
-          </p>
-          <HandNote arrow="down-left" tilt={-4} className="absolute -top-4 right-0 hidden xl:inline-flex">
-            in this order
-          </HandNote>
-        </div>
-
-        {/* The syllabus: a ruled brutalist sheet, one row per week. */}
-        <ol className="mt-12 border-[3px] border-ink bg-paper shadow-brutal-lg">
-          {MODULES.map((m, i) => (
-            <li
-              key={m.n}
-              className={cx(
-                "grid gap-x-8 gap-y-4 p-5 sm:p-7 md:grid-cols-[6.5rem_minmax(0,1fr)] lg:grid-cols-[7.5rem_minmax(0,1fr)_minmax(0,1fr)]",
-                i > 0 && "border-t-[3px] border-ink",
-                i % 2 === 1 && "bg-[#FAFAFB]"
-              )}
-            >
-              <div className="flex items-baseline gap-3 md:block">
-                <span className="font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-gold-deep">Week</span>
-                <span className="block font-didone text-[3.4rem] font-semibold leading-[0.85] text-ink tabular-nums md:mt-1 md:text-[4.4rem]">
-                  {m.n}
-                </span>
-              </div>
-              <div>
-                <h3 className="font-display text-[1.3rem] font-bold leading-snug tracking-[-0.01em] text-ink">{m.t}</h3>
-                <p className="mt-2 leading-relaxed text-ink-soft">{m.one}</p>
-                {m.instrument && (
-                  <p className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-                    <span className="text-ink-muted">You leave with: </span>
-                    <span className="border-2 border-ink bg-gold px-2 py-0.5 font-typewriter text-[12px] font-bold uppercase tracking-[0.06em] text-ink">
-                      {m.instrument}
-                    </span>
-                  </p>
-                )}
-              </div>
-              <div className="md:col-start-2 lg:col-start-auto lg:border-l-2 lg:border-dashed lg:border-ink/30 lg:pl-8">
-                <p className="leading-relaxed text-ink">
-                  <span className="block font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-ink-muted">
-                    You walk out thinking:{" "}
-                  </span>
-                  <span className="mt-2 block font-didone text-[1.45rem] font-medium leading-[1.2] text-ink">{m.aha}</span>
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-        {cta()}
-      </PaperSection>
-
-      {/* ───────── 7. RESULTS ─────────
-          The verified one framed first, the rest as notes, then the actual
-          screenshots pinned to the board. */}
-      <PaperSection ground="grid" checker="top" pad="lg" aria-labelledby="gw-results">
-        <SectionHead id="gw-results" size="md" title="What came out of it" />
-        <p className={cx(bodyLg, "mt-6 max-w-[62ch]")}>
-          These are people I taught. Their results, not a promise of yours. Every one of these has been public since 2023
-          and you can go and check them.
-        </p>
-
-        <div className="mt-14 grid gap-x-10 gap-y-12 lg:grid-cols-6">
-          {/*
-            Strongest first. This is the only claim on this site a stranger can
-            confirm against a third party's own records. Deliberately does NOT
-            claim the dollar split or "2nd of 350+ hackers from 56 countries" —
-            both are chat-only. See 12-Proof-Library/students/blocks.md.
-          */}
-          <div className="relative border-[3px] border-ink bg-paper p-6 pt-9 shadow-brutal-lg sm:p-8 sm:pt-10 lg:col-span-6">
-            <Sticker shape="label" tone="gold" tilt={-3} decorative={false} className="absolute -top-4 left-6">
-              Verified by someone else
-            </Sticker>
-            <p className="max-w-[48ch] font-didone text-[clamp(1.8rem,3.4vw,2.5rem)] font-semibold leading-[1.1] text-ink">
-              Two of my students won the Flow bounty at LearnWeb3&rsquo;s Decentralized Intelligence hackathon, with an
-              AI payroll app called SwiftPay.
-            </p>
-            <p className="mt-5 max-w-[62ch] leading-relaxed text-ink-soft">
-              You do not have to believe me. LearnWeb3 published it themselves, with both their names on it.{" "}
-              <a
-                href="https://learnweb3.io/hackathons/decentralized-intelligence-season-1/projects/39560768-5d7a-4417-b2eb-38f65a8fa0c7/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="paper-link font-bold text-ink underline decoration-2 underline-offset-4"
-              >
-                Go and read it
-              </a>
-              .
-            </p>
-          </div>
-
-          <div className="relative border-[3px] border-ink bg-gold-tint p-6 shadow-brutal [rotate:-1deg] sm:p-7 lg:col-span-3">
-            <p className="text-lg font-bold leading-relaxed text-ink">
-              A final-year student at Babcock was handed ₦800,000 for school fees and gambled ₦500,000 of it away.
-            </p>
-            <p className="mt-3 leading-relaxed text-ink-soft">
-              He came in with ₦300,000 left and panicking. He made $500 back, then landed a $500 job editing smart
-              contracts through the group. Last I heard he was covering his parents&rsquo; and siblings&rsquo; bills.
-            </p>
-          </div>
-
-          <div className="relative border-[3px] border-ink bg-paper p-6 shadow-brutal [rotate:1deg] sm:p-7 lg:col-span-3 lg:mt-8">
-            <p className="text-lg font-bold leading-relaxed text-ink">One got liquidated on Binance and lost his savings.</p>
-            <p className="mt-3 leading-relaxed text-ink-soft">
-              Months later he messaged me at 10pm to say he had moved into a furnished apartment and upgraded his
-              workstation.
-            </p>
-          </div>
-
-          {[
-            {
-              href: "https://x.com/_Quivira/status/1722169180487840197",
-              head: "A follower landed a $10,000 Web3 job with no skill, in three months.",
-              meta: "Posted 8 November 2023. 48,000 views, 377 likes, 116 reposts. Still up.",
-              tilt: 0.8,
-            },
-            {
-              href: "https://x.com/_Quivira/status/1724710340754317664",
-              head: "From not having $100 for a class to a $13,000 gig.",
-              meta: "Posted 15 November 2023. 36,000 views, 457 likes. The student is tagged in it and the payment screenshots are inside the post.",
-              tilt: -0.8,
-            },
-          ].map((p) => (
-            <a
-              key={p.href}
-              href={p.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative block border-[3px] border-ink bg-paper p-6 shadow-brutal transition-[translate,rotate,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:[rotate:0deg] hover:shadow-brutal-lg sm:p-7 lg:col-span-3"
-              style={{ rotate: `${p.tilt}deg` }}
-            >
-              <p className="text-lg font-bold leading-relaxed text-ink">{p.head}</p>
-              <p className="mt-3 font-typewriter text-[13.5px] leading-relaxed text-ink-soft">{p.meta}</p>
-              <span
-                aria-hidden="true"
-                className="mt-4 inline-flex items-center gap-2 border-b-[3px] border-ink pb-0.5 font-typewriter text-[12px] font-bold uppercase tracking-[0.08em] text-ink transition-[gap] duration-200 group-hover:gap-3"
-              >
-                On X <span>↗</span>
-              </span>
-            </a>
-          ))}
-        </div>
-
-        {/* The screenshots themselves. See the RECEIPTS note above. */}
-        <div className="relative mt-28">
-          <h3 className="font-didone text-[clamp(2rem,4vw,2.9rem)] font-semibold leading-none text-ink">
-            Their words, not mine
-          </h3>
-          <p className="mt-5 max-w-[62ch] leading-relaxed text-ink-soft">
-            These are the actual messages. All of them have been public since 2023, attached to a thread that has been
-            seen over a million times.
-          </p>
-        </div>
-
-        <ul className="mt-14 grid grid-cols-2 gap-x-5 gap-y-14 sm:gap-x-10 lg:grid-cols-4">
-          {RECEIPTS.map((r, i) => (
-            <li key={r.src} className={cx(i % 2 === 1 && "mt-8 lg:mt-0", i % 4 === 1 && "lg:mt-10", i % 4 === 3 && "lg:mt-6")}>
-              <figure className="m-0">
-                <PhotoPrint
-                  tilt={RECEIPT_LAYOUT[i].tilt}
-                  attach={RECEIPT_LAYOUT[i].attach}
-                  mat="thin"
-                  lift="self"
-                  delay={(i % 4) * 80}
-                >
-                  <Image
-                    src={r.src}
-                    alt={r.alt}
-                    width={840}
-                    height={1280}
-                    sizes="(max-width: 640px) 46vw, (max-width: 1024px) 46vw, 300px"
-                    className="h-auto w-full"
-                  />
-                </PhotoPrint>
-                <figcaption className="mt-4 px-0.5 text-[14px] leading-relaxed text-ink-soft sm:text-[15px]">{r.cap}</figcaption>
-              </figure>
-            </li>
-          ))}
-        </ul>
-      </PaperSection>
-
-      {/* ───────── 8. THE INSTRUMENTS (the stack) ───────── */}
-      <PaperSection ground="paper" pad="lg" aria-labelledby="gw-instruments">
-        <SectionHead id="gw-instruments" size="md" title="Things you use, not lessons you watch" />
-        <p className={cx(bodyLg, "mt-6 max-w-[62ch]")}>
-          Every part of this ends with something in your hands rather than something in your notes. You do not fill these
-          in alone at midnight. We build them on the calls.
-        </p>
-
-        <ul className="mt-14 grid gap-x-8 gap-y-10 md:grid-cols-6">
-          {DELIVERABLES.map((d, i) => (
-            <li
-              key={d.t}
-              className={cx(
-                "relative border-[3px] border-ink p-6 pt-8 shadow-brutal sm:p-7 sm:pt-9",
-                DELIVERABLE_TONE[i],
-                i < 2 ? "md:col-span-3" : "md:col-span-2"
-              )}
-              style={{ rotate: `${DELIVERABLE_TILT[i]}deg` }}
-            >
-              <span
-                aria-hidden="true"
-                className="absolute -top-[3px] right-5 border-[3px] border-t-0 border-ink bg-paper px-2 py-1 font-typewriter text-[12px] font-bold text-ink"
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <h3 className="font-display text-[1.3rem] font-bold leading-snug tracking-[-0.01em] text-ink">{d.t}</h3>
-              <p className={cx("mt-3 leading-relaxed", i === 2 ? "text-ink" : "text-ink-soft")}>{d.d}</p>
-            </li>
-          ))}
-        </ul>
-        {cta()}
-      </PaperSection>
-
-      {/* ───────── 9. WHO IT IS FOR ───────── */}
-      <PaperSection ground="alt" pad="lg" aria-labelledby="gw-who">
-        <div className="grid gap-x-16 gap-y-14 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)]">
+          See LAUNCH-DAY-01/DAY-01-RESEARCH.md, FINAL TALLY. */}
+      <section className="v3-section v3-section--navy v3-grain" data-nav="navy" data-panel aria-labelledby="gw-different">
+        <div className="v3-wrap v3-gw__diff">
           <div>
-            <SectionHead id="gw-who" size="md" title="Who this is for" />
-            <MarkList items={WHO_FOR} mark="check" tone="ink" className="mt-10" />
-          </div>
-          <div className="relative self-start border-[3px] border-ink bg-paper p-6 shadow-brutal [rotate:1deg] sm:p-8 lg:mt-24">
-            <h3 className="font-display text-[1.3rem] font-bold tracking-[-0.01em] text-ink">And who it is not for</h3>
-            <MarkList items={NOT_FOR} mark="cross" tone="muted" className="mt-6" />
-          </div>
-        </div>
-      </PaperSection>
-
-      {/* ───────── 10. HONESTY ─────────
-          A typed letter on one sheet of paper. */}
-      <PaperSection ground="grid" pad="lg" aria-labelledby="gw-honest">
-        <div className="relative mx-auto max-w-[820px] border-[3px] border-ink bg-paper p-6 pt-10 shadow-brutal-lg sm:p-12 sm:pt-14">
-          <Tape className="-top-3.5 left-1/2 -translate-x-1/2" tilt={-2} width={120} />
-          <SectionHead id="gw-honest" size="md" title="What you are actually buying today" />
-          <p className={cx(bodyLg, "mt-8")}>
-            This is being built right now and I am not going to pretend otherwise. The seven parts are written and the
-            instruments exist. The rest gets built on the calls, with the people who are already inside it, shaped by what
-            they tell me they are stuck on. That is not a shortcut. It is the reason it will fit you and not somebody else.
-          </p>
-          <p className={cx(bodyLg, "mt-5")}>
-            That is why it is ₦{PRICE.toLocaleString()} instead of ₦{WAS.toLocaleString()}, and why{" "}
-            <span className="hl-mark font-semibold text-ink">everything added later is yours</span> at no extra cost. You
-            are early. Early should be worth something.
-          </p>
-          <p aria-hidden="true" className="mt-10 text-right font-hand text-[2rem] font-bold leading-none text-ink">
-            Big Quiv
-          </p>
-        </div>
-      </PaperSection>
-
-      {/* ───────── 11. FINAL PRICING ─────────
-          The brutal framed card: the argument on paper, the price on a gold
-          ticket beside it. */}
-      <PaperSection ground="paper" pad="lg" aria-labelledby="gw-final">
-        <div className="grid border-[3px] border-ink bg-paper shadow-brutal-lg lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-          <div className="border-b-[3px] border-ink p-6 py-10 sm:p-10 lg:border-b-0 lg:border-r-[3px] lg:p-14">
-            <h2
-              id="gw-final"
-              className="font-didone text-[clamp(2.8rem,6vw,4.6rem)] font-semibold leading-[0.95] tracking-[-0.005em] text-ink"
-            >
-              You are not <HandMark kind="underline">behind</HandMark>
+            <h2 id="gw-different" className="v3-h2 v3-display" data-split>
+              What makes this different
             </h2>
-            <p className={cx(bodyLg, "mt-7 max-w-[52ch]")}>
-              You are sitting on something that already works, and nobody ever showed you the second half. That is a
-              fixable problem and it is the only thing this is for.
+            <p className="v3-gw__diff-label">You are not left alone with it</p>
+            <p className="v3-gw__diff-big v3-display" data-fade>
+              Seven parts. Seven weeks. One live session each, where we build that week&rsquo;s piece together.
             </p>
-            <MarkList items={FINAL_LIST} mark="check" tone="ink" className="mt-9" />
           </div>
-          <div className="relative flex items-center bg-paper-alt p-6 py-14 sm:p-10 lg:p-12">
-            <PriceTicket
-              caption="While it is being built"
-              was={`₦${WAS.toLocaleString()}`}
-              now={`₦${PRICE.toLocaleString()}`}
-              tilt={-2}
-              className="w-full"
-            >
-              <BrutalButton onClick={open} variant="paper" size="lg">
-                Get instant access
-              </BrutalButton>
-            </PriceTicket>
+          <div className="v3-gw__diff-copy">
+            <p data-fade>
+              I asked people directly: a done-for-you kit, or live weekly sessions where we work through it together. It
+              was not close. One of them put it better than I could: <em>&ldquo;weekly calls where we build it is better.&rdquo;</em>{" "}
+              Another said it would be <em>&ldquo;well tailored for those who need it, knowing what would really work or not.&rdquo;</em>
+            </p>
+            <p data-fade>
+              One person voted for the kit, and he was right about one thing, so let me say it plainly:{" "}
+              <span className="mark">the templates still come. They just come inside the calls</span>, where I can see your
+              actual skill and your actual situation instead of handing you a blank worksheet and hoping.
+            </p>
+            <p data-fade>
+              That last part is not a guess either. I sent the first tool to somebody who told me she did not know what her
+              skill was. She never filled it in. A blank worksheet is exactly what that person cannot use.
+            </p>
           </div>
         </div>
-      </PaperSection>
+      </section>
 
-      <PaymentModal
-        isOpen={payOpen}
-        onClose={() => setPayOpen(false)}
-        serviceName="The Great Work"
-        amount={PRICE}
-        currency="NGN"
-      />
+      {/* ───────── THE SEVEN WEEKS: type wall (#15) ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="gw-weeks">
+        <div className="v3-wrap">
+          <div className="v3-gw__weeks-head">
+            <h3 id="gw-weeks" className="v3-h2 v3-display" data-split>
+              The seven weeks
+            </h3>
+            <p data-fade>
+              Each one is a week, and each week is a session. In this order, because the order is the point. Every session
+              covers exactly one thing and most of them end with you holding an instrument you keep. You do not watch these.
+              We build them.
+            </p>
+          </div>
+          <TypeWall className="v3-gw__weeks">
+            {MODULES.map((m) => (
+              <li key={m.n} data-wall-row>
+                <p className="v3-gw__wk-n">
+                  <span>Week</span>
+                  <b>{m.n}</b>
+                </p>
+                <div className="v3-gw__wk-body">
+                  <h4 className="v3-gw__wk-t v3-display" data-wall-word>
+                    {m.t}
+                  </h4>
+                  <div className="v3-gw__wk-cols">
+                    <div>
+                      <p className="v3-gw__wk-one">{m.one}</p>
+                      {m.instrument && (
+                        <p className="v3-gw__wk-inst">
+                          <span>You leave with: </span>
+                          <b>{m.instrument}</b>
+                        </p>
+                      )}
+                    </div>
+                    <p className="v3-gw__wk-aha">
+                      <span>You walk out thinking: </span>
+                      {m.aha}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </TypeWall>
+          {buy()}
+        </div>
+      </section>
+
+      {/* ───────── RESULTS ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="gw-results">
+        <div className="v3-wrap">
+          <div className="v3-gw__res-head">
+            <h2 id="gw-results" className="v3-h2 v3-display" data-split>
+              What came out of it
+            </h2>
+            <p data-fade>
+              These are people I taught. Their results, not a promise of yours. Every one of these has been public since
+              2023 and you can go and check them.
+            </p>
+          </div>
+          <div className="v3-gw__res">
+            {/*
+              Strongest first. This is the only claim on this site a stranger can
+              confirm against a third party's own records. Deliberately does NOT
+              claim the dollar split or "2nd of 350+ hackers from 56 countries" —
+              both are chat-only. See 12-Proof-Library/students/blocks.md.
+            */}
+            <div className="v3-gw__proof v3-gw__proof--lead" data-fade>
+              <p className="v3-gw__proof-tag">Verified by someone else</p>
+              <p className="v3-gw__proof-big v3-title">
+                Two of my students won the Flow bounty at LearnWeb3&rsquo;s Decentralized Intelligence hackathon, with an AI
+                payroll app called SwiftPay.
+              </p>
+              <p className="v3-gw__proof-p">
+                You do not have to believe me. LearnWeb3 published it themselves, with both their names on it.{" "}
+                <a
+                  className="v3-link"
+                  href="https://learnweb3.io/hackathons/decentralized-intelligence-season-1/projects/39560768-5d7a-4417-b2eb-38f65a8fa0c7/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Go and read it
+                </a>
+                .
+              </p>
+            </div>
+            <div className="v3-gw__proof" data-fade>
+              <p className="v3-gw__proof-h">
+                A final-year student at Babcock was handed ₦800,000 for school fees and gambled ₦500,000 of it away.
+              </p>
+              <p className="v3-gw__proof-p">
+                He came in with ₦300,000 left and panicking. He made $500 back, then landed a $500 job editing smart
+                contracts through the group. Last I heard he was covering his parents&rsquo; and siblings&rsquo; bills.
+              </p>
+            </div>
+            <div className="v3-gw__proof" data-fade>
+              <p className="v3-gw__proof-h">One got liquidated on Binance and lost his savings.</p>
+              <p className="v3-gw__proof-p">
+                Months later he messaged me at 10pm to say he had moved into a furnished apartment and upgraded his
+                workstation.
+              </p>
+            </div>
+          </div>
+          <div className="v3-gw__posts">
+            {[
+              {
+                href: "https://x.com/_Quivira/status/1722169180487840197",
+                head: "A follower landed a $10,000 Web3 job with no skill, in three months.",
+                meta: "Posted 8 November 2023. 48,000 views, 377 likes, 116 reposts. Still up.",
+              },
+              {
+                href: "https://x.com/_Quivira/status/1724710340754317664",
+                head: "From not having $100 for a class to a $13,000 gig.",
+                meta: "Posted 15 November 2023. 36,000 views, 457 likes. The student is tagged in it and the payment screenshots are inside the post.",
+              },
+            ].map((p) => (
+              <a key={p.href} href={p.href} target="_blank" rel="noopener noreferrer" className="v3-gw__post" data-fade data-tilt>
+                <p className="v3-gw__proof-h">{p.head}</p>
+                <p className="v3-gw__proof-p">{p.meta}</p>
+                <span className="v3-gw__post-go" aria-hidden="true">
+                  On X ↗
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── THEIR WORDS, NOT MINE ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="gw-words">
+        <div className="v3-wrap">
+          <div className="v3-gw__res-head">
+            <h3 id="gw-words" className="v3-h2 v3-display" data-split>
+              Their words, not mine
+            </h3>
+            <p data-fade>
+              These are the actual messages. All of them have been public since 2023, attached to a thread that has been seen
+              over a million times.
+            </p>
+          </div>
+          <ul className="v3-gw__shots">
+            {RECEIPTS.map((r, i) => (
+              <li key={r.src} data-parallax={i % 2 === 1 ? "0.06" : undefined}>
+                <figure>
+                  <div className="v3-gw__shot" data-reveal="clip">
+                    <Image
+                      src={r.src}
+                      alt={r.alt}
+                      width={840}
+                      height={1280}
+                      sizes="(max-width: 640px) 46vw, (max-width: 1024px) 46vw, 300px"
+                    />
+                  </div>
+                  <figcaption>{r.cap}</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ───────── THE INSTRUMENTS (the stack) ───────── */}
+      <section className="v3-section v3-section--navy v3-grain" data-nav="navy" aria-labelledby="gw-instruments">
+        <div className="v3-wrap v3-gw__kit">
+          <div>
+            <h2 id="gw-instruments" className="v3-h2 v3-display" data-split>
+              Things you use, not lessons you watch
+            </h2>
+            <p className="v3-lede" data-fade>
+              Every part of this ends with something in your hands rather than something in your notes. You do not fill
+              these in alone at midnight. We build them on the calls.
+            </p>
+            {buy()}
+          </div>
+          <ol className="v3-gw__kit-list">
+            {DELIVERABLES.map((d, i) => (
+              <li key={d.t} data-fade>
+                <span className="v3-gw__kit-n" aria-hidden="true">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <h3 className="v3-h3">{d.t}</h3>
+                  <p>{d.d}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ───────── WHO IT IS FOR ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="gw-who">
+        <div className="v3-wrap v3-gw__who">
+          <div>
+            <h2 id="gw-who" className="v3-h2 v3-display" data-split>
+              Who this is for
+            </h2>
+            <MarkList items={WHO_FOR} kind="check" className="v3-gw__who-list" />
+          </div>
+          <div className="v3-gw__not">
+            <h3 className="v3-h3">And who it is not for</h3>
+            <MarkList items={NOT_FOR} kind="cross" />
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── HONESTY: a letter ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="gw-honest">
+        <div className="v3-wrap v3-gw__letter">
+          <h2 id="gw-honest" className="v3-h2 v3-display" data-split>
+            What you are actually buying today
+          </h2>
+          <div className="v3-gw__letter-body">
+            <p data-fade>
+              This is being built right now and I am not going to pretend otherwise. The seven parts are written and the
+              instruments exist. The rest gets built on the calls, with the people who are already inside it, shaped by what
+              they tell me they are stuck on. That is not a shortcut. It is the reason it will fit you and not somebody else.
+            </p>
+            <div>
+              <p data-fade>
+                That is why it is ₦{PRICE.toLocaleString()} instead of ₦{WAS.toLocaleString()}, and why{" "}
+                <span className="v3-key">everything added later is yours</span> at no extra cost. You are early. Early should
+                be worth something.
+              </p>
+              <p aria-hidden="true" className="v3-hand v3-gw__sign">
+                Big Quiv
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── FINAL PRICING ───────── */}
+      <section className="v3-section v3-section--navy v3-grain" data-nav="navy" aria-labelledby="gw-final">
+        <div className="v3-wrap v3-gw__close">
+          <div>
+            <h2 id="gw-final" className="v3-display v3-gw__close-h" data-split>
+              You are <span className="mark">not behind</span>
+            </h2>
+            <p className="v3-gw__close-p">
+              You are sitting on something that already works, and nobody ever showed you the second half. That is a fixable
+              problem and it is the only thing this is for.
+            </p>
+            <MarkList items={FINAL_LIST} checklist />
+          </div>
+          <div className="v3-gw__ticket">
+            <div className="v3-gw__mini" aria-hidden="true" data-tilt>
+              <p>The Great Work</p>
+              <i />
+              <span>Big Quiv</span>
+            </div>
+            <p className="v3-cintro__label">While it is being built</p>
+            <p className="v3-gw__ticket-price">
+              <s>{was}</s>
+              <span className="v3-sr"> (was)</span>
+              <b>{now}</b>
+            </p>
+            <button type="button" onClick={open} className="v3-btn v3-btn--lg">
+              Get instant access <Arrow />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <PaymentModal isOpen={payOpen} onClose={() => setPayOpen(false)} serviceName="The Great Work" amount={PRICE} currency="NGN" />
     </div>
   );
 }

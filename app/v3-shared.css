@@ -1,0 +1,66 @@
+/* ── Shared page pieces used on more than one page (v3 rebuild) ──
+   Page-only styles live beside each page in components/v3/pages/<page>.css. */
+
+.v3-hand { margin: 0; font-family: var(--v3-hand); font-weight: 700; font-size: clamp(1.6rem, 2.4vw, 2.2rem); color: var(--v3-gold-deep); transform: rotate(-3deg); }
+.v3-section--navy .v3-hand { color: var(--v3-gold); }
+.v3 .mark { color: var(--v3-gold); }
+.v3-section--cloud .mark, .v3-section--paper .mark { color: var(--v3-gold-deep); }
+
+/* A case study as a large framed real screenshot with its claim under it */
+.v3-case { display: block; color: inherit; }
+.v3-case__frame { position: relative; aspect-ratio: 16 / 10; border-radius: var(--v3-radius); overflow: hidden; background: var(--v3-paper); box-shadow: 0 0 0 1px var(--v3-rule); }
+.v3-case__img { object-fit: cover; object-position: top; transition: transform 600ms var(--v3-ease-out); }
+@media (hover: hover) and (pointer: fine) { .v3-case:hover .v3-case__img { transform: scale(1.03); } }
+.v3-case__tag { margin: 1.25rem 0 0.5rem; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--v3-gold-deep); }
+.v3-case__support { margin: 0.75rem 0 0; max-width: 56ch; font-size: 1.0625rem; line-height: 1.6; color: var(--v3-ink-2); }
+.v3-case__go { display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 1rem; padding-bottom: 3px; border-bottom: 2px solid var(--v3-gold); font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: 1.0625rem; color: var(--v3-navy); }
+.v3-case__arrow { width: 18px; height: 18px; transition: transform 200ms var(--v3-ease-out); }
+@media (hover: hover) and (pointer: fine) { .v3-case:hover .v3-case__arrow { transform: translateX(4px); } }
+
+/* A ruled row of process steps */
+.v3-steps { list-style: none; margin: 3.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--v3-navy); }
+.v3-steps li { padding: 1.75rem 1.75rem 0 0; }
+.v3-steps li + li { padding-left: 1.75rem; border-left: 1px solid var(--v3-rule); }
+.v3-steps__n { display: block; font-family: var(--v3-display); font-weight: 800; font-stretch: 80%; font-size: clamp(3.5rem, 6vw, 5rem); line-height: 0.85; color: var(--v3-navy-2); }
+.v3-steps li.is-key .v3-steps__n { color: var(--v3-gold-deep); }
+.v3-steps .v3-h3 { margin-top: 1.25rem; font-size: 1.5rem; }
+.v3-steps p { margin: 0.6rem 0 0; font-size: 1rem; line-height: 1.6; color: var(--v3-ink-2); }
+@media (max-width: 1000px) { .v3-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } .v3-steps li:nth-child(3) { border-left: 0; padding-left: 0; } }
+@media (max-width: 560px) { .v3-steps { grid-template-columns: minmax(0, 1fr); } .v3-steps li, .v3-steps li + li { padding: 1.5rem 0 0; border-left: 0; } }
+
+/* Testimonials */
+.v3-quotes { list-style: none; margin: 3.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3.5rem; }
+.v3-quotes figure { margin: 0; padding-top: 1.5rem; border-top: 2px solid var(--v3-navy); }
+.v3-quotes__img { position: relative; aspect-ratio: 16 / 10; margin-bottom: 1.5rem; border-radius: var(--v3-radius); overflow: hidden; box-shadow: 0 0 0 1px var(--v3-rule); }
+.v3-quotes__img img { object-fit: cover; }
+.v3-quotes__q { margin: 0; white-space: pre-line; font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: clamp(1.6rem, 2.6vw, 2.25rem); line-height: 1.12; letter-spacing: -0.015em; color: var(--v3-navy); }
+.v3-quotes__by { margin-top: 1.25rem; font-size: 0.9375rem; font-weight: 600; color: var(--v3-ink-2); }
+@media (max-width: 760px) { .v3-quotes { grid-template-columns: minmax(0, 1fr); } }
+
+/* Spotlight (#4): a navy shade closes in around the section's centre */
+[data-spotlight] { position: relative; overflow: hidden; }
+.v3-spotlight { position: absolute; inset: 0; z-index: 1; pointer-events: none; --r: 140%; background: radial-gradient(circle at 50% 45%, transparent var(--r), rgba(27, 36, 51, 0.82) calc(var(--r) + 22%)); }
+@property --r { syntax: "<percentage>"; inherits: false; initial-value: 140%; }
+
+/* Headline Wall (#1) */
+[data-wall-card] { will-change: transform; }
+
+/* Labelled placeholder for a real screenshot that is not on the site yet */
+.v3-placeholder { display: grid; place-items: center; padding: 1.5rem; text-align: center; background: var(--v3-paper); box-shadow: 0 0 0 1px var(--v3-rule); border-radius: var(--v3-radius); color: var(--v3-ink-2); font-size: 0.9375rem; }
+
+/* Before and After (#7, components/v3/fx/BeforeAfter.tsx). Used on TheEditCompanion, home and /ugc. */
+.v3-ba { position: relative; aspect-ratio: 16 / 10; border-radius: var(--v3-radius); overflow: hidden; background: var(--v3-paper); box-shadow: 0 0 0 1px var(--v3-rule); touch-action: pan-y; user-select: none; cursor: ew-resize; }
+.v3-ba__layer { position: absolute; inset: 0; }
+.v3-ba__layer > * { width: 100%; height: 100%; }
+.v3-ba__after { clip-path: inset(0 0 0 var(--split, 50%)); }
+.v3-ba__divider { position: absolute; top: 0; bottom: 0; left: var(--split, 50%); width: 2px; margin-left: -1px; background: var(--v3-navy); pointer-events: none; }
+.v3-ba__handle { position: absolute; top: 50%; left: var(--split, 50%); width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 999px; border: 0; background: var(--v3-gold); color: var(--v3-ink); display: grid; place-items: center; cursor: ew-resize; box-shadow: var(--v3-shadow); transition: transform 140ms var(--v3-ease-out); }
+.v3-ba__handle:active { transform: scale(0.94); }
+.v3-ba__handle svg { width: 22px; height: 22px; }
+.v3-ba__pill { position: absolute; bottom: 14px; padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; pointer-events: none; }
+.v3-ba__pill--before { left: 14px; background: var(--v3-navy); color: var(--v3-bone); }
+.v3-ba__pill--after { right: 14px; background: var(--v3-gold); color: var(--v3-ink); }
+/* a 9:16 reel: the raw take and the posted cut, same moment */
+.v3-ba--reel { aspect-ratio: 9 / 16; background: var(--v3-navy); }
+.v3-ba--reel .v3-ba__layer > video, .v3-ba--reel .v3-ba__layer > img { display: block; object-fit: cover; }
+.v3-ba--reel .v3-ba__divider { background: var(--v3-bone); }

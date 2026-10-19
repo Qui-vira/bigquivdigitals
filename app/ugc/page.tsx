@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { PhoneTile, type PhoneVideo } from "@/components/PhoneTile";
+import type { PhoneVideo } from "@/components/PhoneTile";
 import { FILMS } from "@/lib/films";
-import {
-  BrutalButton,
-  HandNote,
-  MonoLabel,
-  PaperSection,
-  PhotoPrint,
-  StatStamp,
-  Sticker,
-  Tape,
-  cx,
-} from "@/components/ui-paper";
+import { Stage } from "@/components/v3/stage/Stage";
+import { Arrow } from "@/components/v3/Arrow";
+import { PhoneMockup } from "@/components/v3/fx/PhoneMockup";
+import { Viewfinder } from "@/components/v3/fx/Viewfinder";
+import { UgcChallenge } from "@/components/v3/UgcChallenge";
+import "@/components/v3/pages/ugc.css";
 
 /**
  * /ugc — the UGC portfolio. Approved by the owner 2026-10-04: "Build it now".
@@ -21,6 +16,13 @@ import {
  * Canva template, Elle's deck, Iman's Canva site): open on the face, every
  * video in a phone frame grouped by category with "Client:" and "Brief:"
  * under it, real reach numbers, end on contact.
+ *
+ * v3 REBUILD 2026-10-19 (comp: UGC.dc.html). A navy stage with the hand-held
+ * phone (scene "phone", Builder C's object, given the VestaScan poster), then
+ * about, the showreel in a Viewfinder (#34) (the Look Swap is out until real clips exist),
+ * every video in a Phone Mockup (#8) drifting at depth, reach with odometers,
+ * the services, the checklist, and a navy close. The paper-system notes below
+ * are history; the rules marked with a warning sign still hold.
  *
  * REDESIGN 2026-10-05 (paper system, phase 2). This is the most Elle-like page
  * on the site, on purpose: a cover with the portrait as a print and the big
@@ -189,65 +191,9 @@ const GOOD_TO_KNOW = [
   "Full terms come with every quote.",
 ];
 
-/** How each phone in the work wall sits: a small tilt, alternating. */
-const PHONE_TILT = [-2, 1.6, -1.2, 2.2, -1.8, 1.2, -2.4, 1.8];
-const STAMP_TONE = ["gold", "paper", "tint", "paper"] as const;
-const STAMP_TILT = [-2.2, 1.6, -1.4, 2];
-
-/** Star points for a 5-point star in a 100x100 box. */
-function starPoints() {
-  const pts: Array<[number, number]> = [];
-  for (let i = 0; i < 10; i++) {
-    const r = i % 2 === 0 ? 47 : 20;
-    const a = (Math.PI * i) / 5 - Math.PI / 2;
-    pts.push([50 + r * Math.cos(a), 52 + r * Math.sin(a)]);
-  }
-  return pts;
-}
-
-/**
- * The faceted silver star from the reference deck, drawn as ten triangles
- * from the centre so it reads as a pressed metal object. Decorative only.
- * `id` keeps each gradient unique on the page.
- */
-function SilverStar({ id, size = 56, tilt = 0, className }: { id: string; size?: number; tilt?: number; className?: string }) {
-  const pts = starPoints();
-  const poly = pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="-4 -4 110 110"
-      className={cx("pointer-events-none absolute z-[5] overflow-visible", className)}
-      style={{ width: size, height: size, rotate: `${tilt}deg` }}
-    >
-      <defs>
-        <linearGradient id={`${id}-g`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stopColor="#F7F8FA" />
-          <stop offset="0.45" stopColor="#B9BEC5" />
-          <stop offset="0.7" stopColor="#E9ECEF" />
-          <stop offset="1" stopColor="#7F858D" />
-        </linearGradient>
-      </defs>
-      <polygon points={poly} transform="translate(3.5 3.5)" fill="#111111" />
-      <polygon points={poly} fill={`url(#${id}-g)`} />
-      {pts.map(([x, y], i) => {
-        const [nx, ny] = pts[(i + 1) % pts.length];
-        return (
-          <polygon
-            key={i}
-            points={`50,52 ${x.toFixed(1)},${y.toFixed(1)} ${nx.toFixed(1)},${ny.toFixed(1)}`}
-            fill={i % 2 === 0 ? "rgba(255,255,255,0.42)" : "rgba(17,17,17,0.22)"}
-          />
-        );
-      })}
-      <polygon points={poly} fill="none" stroke="#111111" strokeWidth="3" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function EmailLink({ className = "" }: { className?: string }) {
   return (
-    <a href={`mailto:${EMAIL}`} className={cx("paper-link select-all break-all", className)}>
+    <a href={`mailto:${EMAIL}`} className={`v3-ugc-email ${className}`}>
       {EMAIL}
     </a>
   );
@@ -255,599 +201,369 @@ function EmailLink({ className = "" }: { className?: string }) {
 
 function WhatsAppLink({ className = "" }: { className?: string }) {
   return (
-    <a
-      href={WHATSAPP.href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={cx("paper-link select-all whitespace-nowrap", className)}
-    >
+    <a href={WHATSAPP.href} target="_blank" rel="noopener noreferrer" className={`v3-ugc-wa ${className}`}>
       {WHATSAPP.display}
     </a>
   );
 }
 
-/** A section tag in the reference's wavy pill shape. Decorative: the heading carries the meaning. */
-function Tag({ children, tilt = -7, className }: { children: string; tilt?: number; className?: string }) {
-  return (
-    <Sticker
-      shape="wavy"
-      tone="soft"
-      size={46}
-      bumps={5}
-      tilt={tilt}
-      className={className}
-      textClassName="text-[13px]! normal-case! tracking-[0.02em]!"
-    >
-      {children}
-    </Sticker>
-  );
-}
+/**
+ * The stage phone's poses for this page's beats (Builder C's phone scene takes
+ * them as params): held in the hand for the hero; tipped towards you on the
+ * left for the paid ad; swung right for "Tap any video"; small in the middle
+ * while the numbers land; small above the two actions.
+ */
+const UGC_POSES = [
+  [0.0, { x: 0.3, y: 0.0, s: 0.95, rx: 0.18, ry: -0.32, rz: -0.12 }],
+  [0.05, { x: 0.3, y: 0.0, s: 0.95, rx: 0.18, ry: -0.32, rz: -0.12 }],
+  [0.15, { x: -0.3, y: 0.0, s: 1, rx: -0.04, ry: 0.22, rz: 0.03 }],
+  [0.3, { x: -0.3, y: 0.0, s: 1, rx: -0.04, ry: 0.28, rz: 0.03 }],
+  [0.38, { x: 0.3, y: 0.0, s: 0.98, rx: 0.08, ry: -0.36, rz: -0.08 }],
+  [0.52, { x: 0.3, y: 0.0, s: 0.98, rx: 0.08, ry: -0.42, rz: -0.08 }],
+  [0.6, { x: 0, y: 0.04, s: 0.62, rx: 0.05, ry: 0.1, rz: 0 }],
+  [0.75, { x: 0, y: 0.04, s: 0.62, rx: 0.05, ry: -0.1, rz: 0 }],
+  [0.84, { x: 0, y: -0.02, s: 0.5, rx: 0.06, ry: -0.18, rz: 0 }],
+  [1.0, { x: 0, y: -0.02, s: 0.5, rx: 0.06, ry: 0.16, rz: 0 }],
+];
 
-const sectionTitle =
-  "font-didone text-[clamp(2.6rem,6.4vw,4.75rem)] font-semibold leading-[0.98] tracking-[-0.005em] text-ink text-balance";
+/** Depth of each phone on the work wall (#35 parallax), cycled. */
+const DRIFT = [0.06, 0.12, 0.03, 0.1, 0.08, 0.04, 0.11, 0.05];
 
 export default function UgcPage() {
+  let n = 0;
   return (
-    <div className="paper-scope overflow-x-clip bg-paper text-ink">
-      {/* ───────── 1. COVER ─────────
-          The deck's first slide: a print of him, the big two-word title, a
-          starburst, and the "by" pill. The niches run underneath in the
-          typewriter, then the one-line description. */}
-      <PaperSection
-        as="header"
-        ground="grid"
-        pad="none"
-        aria-labelledby="ugc-title"
-        innerClassName="pb-16 pt-[calc(4rem+2.5rem)] md:pb-24 md:pt-[calc(4.5rem+3.5rem)]"
+    <div className="v3 v3-ugc">
+      {/* ───────── STAGE: a hand-held phone playing his UGC work ───────── */}
+      <Stage
+        scene="phone"
+        params={{ screen: VESTASCAN.video.poster, keys: UGC_POSES }}
+        ground="navy"
+        height={520}
+        heightPhone={460}
+        mark="UGC"
+        label="UGC Portfolio"
       >
-        <div className="grid items-center gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,0.78fr)_minmax(0,1.22fr)]">
-          {/* Title block. First on phones, right column from lg. */}
-          <div className="relative @container lg:order-2">
-            <h1 id="ugc-title" className="relative text-ink">
-              <span className="load-drop flex items-start font-display text-[34cqw] font-bold leading-[0.8] tracking-[-0.05em]">
-                UGC
-                <Sticker
-                  shape="starburst"
-                  tone="gold"
-                  size={150}
-                  tilt={14}
-                  reveal={false}
-                  className="load-settle ml-[0.06em] mt-[0.02em] size-[0.5em]! shrink-0"
-                />
-              </span>
-              <span
-                className="load-drop block font-didone text-[30cqw] font-semibold uppercase leading-[0.9] tracking-[-0.01em]"
-                style={{ "--rv-delay": "120ms" } as React.CSSProperties}
-              >
-                Portfolio
-              </span>
-            </h1>
-            <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-4 sm:mt-6">
-              <Tag tilt={-6} className="load-settle shrink-0">
-                by Big Quiv
-              </Tag>
-              <MonoLabel as="p" tone="ink" size="sm" className="font-bold">
-                {NICHES.join(" • ")}
-              </MonoLabel>
-            </div>
-
-            <p className="mt-9 max-w-[34ch] text-[1.2rem] leading-relaxed text-ink-soft md:text-[1.35rem]">
-              {DESCRIPTION}
+        <div className="v3-intro v3-ugc-intro">
+          <h1 id="ugc-title" className="v3-intro__line v3-display" data-lift>
+            UGC <span className="mark">Portfolio</span>
+          </h1>
+          <div className="v3-ugc-intro__rest" data-intro-rest>
+            <p className="v3-ugc-intro__by">
+              <span>by Big Quiv</span>
+              <span className="v3-ugc-intro__niches">{NICHES.join(" • ")}</span>
             </p>
-            <MonoLabel as="p" tone="soft" className="mt-4">
-              Lagos, Nigeria
-            </MonoLabel>
-          </div>
-
-          {/* The print. Below the title on phones, left column from lg. */}
-          <div className="relative mx-auto w-full max-w-[330px] sm:max-w-[380px] lg:order-1 lg:mx-0 lg:max-w-none">
-            <span
-              aria-hidden="true"
-              className="load-tilt absolute inset-0 border-[3px] border-ink bg-gold [rotate:-1deg] [translate:14px_14px]"
-            />
-            <PhotoPrint tilt={-4} attach="clip" mat="polaroid" caption="Big Quiv" reveal={false} className="load-drop">
-              <div className="relative aspect-[4/5] bg-black">
-                <Image
-                  src="/quivira-hero.webp"
-                  alt="Big Quiv"
-                  fill
-                  priority
-                  sizes="(max-width: 1024px) 380px, 460px"
-                  className="object-cover"
-                  style={{ objectPosition: "76% 30%" }}
-                />
-              </div>
-            </PhotoPrint>
-            <SilverStar id="cover-star" size={62} tilt={-12} className="-right-4 -top-7 lg:-bottom-6 lg:-left-7 lg:right-auto lg:top-auto" />
-            <HandNote
-              load
-              delay={700}
-              tilt={-5}
-              arrow="down-left"
-              arrowAt="start"
-              arrowClassName="!w-[56px]"
-              className="absolute -right-6 -top-16 hidden xl:inline-flex"
-            >
-              hi, that&rsquo;s me
-            </HandNote>
+            <p className="v3-ugc-intro__desc">{DESCRIPTION}</p>
+            <div className="v3-intro__actions">
+              <a href={`mailto:${EMAIL}`} className="v3-btn v3-btn--lg">
+                Email me <Arrow />
+              </a>
+              <a href={WHATSAPP.href} target="_blank" rel="noopener noreferrer" className="v3-link">
+                WhatsApp me
+              </a>
+              <span className="v3-ugc-intro__place">Lagos, Nigeria</span>
+            </div>
           </div>
         </div>
-      </PaperSection>
 
-      {/* ───────── 2. ABOUT ME ─────────
-          The scrapbook spread: the "about me" pill, the name set huge, the
-          lines typed underneath, a contact card taped in, and two prints
-          overlapping on the right. */}
-      <PaperSection ground="paper" checker="top" pad="lg" aria-labelledby="about">
-        <div className="grid gap-x-16 gap-y-20 lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] lg:items-start">
+        <h2 className="v3-ghost" data-ghost="0.12,0.18,0.28,0.33" data-side="right" aria-hidden="true">
+          Start with the one a client paid for.
+        </h2>
+        <h2 className="v3-ghost" data-ghost="0.35,0.41,0.5,0.55" data-side="left" aria-hidden="true">
+          Tap any video to play it.
+        </h2>
+        <h2 className="v3-ghost" data-ghost="0.57,0.62,0.72,0.76" data-side="high" aria-hidden="true">
+          Real numbers.
+        </h2>
+        <ul className="v3-ugc-stage-nums" data-at="0.6,0.65,0.73,0.77" aria-hidden="true">
+          {REACH.map((r) => (
+            <li key={r.platform}>
+              <span>{r.main}</span>
+              {r.platform}
+            </li>
+          ))}
+        </ul>
+        <p className="v3-aside" data-at="0.8,0.85,0.95,0.99" data-side="center" style={{ bottom: "auto", top: "14svh" }}>
+          I&rsquo;m taking bookings for brand collaborations.
+        </p>
+        <div className="v3-endcta" data-at="0.82,0.87,0.96,1">
+          <a href={`mailto:${EMAIL}`} className="v3-btn v3-btn--lg">
+            Email me <Arrow />
+          </a>
+          <a href={WHATSAPP.href} target="_blank" rel="noopener noreferrer" className="v3-link">
+            WhatsApp me
+          </a>
+        </div>
+      </Stage>
+
+      {/* ───────── THE 30-DAY CHALLENGE: first, it is what he is running now ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="challenge">
+        <div className="v3-wrap">
+          <UgcChallenge headingId="challenge" />
+        </div>
+      </section>
+
+      {/* ───────── ABOUT ME ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" data-panel aria-labelledby="about">
+        <div className="v3-wrap v3-ugc-about">
           <div>
-            <Tag tilt={-9}>about me</Tag>
-            <h2
-              id="about"
-              className="mt-6 font-didone text-[clamp(3.4rem,11vw,6rem)] font-semibold leading-[0.92] tracking-[-0.01em] text-ink text-balance"
-            >
+            <h2 id="about" className="v3-h2 v3-display" data-split>
               Hi, I&rsquo;m Big Quiv.
             </h2>
-
-            <h3 className="mt-10 font-display text-xl font-bold tracking-[-0.01em] text-ink">What I do.</h3>
-            <div className="mt-5 max-w-[58ch] space-y-5 font-typewriter text-[15.5px] leading-[1.75] text-ink-soft md:text-base">
+            <h3 className="v3-h3 v3-ugc-about__h3">What I do.</h3>
+            <div className="v3-ugc-about__lines">
               {ABOUT.map((line) => (
                 <p key={line}>{line}</p>
               ))}
               <p>
                 I have taught 3,000+ students, and I build products too, like Peaceway Online (
-                <a
-                  href="https://peacewayonline.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="paper-link font-bold text-ink underline decoration-ink decoration-2 underline-offset-4"
-                >
+                <a href="https://peacewayonline.com" target="_blank" rel="noopener noreferrer">
                   peacewayonline.com
                 </a>
                 ).
               </p>
             </div>
 
-            {/* The contact card: handles, email and WhatsApp, taped into the spread. */}
-            <div className="relative mt-14 max-w-[460px] border-[3px] border-ink bg-gold-tint p-6 pt-8 shadow-brutal [rotate:-1.2deg] sm:p-7 sm:pt-9">
-              <Tape className="-top-3.5 left-8" tilt={-5} width={96} />
-              <dl className="grid grid-cols-2 gap-x-6 gap-y-5 sm:grid-cols-3">
-                {HANDLES.map((h) => (
-                  <div key={h.platform}>
-                    <dt className="font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-ink-soft">
-                      {h.platform}
-                    </dt>
-                    <dd className="mt-1">
-                      <a
-                        href={h.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="paper-link inline-flex min-h-[32px] items-center font-display font-bold text-ink"
-                      >
-                        {h.handle}
-                      </a>
-                    </dd>
-                  </div>
-                ))}
-                <div className="col-span-2 border-t-2 border-dashed border-ink/40 pt-4 sm:col-span-3">
-                  <dt className="font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-ink-soft">Email</dt>
-                  <dd className="mt-1">
-                    <EmailLink className="font-display font-bold text-ink" />
+            <dl className="v3-ugc-card">
+              {HANDLES.map((h) => (
+                <div key={h.platform}>
+                  <dt>{h.platform}</dt>
+                  <dd>
+                    <a href={h.href} target="_blank" rel="noopener noreferrer">
+                      {h.handle}
+                    </a>
                   </dd>
                 </div>
-                <div className="col-span-2 sm:col-span-3">
-                  <dt className="font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-ink-soft">WhatsApp</dt>
-                  <dd className="mt-1">
-                    <WhatsAppLink className="font-display font-bold text-ink" />
-                  </dd>
-                </div>
-              </dl>
-            </div>
+              ))}
+              <div className="v3-ugc-card__wide">
+                <dt>Email</dt>
+                <dd>
+                  <EmailLink />
+                </dd>
+              </div>
+              <div className="v3-ugc-card__wide">
+                <dt>WhatsApp</dt>
+                <dd>
+                  <WhatsAppLink />
+                </dd>
+              </div>
+            </dl>
           </div>
 
-          {/* Two prints, the big one taped at the corners, the small one
-              clipped over its lower edge. */}
-          <div className="relative mx-auto w-full max-w-[460px] pb-24 sm:pb-28 lg:mt-8 lg:max-w-none lg:pb-36">
-            <PhotoPrint tilt={2.6} attach="tape-corners" mat="even" lift="self" className="ml-auto w-[88%] sm:w-[84%]">
-              <div className="relative aspect-[4/5] bg-black">
-                <Image
-                  src="/hero/king-base-1600.webp"
-                  alt="Big Quiv in a studio portrait, wearing black glasses."
-                  fill
-                  sizes="(max-width: 1024px) 400px, 460px"
-                  className="object-cover"
-                  style={{ objectPosition: "50% 28%" }}
-                />
-              </div>
-            </PhotoPrint>
-            <PhotoPrint
-              tilt={-6}
-              attach="clip"
-              mat="polaroid"
-              caption="the early days"
-              lift="self"
-              delay={160}
-              className="absolute bottom-0 left-0 w-[56%] sm:w-[50%]"
-            >
-              <div className="relative aspect-[4/5] bg-black">
+          <div className="v3-ugc-about__photos">
+            <div className="v3-ugc-about__main" data-reveal="clip">
+              <Image
+                src="/hero/king-base-1600.webp"
+                alt="Big Quiv in a studio portrait, wearing black glasses."
+                fill
+                sizes="(max-width: 1024px) 80vw, 520px"
+                style={{ objectFit: "cover", objectPosition: "50% 28%" }}
+              />
+            </div>
+            <figure className="v3-ugc-about__small" data-parallax="0.1">
+              <div className="v3-ugc-about__small-img">
                 <Image
                   src="/about-journey.jpg"
                   alt="A selfie of Big Quiv with classmates at his web design class graduation."
                   fill
-                  sizes="240px"
-                  className="object-cover"
-                  style={{ objectPosition: "0% 50%" }}
+                  sizes="260px"
+                  style={{ objectFit: "cover", objectPosition: "0% 50%" }}
                 />
               </div>
-            </PhotoPrint>
-            <SilverStar id="about-star" size={54} tilt={18} className="-left-2 top-[18%] sm:left-[4%]" />
+            </figure>
           </div>
         </div>
-      </PaperSection>
+      </section>
 
-      {/* ───────── 3. SHOWREEL ─────────
-          One framed spread: the words on paper, the phone on a gold panel.
-          The one video on the page that loads before a tap. */}
-      <PaperSection ground="alt" pad="lg" aria-labelledby="showreel">
-        <div className="grid border-[3px] border-ink bg-paper shadow-brutal-lg lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-          <div className="relative flex flex-col justify-center border-b-[3px] border-ink p-6 py-10 sm:p-10 lg:border-b-0 lg:border-r-[3px] lg:p-14">
-            <Sticker shape="label" tone="gold" tilt={-3} decorative={false} className="self-start">
-              Showreel
-            </Sticker>
-            <h2
-              id="showreel"
-              className="mt-7 max-w-[14ch] font-didone text-[clamp(2.7rem,7vw,4.9rem)] font-semibold leading-[0.95] tracking-[-0.005em] text-ink text-balance"
-            >
+      {/* ───────── SHOWREEL: the paid ad, framed in a viewfinder (#34) ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="showreel">
+        <div className="v3-wrap v3-ugc-reel">
+          <div className="v3-ugc-reel__text">
+            <h2 id="showreel" className="v3-h2 v3-display" data-split>
               Start with the one a client paid for.
             </h2>
-            <p className="mt-7 max-w-[44ch] text-lg leading-relaxed text-ink-soft">
+            <p className="v3-ugc-reel__line">
               VestaScan, a Web3 project. Made with AI, no camera, no crew. Sound is off until you turn it on.
             </p>
-            <HandNote arrow="right" arrowAt="end" tilt={-3} className="mt-10 hidden lg:inline-flex" arrowClassName="!w-[110px]">
+            <p className="v3-hand" aria-hidden="true">
               watch this one first
-            </HandNote>
-          </div>
-          <div className="relative flex items-center justify-center overflow-hidden bg-gold px-6 py-14 sm:py-16">
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 opacity-[0.16]"
-              style={{
-                backgroundImage:
-                  "linear-gradient(#111111 1px, transparent 1px), linear-gradient(90deg, #111111 1px, transparent 1px)",
-                backgroundSize: "28px 28px",
-              }}
-            />
-            {/* The one video on the page that loads before a tap. */}
-            <PhoneTile video={VESTASCAN.video} autoPlay tilt={2} className="max-w-[270px] sm:max-w-[290px]" />
-            <SilverStar id="reel-star" size={58} tilt={-10} className="right-[10%] top-[9%]" />
-            <Sticker
-              shape="circle"
-              tone="paper"
-              size={92}
-              tilt={-12}
-              className="absolute bottom-[8%] left-[7%] hidden sm:inline-flex"
-            >
-              play me
-            </Sticker>
-          </div>
-        </div>
-      </PaperSection>
-
-      {/* ───────── 4. WORKED WITH + CLIENT WORDS ─────────
-          A sticker wall: the open YOUR BRAND slot and VestaScan, nothing
-          else. The client's approval sits beside it as a taped note. */}
-      <PaperSection ground="paper" pad="lg" aria-labelledby="worked-with">
-        <div className="grid items-center gap-x-16 gap-y-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
-          <div>
-            <h2 id="worked-with" className={sectionTitle}>
-              Worked with
-            </h2>
-            <ul className="relative mt-12 flex flex-wrap items-center gap-x-10 gap-y-12 sm:gap-x-16">
-              <li className="relative flex items-center gap-5">
-                <span className="relative grid h-36 w-36 shrink-0 place-items-center rounded-full border-[3px] border-dashed border-ink bg-paper text-center font-typewriter text-[15px] font-bold uppercase leading-tight tracking-[0.12em] text-ink [rotate:-6deg] sm:h-44 sm:w-44 sm:text-base">
-                  <span>
-                    Your
-                    <br />
-                    brand
-                  </span>
-                  <span aria-hidden="true" className="absolute inset-[9px] rounded-full border-[1.5px] border-dashed border-ink/40" />
-                </span>
-                <span className="font-hand text-[1.55rem] font-bold leading-[1.05] text-ink [rotate:-4deg] sm:text-[1.75rem]">
-                  <span aria-hidden="true" className="mr-1 font-typewriter text-[1.1rem]">
-                    &larr;
-                  </span>
-                  This spot
-                  <br />
-                  is open
-                </span>
-              </li>
-              <li>
-                <Sticker
-                  shape="circle"
-                  tone="gold"
-                  size={176}
-                  tilt={8}
-                  decorative={false}
-                  textClassName="font-display! text-[1.55rem]! normal-case! tracking-[-0.02em]!"
-                >
-                  VestaScan
-                </Sticker>
-              </li>
-            </ul>
-          </div>
-
-          <figure
-            aria-labelledby="client-words"
-            className="relative m-0 border-[3px] border-ink bg-gold-tint p-7 pt-10 shadow-brutal [rotate:1.8deg] sm:p-9 sm:pt-11"
-          >
-            <Tape className="-top-3.5 left-1/2 -translate-x-1/2" tilt={-4} />
-            <h3 id="client-words" className="font-typewriter text-[13px] font-bold uppercase tracking-[0.1em] text-ink">
-              Client words
-            </h3>
-            <blockquote className="mt-5 font-didone text-[clamp(2rem,4.4vw,2.9rem)] font-medium leading-[1.08] text-ink">
-              &ldquo;Yes video is <span className="hl-mark">approved!</span>{" "}It looks great.&rdquo;
-            </blockquote>
-            <figcaption className="mt-7 border-t-2 border-dashed border-ink/40 pt-4 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink">
-              VestaScan team, Aug 2026
-            </figcaption>
-          </figure>
-        </div>
-      </PaperSection>
-
-      {/* ───────── 5. MY WORK ─────────
-          Every video in a phone, grouped by category, the client and the
-          brief under each one. Groups flow on one wall, so the short
-          categories share a row instead of leaving gaps. */}
-      <PaperSection ground="grid" checker="top" pad="lg" aria-labelledby="work">
-        <div className="relative">
-          <Tag tilt={-8}>my work</Tag>
-          <h2 id="work" className={cx(sectionTitle, "mt-6")}>
-            Tap any video to play it.
-          </h2>
-          <HandNote arrow="down-right" tilt={4} className="absolute -bottom-16 left-[48%] hidden lg:inline-flex">
-            sound on for these
-          </HandNote>
-        </div>
-
-        <div className="mt-16 grid grid-cols-2 gap-x-4 gap-y-16 sm:flex sm:flex-wrap sm:gap-x-16 sm:gap-y-20 md:mt-24">
-          {CATEGORIES.map((c, ci) => (
-            <section
-              key={c.name}
-              aria-labelledby={`cat-${ci}`}
-              className={cx("min-w-0 sm:w-auto", c.items.length > 1 ? "col-span-2" : "col-span-1")}
-            >
-              <h3 id={`cat-${ci}`}>
-                <Sticker shape="label" tone={ci % 2 === 0 ? "tint" : "gold"} tilt={ci % 2 === 0 ? -2 : 2} decorative={false}>
-                  {c.name}
-                </Sticker>
-              </h3>
-              <ul
-                className={cx(
-                  "mt-10 grid gap-x-4 gap-y-12 sm:flex sm:flex-row sm:flex-wrap sm:items-start sm:gap-x-10 sm:gap-y-16",
-                  c.items.length > 1 ? "grid-cols-2" : "grid-cols-1"
-                )}
-              >
-                {c.items.map((w, i) => {
-                  const n = CATEGORIES.slice(0, ci).reduce((sum, g) => sum + g.items.length, 0) + i;
-                  return (
-                    <li key={w.video.file} className="min-w-0 sm:w-[15.5rem]">
-                      <figure className="m-0">
-                        {/* No phone here autoplays: the first video on the page
-                            is the VestaScan showreel above, and this grid's
-                            VestaScan tile is the same file. Autoplaying it again
-                            would download it twice. */}
-                        <PhoneTile
-                          video={w.video}
-                          label={w.video.title}
-                          tilt={PHONE_TILT[n % PHONE_TILT.length]}
-                          delay={i * 90}
-                          className="max-w-none"
-                        />
-                        <figcaption className="mt-4 space-y-2 border-t-2 border-dashed border-ink/35 pt-4 text-[14px] leading-relaxed sm:text-[15px]">
-                          <p>
-                            <span className="font-typewriter text-[12px] font-bold uppercase tracking-[0.06em] text-gold-deep sm:text-[13px]">
-                              Client:{" "}
-                            </span>
-                            <span className="font-display font-bold text-ink">{w.client}</span>
-                          </p>
-                          <p>
-                            <span className="font-typewriter text-[12px] font-bold uppercase tracking-[0.06em] text-gold-deep sm:text-[13px]">
-                              Brief:{" "}
-                            </span>
-                            <span className="text-ink-soft">{w.brief}</span>
-                          </p>
-                        </figcaption>
-                      </figure>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-          ))}
-        </div>
-      </PaperSection>
-
-      {/* ───────── 6. REACH ─────────
-          Each platform as a stamped ticket, the platform tag stuck on top. */}
-      <PaperSection ground="paper" pad="lg" aria-labelledby="reach">
-        <Tag tilt={-6}>reach</Tag>
-        <h2 id="reach" className={cx(sectionTitle, "mt-6")}>
-          Real numbers.
-        </h2>
-        <MonoLabel as="p" tone="soft" className="mt-4">
-          As of {REACH_DATE}
-        </MonoLabel>
-
-        <ul className="mt-16 grid grid-cols-1 gap-x-8 gap-y-16 sm:grid-cols-2 xl:grid-cols-4">
-          {REACH.map((r, i) => (
-            <li key={r.platform} className="relative max-sm:px-1.5">
-              <Sticker
-                shape="label"
-                tone="ink"
-                tilt={i % 2 === 0 ? -4 : 3}
-                decorative={false}
-                delay={i * 90 + 200}
-                className="absolute -top-4 left-4 z-[5]"
-              >
-                {r.platform}
-              </Sticker>
-              <StatStamp
-                value={r.main}
-                label={r.mainLabel}
-                tone={STAMP_TONE[i % STAMP_TONE.length]}
-                tilt={STAMP_TILT[i % STAMP_TILT.length]}
-                delay={i * 90}
-              />
-              <p className="mt-6 px-1 font-display text-[1.05rem] font-bold text-ink">{r.handle}</p>
-              {r.sub && <p className="mt-1 px-1 text-[15px] leading-relaxed text-ink-soft">{r.sub}</p>}
-            </li>
-          ))}
-        </ul>
-      </PaperSection>
-
-      {/* ───────── 7. WHAT I MAKE + GOOD TO KNOW ─────────
-          Two objects side by side: a typed list and a ruled note. */}
-      <PaperSection ground="alt" pad="lg" aria-label="What I make, and good to know">
-        <div className="grid gap-x-16 gap-y-24 lg:grid-cols-2">
-          <div>
-            <Tag tilt={-7}>what I make</Tag>
-            <h2
-              id="services"
-              className="mt-6 font-didone text-[clamp(2.4rem,5vw,3.75rem)] font-semibold leading-[0.98] tracking-[-0.005em] text-ink"
-            >
-              For pricing, <span className="hl-mark">email me.</span>
-            </h2>
-
-            <div className="relative mt-12 border-[3px] border-ink bg-paper px-6 pb-8 pt-10 shadow-brutal [rotate:-1deg] sm:px-9">
-              <span
-                aria-hidden="true"
-                className="absolute inset-x-6 top-3 h-[3px]"
-                style={{ background: "radial-gradient(circle, #111111 1.2px, transparent 1.6px) 0 0 / 9px 3px repeat-x" }}
-              />
-              <ul aria-labelledby="services" className="space-y-3.5 font-typewriter text-[15.5px] leading-snug text-ink">
-                {SERVICES.map((s, i) => (
-                  <li key={s} className="grid grid-cols-[auto_1fr] gap-4">
-                    <span aria-hidden="true" className="font-bold tabular-nums text-gold-deep">
-                      [{String(i + 1).padStart(2, "0")}]
-                    </span>
-                    <span>{s}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div>
-            <Tag tilt={5}>good to know</Tag>
-            <h2
-              id="good-to-know"
-              className="mt-6 font-didone text-[clamp(2.4rem,5vw,3.75rem)] font-semibold leading-[0.98] tracking-[-0.005em] text-ink"
-            >
-              Before you book.
-            </h2>
-
-            {/* A sheet of ruled notebook paper. The line-height matches the
-                ruling, so wrapped lines still sit on the rules. */}
-            <div
-              className="relative mt-12 border-[3px] border-ink bg-paper pb-8 pr-6 pt-8 shadow-brutal [rotate:1.2deg] sm:pr-9"
-              style={{
-                backgroundImage:
-                  "linear-gradient(90deg, transparent 2.6rem, #E7BB88 2.6rem, #E7BB88 calc(2.6rem + 2px), transparent calc(2.6rem + 2px)), repeating-linear-gradient(180deg, transparent 0, transparent calc(2rem - 1px), #D5DBE2 calc(2rem - 1px), #D5DBE2 2rem)",
-              }}
-            >
-              <Tape className="-top-3.5 right-10" tilt={5} width={92} />
-              <ul aria-labelledby="good-to-know" className="pl-[3.6rem] text-[16px] leading-[2rem] text-ink">
-                {GOOD_TO_KNOW.map((g) => (
-                  <li key={g} className="relative">
-                    <span aria-hidden="true" className="absolute -left-6 font-typewriter font-bold text-gold-deep">
-                      &#x2713;
-                    </span>
-                    {g}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </PaperSection>
-
-      {/* ───────── 8. LET'S WORK TOGETHER ─────────
-          The closing statement: a pinned print, the words set huge, the
-          email and handles typed underneath, one button. */}
-      <PaperSection ground="grid" pad="lg" aria-labelledby="contact">
-        <div className="grid items-center gap-x-16 gap-y-20 lg:grid-cols-[minmax(0,0.75fr)_minmax(0,1.25fr)]">
-          <div className="relative order-2 mx-auto w-full max-w-[300px] sm:max-w-[340px] lg:order-1">
-            <PhotoPrint tilt={-5} attach="pin" mat="polaroid" caption="see you soon" lift="self">
-              <div className="relative aspect-[4/5] bg-black">
-                <Image
-                  src="/hero/king-base-1024.webp"
-                  alt="Big Quiv"
-                  fill
-                  sizes="340px"
-                  className="object-cover"
-                  style={{ objectPosition: "50% 30%" }}
-                />
-              </div>
-            </PhotoPrint>
-            <SilverStar id="contact-star" size={56} tilt={14} className="-bottom-5 -right-3" />
-            <Sticker shape="starburst" tone="soft" size={74} tilt={-10} className="absolute -left-6 top-[30%]" delay={150} />
-          </div>
-
-          <div className="order-1 lg:order-2">
-            <h2
-              id="contact"
-              className="relative font-didone text-[clamp(3.6rem,13vw,7.6rem)] font-semibold uppercase leading-[0.88] tracking-[-0.01em] text-ink"
-            >
-              Let&rsquo;s work
-              <br />
-              <span className="inline-flex items-start">
-                together
-                <Sticker
-                  shape="starburst"
-                  tone="gold"
-                  size={96}
-                  tilt={12}
-                  className="ml-[0.08em] -mt-[0.18em] size-[0.62em]! shrink-0"
-                />
-              </span>
-            </h2>
-            <p className="mt-8 max-w-[30ch] font-display text-[1.45rem] font-bold leading-snug tracking-[-0.01em] text-ink sm:text-[1.7rem]">
-              I&rsquo;m taking bookings for brand collaborations.
             </p>
 
-            <div className="mt-8 space-y-2 font-typewriter text-[15px] font-bold uppercase tracking-[0.06em] text-ink sm:text-base">
+            <div className="v3-ugc-worked">
+              <h3 id="worked-with" className="v3-h3">
+                Worked with
+              </h3>
+              <ul aria-labelledby="worked-with">
+                <li className="v3-ugc-worked__open">
+                  <span>Your brand</span>
+                  <em>&larr; This spot is open</em>
+                </li>
+                <li className="v3-ugc-worked__brand">VestaScan</li>
+              </ul>
+            </div>
+
+            <figure className="v3-ugc-words" aria-labelledby="client-words">
+              <h3 id="client-words">Client words</h3>
+              <blockquote>
+                &ldquo;Yes video is <span className="mark">approved!</span> It looks great.&rdquo;
+              </blockquote>
+              <figcaption>VestaScan team, Aug 2026</figcaption>
+            </figure>
+          </div>
+
+          <div className="v3-ugc-reel__phone">
+            <Viewfinder className="v3-ugc-vf">
+              {/* The one video on the page that loads before a tap. */}
+              <PhoneMockup video={VESTASCAN.video} autoPlay priority />
+            </Viewfinder>
+          </div>
+        </div>
+
+        {/* Look Swap (#24) was here: one clip in two looks. Removed 19 Oct until he has
+            a real clip in two looks; a placeholder must not ship. Put it back with
+            <LookSwap a={...} b={...} /> from components/v3/fx/LookSwap.tsx. */}
+      </section>
+
+      {/* ───────── MY WORK: every video in a phone (#8), at depth ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="work">
+        <div className="v3-wrap">
+          <h2 id="work" className="v3-h2 v3-display" data-split>
+            Tap any video to play it.
+          </h2>
+          <div className="v3-ugc-cats">
+            {CATEGORIES.map((c, ci) => (
+              <section key={c.name} aria-labelledby={`cat-${ci}`} className={c.items.length > 1 ? "is-wide" : undefined}>
+                <h3 id={`cat-${ci}`} className="v3-ugc-cat__h">
+                  {c.name}
+                </h3>
+                <ul className="v3-ugc-phones">
+                  {c.items.map((w) => {
+                    const d = DRIFT[n++ % DRIFT.length];
+                    return (
+                      <li key={w.video.file}>
+                        <figure>
+                          {/* No phone here autoplays: the VestaScan showreel above is the
+                              one video that loads before a tap, and this grid's VestaScan
+                              phone is the same file. */}
+                          <div data-parallax={d}>
+                            <PhoneMockup video={w.video} />
+                          </div>
+                          <figcaption>
+                            <h4>{w.video.title}</h4>
+                            <p>
+                              <span>Client: </span>
+                              <strong>{w.client}</strong>
+                            </p>
+                            <p>
+                              <span>Brief: </span>
+                              {w.brief}
+                            </p>
+                          </figcaption>
+                        </figure>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── REACH ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="reach">
+        <div className="v3-wrap">
+          <div className="v3-ugc-reach__head">
+            <h2 id="reach" className="v3-h2 v3-display" data-split>
+              Real numbers.
+            </h2>
+            <p>As of {REACH_DATE}</p>
+          </div>
+          <ul className="v3-ugc-reach">
+            {REACH.map((r) => (
+              <li key={r.platform}>
+                <p className="v3-ugc-reach__platform">{r.platform}</p>
+                <p className="v3-ugc-reach__num">
+                  <span data-odometer>{r.main}</span>
+                  <span className="v3-ugc-reach__label">{r.mainLabel}</span>
+                </p>
+                <p className="v3-ugc-reach__handle">{r.handle}</p>
+                {r.sub && <p className="v3-ugc-reach__sub">{r.sub}</p>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ───────── WHAT I MAKE ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="services">
+        <div className="v3-wrap v3-ugc-make">
+          <h2 id="services" className="v3-h2 v3-display" data-split>
+            For pricing, <span className="mark">email me.</span>
+          </h2>
+          <ol aria-labelledby="services" className="v3-ugc-make__list">
+            {SERVICES.map((s, i) => (
+              <li key={s} data-fade>
+                <span aria-hidden="true">[{String(i + 1).padStart(2, "0")}]</span>
+                {s}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ───────── BEFORE YOU BOOK ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="good-to-know">
+        <div className="v3-wrap v3-ugc-make">
+          <h2 id="good-to-know" className="v3-h2 v3-display" data-split>
+            Before you book.
+          </h2>
+          <ul aria-labelledby="good-to-know" className="v3-ugc-know" data-checklist>
+            {GOOD_TO_KNOW.map((g) => (
+              <li key={g} data-check>
+                {g}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* ───────── LET'S WORK TOGETHER ───────── */}
+      <section className="v3-section v3-section--navy v3-grain v3-ugc-close" data-nav="navy" data-spotlight aria-labelledby="contact">
+        <div className="v3-wrap v3-ugc-close__grid">
+          <div>
+            <h2 id="contact" className="v3-display v3-ugc-close__h" data-split>
+              Let&rsquo;s work <span className="mark">together</span>
+            </h2>
+            <p className="v3-ugc-close__line">I&rsquo;m taking bookings for brand collaborations.</p>
+            <div className="v3-ugc-close__contacts">
               <p>
-                <EmailLink className="normal-case tracking-normal" />
+                <EmailLink />
               </p>
               <p>
-                WhatsApp <WhatsAppLink className="normal-case tracking-normal" />
+                WhatsApp <WhatsAppLink />
               </p>
-              <p className="flex flex-wrap gap-x-5 gap-y-1">
+              <p className="v3-ugc-close__handles">
                 {HANDLES.map((h) => (
-                  <a
-                    key={h.platform}
-                    href={h.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="paper-link inline-flex min-h-[36px] items-center"
-                  >
+                  <a key={h.platform} href={h.href} target="_blank" rel="noopener noreferrer">
                     {h.platform} {h.handle}
                   </a>
                 ))}
               </p>
             </div>
-
-            <div className="mt-10 flex flex-wrap gap-5">
-              <BrutalButton href={`mailto:${EMAIL}`} size="lg">
-                Email me
-              </BrutalButton>
-              <BrutalButton href={WHATSAPP.href} variant="paper" size="lg" newTab>
+            <div className="v3-ugc-close__actions">
+              <a href={`mailto:${EMAIL}`} className="v3-btn v3-btn--lg">
+                Email me <Arrow />
+              </a>
+              <a href={WHATSAPP.href} target="_blank" rel="noopener noreferrer" className="v3-link">
                 WhatsApp me
-              </BrutalButton>
+              </a>
             </div>
           </div>
+          <div className="v3-ugc-close__photo" data-parallax="0.1">
+            <Image src="/hero/king-base-1024.webp" alt="Big Quiv" fill sizes="(max-width: 900px) 70vw, 420px" style={{ objectFit: "cover", objectPosition: "50% 30%" }} />
+          </div>
         </div>
-      </PaperSection>
+      </section>
     </div>
   );
 }

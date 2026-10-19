@@ -1,0 +1,51 @@
+/* 404, error and loading (Builder D). app/not-found.tsx, app/error.tsx, app/loading.tsx */
+
+/* ── 404 ── */
+.v3-nf__grid { position: absolute; inset: 0; z-index: 3; max-width: var(--v3-max); margin: 0 auto; padding: calc(72px + clamp(1.5rem, 5svh, 4rem)) var(--v3-gutter) clamp(1.5rem, 5svh, 3.5rem); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 4rem; align-items: end; }
+.v3-nf__num-wrap { position: relative; padding-bottom: 0.4rem; }
+.v3-nf__num { margin: 0; font-stretch: 78%; font-size: clamp(8rem, 21vw, 17rem); line-height: 0.8; letter-spacing: -0.05em; color: var(--v3-navy-2); font-variant-numeric: tabular-nums; }
+.v3-nf__track { height: 2px; margin-top: clamp(1.5rem, 4vw, 3rem); margin-right: 8%; background: var(--v3-rule-bone); }
+.v3-nf__h { margin: clamp(1.5rem, 4svh, 2.5rem) 0 0; max-width: 14ch; font-size: clamp(2.6rem, 5vw, 4.5rem); color: var(--v3-bone); }
+.v3-nf__p { margin: 1.25rem 0 0; max-width: 44ch; font-size: 1.125rem; line-height: 1.6; color: var(--v3-ash); }
+.v3-nf__links { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--v3-bone); }
+.v3-nf__links li { border-bottom: 1px solid var(--v3-rule-bone); }
+.v3-nf__links a { display: grid; grid-template-columns: 3.2rem minmax(0, 1fr) auto; align-items: center; gap: 0.5rem; min-height: 52px; padding: 0.4rem 0.25rem; color: var(--v3-bone); transition: background-color 180ms ease; }
+.v3-nf__links a > * { transition: transform 260ms var(--v3-ease-out); }
+.v3-nf__n { font-family: var(--v3-mono); font-size: 0.875rem; color: var(--v3-gold); font-variant-numeric: tabular-nums; }
+.v3-nf__label { font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: 1.0625rem; line-height: 1.25; }
+.v3-nf__arrow { width: 18px; height: 18px; color: var(--v3-ash); transition: transform 200ms var(--v3-ease-out), color 200ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  .v3-nf__links a:hover { background: color-mix(in srgb, var(--v3-bone) 6%, transparent); }
+  .v3-nf__links a:hover > :not(.v3-nf__arrow) { transform: translateX(0.35rem); }
+  .v3-nf__links a:hover .v3-nf__arrow { transform: translateX(3px); color: var(--v3-gold); }
+}
+.v3-nf__more { display: none; padding-top: 1rem; }
+@media (max-width: 900px), (max-height: 640px) {
+  .v3-nf__grid { grid-template-columns: minmax(0, 1fr); align-items: end; }
+  .v3-nf__links--stage { display: none; }
+  .v3-nf__more { display: block; }
+}
+@media (max-width: 760px) {
+  .v3-nf__num { font-size: clamp(7rem, 40vw, 10rem); }
+  .v3-nf__h { font-size: clamp(2.3rem, 10vw, 3rem); }
+}
+
+/* ── Error ── */
+.v3-err__wrap { min-height: 100svh; display: grid; place-items: center; padding-top: calc(72px + 3rem); }
+.v3-err__card { position: relative; z-index: 2; width: min(100%, 640px); padding: clamp(1.75rem, 5vw, 3.25rem); border-radius: 14px; background: var(--v3-cloud); color: var(--v3-ink); }
+.v3-err__label { margin: 0; display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.8125rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--v3-ink-2); }
+.v3-err__label::before { content: ""; width: 28px; height: 2px; background: var(--v3-gold); }
+.v3-err__h { margin: 1.25rem 0 0; font-size: clamp(2.4rem, 5.6vw, 3.6rem); color: var(--v3-navy); }
+.v3-err__p { margin: 1.25rem 0 0; max-width: 44ch; font-size: 1.125rem; line-height: 1.6; color: var(--v3-ink-2); }
+.v3-err__actions { margin-top: 2.25rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.75rem; color: var(--v3-navy); }
+.v3-err__actions .v3-btn { border: 0; }
+.v3-err__arrow { width: 18px; height: 18px; }
+.v3-err__ref { margin: 2rem 0 0; padding-top: 1rem; border-top: 1px solid var(--v3-rule); font-family: var(--v3-mono); font-size: 0.8125rem; color: var(--v3-ink-2); }
+
+/* ── Loading ── */
+.v3-loading { min-height: 100svh; display: grid; place-items: center; background: var(--v3-navy); }
+.v3-loading__track { position: relative; width: min(60vw, 320px); height: 2px; background: var(--v3-rule-bone); }
+.v3-loading__dot { position: absolute; left: 0; bottom: 2px; width: calc(100% - 18px); height: 18px; animation: v3-roll 1.4s cubic-bezier(0.77, 0, 0.175, 1) infinite alternate; }
+.v3-loading__dot::before { content: ""; position: absolute; left: 0; top: 0; width: 18px; height: 18px; border-radius: 999px; background: var(--v3-gold); }
+@keyframes v3-roll { to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .v3-loading__dot { animation: none; transform: translateX(50%); } }

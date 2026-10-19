@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/air-peace-last-bus-stop-workflow",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Day 7 of 30 Free Ads: How I Made The Last Bus Stop Before the Sky for Air Peace | BigQuiv Digitals",
+  "description": "Enter the code word from the video to open the full workflow.",
+  "canonical": "https://bigquivdigitals.com/doc/air-peace-last-bus-stop-workflow",
+  "open_graph": {
+    "og:title": "Day 7 of 30 Free Ads: How I Made The Last Bus Stop Before the Sky for Air Peace | BigQuiv Digitals",
+    "og:description": "Enter the code word from the video to open the full workflow.",
+    "og:url": "https://bigquivdigitals.com/doc/air-peace-last-bus-stop-workflow",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "Day 7 of 30 Free Ads: How I Made The Last Bus Stop Before the Sky for Air Peace",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Day 7 of 30 Free Ads: How I Made The Last Bus Stop Before the Sky for Air Peace | BigQuiv Digitals",
+    "twitter:description": "Enter the code word from the video to open the full workflow.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

@@ -112,16 +112,16 @@ export function FlutterwaveButton({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="grid gap-3">
       <button
         type="button"
         onClick={handlePay}
         disabled={loading}
-        className="min-h-[52px] w-full cursor-pointer border-[3px] border-ink bg-gold px-4 py-3 font-display text-base font-bold text-ink shadow-brutal transition-[translate,box-shadow,background-color] duration-150 ease-out hover:-translate-x-[2px] hover:-translate-y-[2px] hover:bg-gold-hover hover:shadow-[8px_8px_0_0_#111111] active:translate-x-[5px] active:translate-y-[5px] active:shadow-[1px_1px_0_0_#111111] disabled:pointer-events-none disabled:opacity-60"
+        className="v3-btn v3-pay__btn"
       >
         {loading ? "Processing..." : `Pay ${formatPrice(amount, currency)} with Card / Bank`}
       </button>
-      {error && <p role="alert" className="border-2 border-ink bg-gold-tint px-2.5 py-1.5 text-sm font-semibold text-ink">{error}</p>}
+      {error && <p role="alert" className="v3-pay__err">{error}</p>}
     </div>
   );
 }

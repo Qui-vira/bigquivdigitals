@@ -2,6 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import { Navbar } from "./Navbar";
+import { SmoothScroll } from "./v3/SmoothScroll";
+import { Motion } from "./v3/Motion";
+import { Cursor } from "./v3/Cursor";
+import { Transitions } from "./v3/Transitions";
+import { Opener } from "./v3/Opener";
+import { useEffect } from "react";
 
 /**
  * Public chrome. The admin area keeps its own shell and never renders these.
@@ -12,16 +18,26 @@ import { Navbar } from "./Navbar";
  */
 export function PublicNavbar() {
   const pathname = usePathname();
-  if (pathname.startsWith("/admin")) return null;
+  const admin = pathname.startsWith("/admin");
+  // public pages sit on cloud; the admin keeps its own dark shell
+  useEffect(() => {
+    document.documentElement.classList.toggle("v3-site", !admin);
+  }, [admin]);
+  if (admin) return null;
   return (
     <>
       <a
         href="#main"
-        className="paper-focus fixed left-3 top-3 z-[60] -translate-y-[200%] border-[3px] border-ink bg-gold px-3 py-2 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink shadow-brutal-sm transition-transform duration-150 focus:translate-y-0"
+        className="fixed left-3 top-3 z-[60] -translate-y-[200%] rounded-[6px] bg-gold px-4 py-2.5 font-display text-[14px] font-bold text-ink transition-transform duration-150 focus:translate-y-0"
       >
         Skip to content
       </a>
       <Navbar />
+      <SmoothScroll />
+      <Opener />
+      <Motion />
+      <Cursor />
+      <Transitions />
     </>
   );
 }

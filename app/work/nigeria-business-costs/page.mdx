@@ -8,6 +8,8 @@ export const metadata = {
 
 # Your business costs are rising. Can you prove which ones are killing you?
 
+<Lede>
+
 Running a business gets more expensive, but knowing exactly **what changed, where, and by how much** is surprisingly difficult.
 
 The data exists.
@@ -23,6 +25,10 @@ Not to calculate the total cost of running a business in Nigeria. The available 
 The goal was simpler:
 
 **Show how major external business costs are changing, where they differ, and which ones a business may need to pay attention to.**
+
+</Lede>
+
+<Part>
 
 ## The problem
 
@@ -42,9 +48,15 @@ That leaves business owners feeling the increase without having a clear picture 
 
 One example is diesel.
 
+<BigFigure value="158.2%" />
+
 From its low point in September 2025 to May 2026, the median increase across Nigeria's 36 states and the Federal Capital Territory was **158.2%**.
 
 That is the kind of change a business should be able to see clearly.
+
+</Part>
+
+<Part>
 
 ## So I built one place to see it
 
@@ -68,6 +80,10 @@ The project tracks nine major cost categories over time across all 36 states and
 But putting the data together turned out to be the easy part.
 
 The harder part was making sure the result did not quietly say things the original data never said.
+
+</Part>
+
+<Part>
 
 ## The data does not all fit together
 
@@ -101,6 +117,10 @@ The sources come directly from the original publishers. No Kaggle copies. No mir
 
 And when an official file is missing, the project records the gap instead of filling it with an invented value.
 
+</Part>
+
+<Part>
+
 ## Then came the messy part
 
 Before writing the transformation pipelines, I profiled **219 spreadsheet sheets and 173 PDFs**.
@@ -124,6 +144,10 @@ One transport file labels two columns with the same period even though the secon
 Any one of these problems could quietly corrupt an automated pipeline.
 
 So the system was designed around the source files as they actually exist, not around how convenient I wanted them to be.
+
+</Part>
+
+<Part>
 
 ## The database keeps those differences intact
 
@@ -163,7 +187,11 @@ For example, food has no state-level prices, so the relationship that would allo
 
 The model cannot accidentally answer a question the source data cannot support.
 
-<PullQuote>The model cannot accidentally answer a question the source data cannot support.</PullQuote>
+</Part>
+
+<PullQuote mark="a question the source data cannot support.">The model cannot accidentally answer a question the source data cannot support.</PullQuote>
+
+<Part>
 
 ## Then I built the Excel workbook
 
@@ -204,6 +232,10 @@ Those limits are not just explanatory text.
 
 The workbook contains seven things the project can do and six things it cannot do, stored as structured data so those claims stay consistent throughout the project.
 
+</Part>
+
+<Part>
+
 ## The same logic carries into Power BI
 
 The Power BI report is built as a **project**, not a single binary file.
@@ -227,6 +259,10 @@ Only after that does the report start showing what happened.
 
 And some of what happened was much larger than I expected.
 
+</Part>
+
+<Part>
+
 ## What the data showed
 
 ### Diesel more than doubled
@@ -236,6 +272,14 @@ From its low point in September 2025 to May 2026, diesel rose by a median **158.
 Every jurisdiction recorded an increase.
 
 Even the smallest increase was **115%**.
+
+<ChartGrow
+  caption="From its low point in September 2025 to May 2026"
+  bars={[
+    { label: "Median increase", value: 158.2, display: "158.2%", key: true },
+    { label: "Smallest increase", value: 115, display: "115%" },
+  ]}
+/>
 
 <Evidence
   src="/proof/nbci/02-powerbi-fuel-and-power.webp"
@@ -259,6 +303,16 @@ Transport fares often did not follow it down.
 Motorcycle taxi and water transport fares were still higher in **100% of those cases**.
 
 City bus fares were higher in **98.8%**.
+
+<ChartGrow
+  caption="Transport fares often did not follow it down."
+  max={100}
+  bars={[
+    { label: "Motorcycle taxi", value: 100, display: "100%", key: true },
+    { label: "Water transport", value: 100, display: "100%" },
+    { label: "City bus", value: 98.8, display: "98.8%" },
+  ]}
+/>
 
 Fuel costs can fall without the transport prices businesses and customers actually pay falling with them.
 
@@ -286,6 +340,14 @@ Water transport fares differed by almost **seven times** between the lowest and 
 
 Petrol differed by only about **1.14 times**.
 
+<ChartGrow
+  caption="Location matters far more for some costs than others"
+  bars={[
+    { label: "Water transport fares", value: 6.91, display: "6.91x", key: true },
+    { label: "Petrol", value: 1.14, display: "1.14x" },
+  ]}
+/>
+
 So saying that "location matters" without asking **which cost** hides most of the useful information.
 
 For some costs, geography changes the picture dramatically.
@@ -297,6 +359,10 @@ For others, the difference is relatively small.
   alt="The page headed How does the external cost environment differ between locations. A note explains that location is one of the things the project looks at and not the point of it, that a cheaper jurisdiction is not a better one and a dearer one does not mean a business loses money there. Cards below show water fares at 6.91 times and petrol at 1.14 times between dearest and cheapest."
   claim="Location is one of the things the project looks at, not the point of it."
   tier="Personal"
+  labels={[
+    { x: 0.12, y: 0.235, px: 0.2, py: 0.38, text: "water fares at 6.91 times" },
+    { x: 0.37, y: 0.235, px: 0.62, py: 0.32, text: "petrol at 1.14 times" },
+  ]}
 />
 
 And even when a place is cheaper in one month, that does not make it permanently cheaper.
@@ -310,6 +376,10 @@ So the ranking reshuffles.
 The project can show what was cheapest in a particular month.
 
 It does not pretend that one jurisdiction is permanently the cheapest.
+
+</Part>
+
+<Part>
 
 ## What does any of this mean for an actual business?
 
@@ -347,6 +417,10 @@ Different business.
 
 Different consequence.
 
+</Part>
+
+<Part>
+
 ## That is also why I do not call this "the cost of doing business"
 
 The project tracks nine external costs businesses may buy, plus inflation measures.
@@ -378,6 +452,10 @@ They are stored as data in both tools.
 They appear directly inside the dashboards.
 
 And the build contains language checks that reject claims such as "best state" or "cheaper place to do business" before the final output can ship.
+
+</Part>
+
+<Part>
 
 ## Then I tested whether I could trust my own work
 
@@ -422,17 +500,17 @@ The output has to survive independent testing.
   alt="The validation page of the report. Four figures across the top: 110 validation checks passed, 342 raw source files SHA-256 verified, 29,032 fact rows in the database, 0 panel grain duplicates. Below, a table of the fifteen rules every page must obey, a list of months genuinely missing from the government sources, and the coverage of each dataset."
   claim="Every check, every verified file, and every gap the sources left, on one page."
   tier="Personal"
+  zoom={{ x: 0.25, y: 0.13, scale: 1.8 }}
 />
 
 That is how the project ends up with:
 
-**110 analysis checks passed**
-
-**342 raw files hash-verified**
-
-**29,032 database fact rows**
-
-**0 panel-grain duplicate rows**
+<Stats>
+<StatLine n="110">analysis checks passed</StatLine>
+<StatLine n="342">raw files hash-verified</StatLine>
+<StatLine n="29,032">database fact rows</StatLine>
+<StatLine n="0">panel-grain duplicate rows</StatLine>
+</Stats>
 
 And when the source itself is incomplete, the dashboard shows that too.
 
@@ -441,6 +519,10 @@ Eleven expected government releases that were not published remain missing.
 They are named directly on the validation page.
 
 If a year-on-year comparison cannot be calculated because the comparison month is missing, the chart breaks the line rather than pretending the gap does not exist.
+
+</Part>
+
+<Part>
 
 ## Built with
 
@@ -459,6 +541,10 @@ If a year-on-year comparison cannot be calculated because the comparison month i
 The repository contains the cleaning pipelines, schema, analysis code, validation suites and dashboard projects:
 
 [github.com/Qui-vira/nigeria-business-cost-intelligence](https://github.com/Qui-vira/nigeria-business-cost-intelligence)
+
+</Part>
+
+<Part>
 
 ## Why I built it this way
 
@@ -485,3 +571,5 @@ Not to turn incomplete information into certainty.
 But to take scattered public data, make it usable, and make sure every conclusion stops exactly where the evidence stops.
 
 If you need data work where the numbers are expected to survive someone actually testing them, this is what that looks like.
+
+</Part>

@@ -1,23 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { type ProofStatData } from "@/components/ProofStat";
-import { HeroReveal } from "@/components/HeroReveal";
-import { AutoCarousel } from "@/components/AutoCarousel";
-import {
-  BrutalButton,
-  HandArrow,
-  HandMark,
-  HandNote,
-  Highlighter,
-  MonoLabel,
-  PaperSection,
-  PhotoPrint,
-  SectionHead,
-  StatStamp,
-  Sticker,
-  Tape,
-  cx,
-} from "@/components/ui-paper";
+import { Stage } from "@/components/v3/stage/Stage";
+import { HeadlineWall } from "@/components/v3/fx/HeadlineWall";
+import { Arrow } from "@/components/v3/Arrow";
+import { UgcChallenge } from "@/components/v3/UgcChallenge";
+import { CHALLENGE_DAYS, poster } from "@/lib/ugc-challenge";
+import "@/components/v3/pages/home.css";
 
 interface Testimonial {
   quote: string;
@@ -34,17 +23,24 @@ interface HomeClientProps {
 }
 
 /**
- * The homepage on the paper system (redesign 2026-10).
+ * The homepage, v3 (rebuild approved 19 Oct 2026; comp: Main.dc.html on the
+ * BigQuiv Digitals website comps canvas; motion: MOTION-PLAN.md).
  *
- * Structure is unchanged from the conversion pass: who -> proof -> cost ->
- * offer -> process -> hire me, with the same three CTA placements. Every word
- * and number of the owner's copy below is unchanged; this file changed how it
- * looks, not what it says. The only new words are pen annotations and sticker
- * labels, and none of them states a fact.
+ * Every word is the owner's own copy from the live page, word for word. Only
+ * the design changed. Structure: the stage (his photo, still, on navy; four
+ * beats: the hook, "Same skills.", "One move.", the receipts, then his four
+ * latest challenge reels orbit him), the UGC challenge (raw take against the
+ * reel, every day so far), the builds (Headline Wall), the
+ * problem (the site's one glitch line), the offer (navy panel), the process
+ * (checklist), testimonials, the close (spotlight).
  *
- * Rendered on the server (the name is historical). The animated pieces are
- * client leaves from components/ui-paper.
+ * Rendered on the server; the stage and the wall are client leaves, and the
+ * effects layer (components/v3/Motion.tsx) animates by attribute.
  */
+
+// The hero's orbit: his four latest challenge reels (owner, 19 Oct 2026: the UGC
+// challenge goes first, not the data work).
+const HERO_ORBIT = CHALLENGE_DAYS.slice(-4).reverse().map((d) => poster(d.file));
 
 const CASE_STUDIES = [
   {
@@ -70,8 +66,7 @@ const CASE_STUDIES = [
   {
     href: "/work/nigeria-business-costs",
     tag: "Data analysis",
-    claim:
-      "Eight government datasets, 29,032 verified rows, one honest picture of Nigerian business costs.",
+    claim: "Eight government datasets, 29,032 verified rows, one honest picture of Nigerian business costs.",
     support:
       "Diesel more than doubled while the inflation rate in the news was falling. A PostgreSQL model, an Excel workbook and a Power BI report, with 110 analysis checks and both dashboards validated against the file itself.",
     image: "/proof/nbci/01-powerbi-what-is-changing.webp",
@@ -88,14 +83,6 @@ const CASE_STUDIES = [
     imageAlt:
       "The post's own metrics bar: 8:43 AM, 24 April 2025, 128K views, with 1.7K comments, 267 reposts, 1.4K likes and 598 bookmarks, and the follow-up post delivering the free Web3 guide the next day.",
   },
-];
-
-/** How each print sits on the board: its tilt and what holds it on. */
-const PRINT_LAYOUT = [
-  { tilt: -2.2, attach: "tape" as const },
-  { tilt: 1.6, attach: "clip" as const },
-  { tilt: 1.2, attach: "pin" as const },
-  { tilt: -1.6, attach: "tape-corners" as const },
 ];
 
 const OFFER_LINES = [
@@ -129,424 +116,263 @@ const STEPS = [
   },
 ];
 
-const STAMP_STYLE = [
-  { tone: "gold" as const, tilt: -2.4 },
-  { tone: "paper" as const, tilt: 1.8 },
-  { tone: "tint" as const, tilt: -1.2 },
-  { tone: "paper" as const, tilt: 2.2 },
-];
-
-const NOTE_TILT = [-1.8, 1.4, -0.8, 1.9, -1.4, 1];
-
-/** Numbers inside a quote get a highlighter pass, not a colour change. */
-function MarkedQuote({ text }: { text: string }) {
-  const parts = text.split(/(\$[\d,.]+[KkMm]?|\d+[%+x]|\d{2,}[\d,.]*)/g);
-  return (
-    <>
-      {parts.map((part, i) =>
-        /^\$[\d,.]+[KkMm]?$|^\d+[%+x]$|^\d{2,}[\d,.]*$/.test(part) ? (
-          <span key={i} className="hl-mark">
-            {part}
-          </span>
-        ) : (
-          <span key={i}>{part}</span>
-        )
-      )}
-    </>
-  );
-}
-
-function Stars({ rating }: { rating: number }) {
-  return (
-    <div className="flex gap-1" role="img" aria-label={`${rating} out of 5`}>
-      {[1, 2, 3, 4, 5].map((i) => (
-        <svg
-          key={i}
-          aria-hidden="true"
-          viewBox="0 0 20 20"
-          className={cx("h-4 w-4", i <= rating ? "text-ink" : "text-ink/20")}
-          fill="currentColor"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
-    </div>
-  );
-}
+const GLITCH = "Five freelancers, five invoices, and nobody answering for the result.";
 
 export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClientProps) {
   // The claim register, kept structural: a stat with no evidenceRef never
-  // reaches the page. Same rule ProofStrip enforced before the redesign.
+  // reaches the page.
   const backedStats = proofStats.filter((s) => s.evidenceRef);
 
   return (
-    <div className="paper-scope overflow-x-clip bg-paper text-ink">
-      {/* ───────── 1. HERO ─────────
-          Copy written by the owner, unchanged. The portrait and the liquid
-          glass effect are unchanged too; HeroReveal now frames them as a
-          print on grid paper instead of a full-bleed black screen. */}
-      <HeroReveal
-        headline={
-          <>
-            Your next skill is going to end{" "}
-            <Highlighter load delay={650}>
-              exactly like the last one did.
-            </Highlighter>
-          </>
-        }
-        supporting="Mine stopped ending that way in 2022, when I got my first seven-figure naira dev job."
-        mechanism="Now I have built the thing that fixes yours."
-        proof="Same skills. One move."
+    <div className="v3 v3-home">
+      {/* ───────── STAGE: he is the product ───────── */}
+      <Stage
+        scene="portrait"
+        params={{ orbit: HERO_ORBIT }}
+        ground="navy"
+        height={620}
+        heightPhone={560}
+        mark="BIG QUIV"
+        fallback="/hero3d/quiv-color-900.webp"
+        particles
+        label="Big Quiv"
       >
-        {/* The course name sits ABOVE the button, where it can inform the
-            decision. One filled control for the waitlist; hiring is a quiet
-            link beside it so a buyer who is not a learner still has a door. */}
-        <div className="w-full">
-          <MonoLabel as="p" caps={false} size="md" tone="soft" className="mb-4">
-            The Great Work opens soon. The list goes first.
-          </MonoLabel>
-          <div className="flex flex-wrap items-center gap-x-7 gap-y-5">
-            <BrutalButton href="/greatwork-waitlist" size="lg">
-              Join the waitlist
-            </BrutalButton>
-            <a
-              href={calendlyUrl}
-              className="paper-link inline-flex min-h-[44px] items-center font-display text-[1.05rem] font-bold text-ink underline decoration-ink decoration-[3px] underline-offset-[7px]"
-            >
-              Hire me
-            </a>
-          </div>
-        </div>
-      </HeroReveal>
-
-      {/* ───────── 2. RECEIPTS ─────────
-          Stamped tickets. Values are static text: no count-up, on purpose
-          (see StatStamp). */}
-      {backedStats.length > 0 && (
-        <PaperSection ground="paper" checker="top" aria-labelledby="proof-strip-heading">
-          <SectionHead index="01" id="proof-strip-heading" title={<HandMark kind="underline">Receipts.</HandMark>} />
-
-          {/* Four across only from xl, two from sm, one on phones: the longest
-              value has to fit its ticket at every width. */}
-          <ul className="mt-14 grid grid-cols-1 gap-x-8 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
-            {backedStats.map((stat, i) => (
-              <li key={stat.label} className="max-sm:px-1.5">
-                <StatStamp
-                  value={`${stat.value.toLocaleString("en-US")}${stat.suffix ?? ""}`}
-                  label={stat.label}
-                  tone={STAMP_STYLE[i % STAMP_STYLE.length].tone}
-                  tilt={STAMP_STYLE[i % STAMP_STYLE.length].tilt}
-                  delay={i * 90}
-                />
-              </li>
-            ))}
-          </ul>
-
-          <MonoLabel as="p" caps={false} size="md" tone="soft" className="mt-14">
-            Every number here has a screenshot behind it. Ask me for any of them.
-          </MonoLabel>
-        </PaperSection>
-      )}
-
-      {/* ───────── 3. CASE STUDIES ─────────
-          Pinned prints on a grid-paper board. The whole card is one link. */}
-      <PaperSection ground="grid" id="work" aria-labelledby="work-heading" pad="lg">
-        <div className="relative">
-          <SectionHead index="02" id="work-heading" title="Three builds. Go and check them." />
-          {/* Sits in the gap the staggered right column leaves above its first
-              print, so the arrow lands on that print's top edge. */}
-          <HandNote
-            arrow="down-right"
-            arrowAt="below"
-            tilt={-4}
-            size="lg"
-            className="absolute -bottom-[13.25rem] left-[calc(50%+1.5rem)] z-[5] hidden lg:inline-flex"
-            arrowClassName="ml-40"
-          >
-            go on, open one
-          </HandNote>
-        </div>
-
-        <ul className="mt-16 grid gap-x-12 gap-y-16 md:mt-24 md:grid-cols-2 lg:gap-x-20">
-          {CASE_STUDIES.map((cs, i) => {
-            const layout = PRINT_LAYOUT[i % PRINT_LAYOUT.length];
-            return (
-              <li key={cs.href} className={i % 2 === 1 ? "md:mt-28" : undefined}>
-                <Link href={cs.href} className="group block">
-                  <PhotoPrint tilt={layout.tilt} attach={layout.attach} lift="group" mat="even" delay={i * 80}>
-                    <div className="relative aspect-[16/10]">
-                      <Image
-                        src={cs.image}
-                        alt={cs.imageAlt}
-                        fill
-                        sizes="(max-width: 768px) 92vw, (max-width: 1320px) 46vw, 580px"
-                        className="object-cover object-top"
-                      />
-                    </div>
-                  </PhotoPrint>
-
-                  <div className="mt-8 px-1">
-                    <Sticker
-                      shape="label"
-                      tone={i % 2 === 0 ? "tint" : "gold"}
-                      tilt={i % 2 === 0 ? -2 : 2}
-                      decorative={false}
-                    >
-                      {cs.tag}
-                    </Sticker>
-                    <h3 className="mt-5 font-display text-[1.45rem] font-bold leading-[1.15] tracking-[-0.015em] text-ink text-balance md:text-[1.65rem]">
-                      {cs.claim}
-                    </h3>
-                    <p className="mt-3 max-w-[56ch] text-[15px] leading-relaxed text-ink-soft md:text-base">
-                      {cs.support}
-                    </p>
-                    <span className="mt-5 inline-flex items-center gap-2 border-b-[3px] border-ink pb-1 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink transition-[gap] duration-200 group-hover:gap-3.5">
-                      Read the build <span aria-hidden="true">&rarr;</span>
-                    </span>
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </PaperSection>
-
-      {/* ───────── 4. THE PROBLEM ─────────
-          The quiet interlude: one statement, two paragraphs, one pen mark. */}
-      <PaperSection ground="paper" width="mid" pad="lg" aria-labelledby="problem-heading">
-        <div className="relative">
-          <h2
-            id="problem-heading"
-            className="max-w-[18ch] font-didone text-[clamp(2.7rem,7.4vw,5.6rem)] font-semibold leading-[0.98] tracking-[-0.005em] text-ink text-balance"
-          >
-            Five freelancers, five invoices, and <HandMark kind="circle">nobody answering</HandMark> for the result.
-          </h2>
-          {/* Beside the headline, its arrow ending at the circled words. Only
-              from xl: below that the headline fills the measure. */}
-          <HandNote
-            tilt={-6}
-            size="lg"
-            className="absolute left-[52%] top-[30%] hidden xl:inline-flex"
-            arrow="down-left"
-            arrowAt="below"
-            arrowClassName="-ml-2"
-          >
-            sound familiar?
-          </HandNote>
-        </div>
-
-        <div className="mt-12 grid gap-6 border-t-[3px] border-ink pt-8 md:grid-cols-2 md:gap-12">
-          <p className="text-lg leading-relaxed text-ink-soft">
-            Your designer has never spoken to your writer. Your developer has never read the content plan. Everyone
-            delivers exactly what you asked for and the numbers still sit where they were.
-          </p>
-          <p className="text-lg leading-relaxed text-ink-soft">
-            That is a systems problem, not a talent problem, and it is why good brands stay invisible for years.
-          </p>
-        </div>
-      </PaperSection>
-
-      {/* ───────── 5. THE OFFER ─────────
-          One framed object: the name on a gold panel, the five parts of the
-          system as an indexed list beside it. */}
-      <PaperSection ground="alt" pad="lg" aria-labelledby="offer-heading">
-        <div className="relative grid border-[3px] border-ink bg-paper shadow-brutal-lg lg:grid-cols-[0.92fr_1.08fr]">
-          <div className="relative flex flex-col border-b-[3px] border-ink bg-gold p-6 pb-10 sm:p-10 lg:border-b-0 lg:border-r-[3px]">
-            <SectionHead index="03" indexTone="paper" id="offer-heading" title="The Growth Operating System" />
-            <p className="mt-7 max-w-[24ch] font-display text-[1.3rem] font-bold leading-snug tracking-[-0.01em] text-ink sm:text-[1.5rem]">
-              One system, one invoice, one person you can <HandMark kind="circle" tone="ink">shout at.</HandMark>
-            </p>
-            {/* Lower half of the panel: the sticker and a pen arrow across to
-                the list, so the panel reads as a label pinned to it. */}
-            <div aria-hidden="true" className="mt-10 hidden items-end gap-3 sm:flex lg:mt-auto">
-              <Sticker shape="starburst" tone="paper" size={132} tilt={-10} className="shrink-0">
-                the offer
-              </Sticker>
-              <HandArrow kind="right" className="mb-10 w-28 lg:w-36" />
+        <div className="v3-intro">
+          <h1 className="v3-intro__line v3-display" data-lift>
+            Your next skill is going to end <span className="mark">exactly like the last one did.</span>
+          </h1>
+          <div className="v3-intro__row" data-intro-rest>
+            <div className="v3-intro__actions">
+              <Link href="/greatwork-waitlist" className="v3-btn v3-btn--lg" data-flood>
+                Join the waitlist <Arrow />
+              </Link>
+              <a href={calendlyUrl} className="v3-link">
+                Hire me
+              </a>
             </div>
+            <p className="v3-intro__note">The Great Work opens soon. The list goes first.</p>
+            <span className="v3-intro__cue" aria-hidden="true">
+              <i />
+              Scroll
+            </span>
           </div>
+        </div>
 
-          <ol className="p-6 sm:p-10">
-            {OFFER_LINES.map((line, i) => (
-              <li
-                key={line}
-                className="grid grid-cols-[auto_1fr] gap-4 border-b-2 border-dashed border-ink/35 py-5 first:pt-0 last:border-b-0 last:pb-0 sm:gap-6"
+        <h2 className="v3-ghost" data-ghost="0.17,0.235,0.33,0.37" data-side="left">
+          Same skills.
+        </h2>
+        <p className="v3-aside" data-at="0.2,0.25,0.32,0.36" data-side="left">
+          Mine stopped ending that way in 2022, when I got my first seven-figure naira dev job.
+        </p>
+
+        <h2 className="v3-ghost" data-ghost="0.38,0.445,0.52,0.56" data-side="left">
+          One move.
+        </h2>
+        <p className="v3-aside" data-at="0.41,0.46,0.51,0.55" data-side="left">
+          Now I have built the thing that fixes yours.
+        </p>
+
+        <h2 className="v3-ghost" data-ghost="0.585,0.64,0.72,0.76" data-side="left">
+          Receipts.
+        </h2>
+        {backedStats.length > 0 && (
+          <div className="v3-home__receipts" data-at="0.6,0.65,0.73,0.77">
+            <ul>
+              {backedStats.map((stat) => (
+                <li key={stat.label}>
+                  <span className="v3-home__receipt-v" data-odometer>
+                    {`${stat.value.toLocaleString("en-US")}${stat.suffix ?? ""}`}
+                  </span>
+                  <span className="v3-home__receipt-l">{stat.label}</span>
+                </li>
+              ))}
+            </ul>
+            <p>Every number here has a screenshot behind it. Ask me for any of them.</p>
+          </div>
+        )}
+
+        <p className="v3-aside" data-at="0.8,0.85,0.95,0.99" data-side="center" style={{ bottom: "auto", top: "14svh" }}>
+          The Great Work opens soon. The list goes first.
+        </p>
+        <div className="v3-endcta" data-at="0.82,0.87,0.96,1">
+          <Link href="/greatwork-waitlist" className="v3-btn" data-flood>
+            Join the waitlist <Arrow />
+          </Link>
+          <a href={calendlyUrl} className="v3-link">
+            Hire me
+          </a>
+        </div>
+      </Stage>
+
+      {/* ───────── THE UGC CHALLENGE: what he is running now, first ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="ugc-challenge-heading">
+        <div className="v3-wrap">
+          <UgcChallenge />
+        </div>
+      </section>
+
+      {/* ───────── THE BUILDS: Headline Wall ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" data-panel aria-labelledby="work-heading">
+        <div className="v3-wrap">
+          <div className="v3-home__builds-head">
+            <h2 id="work-heading" className="v3-h2 v3-display" data-split>
+              Three builds. Go and check them.
+            </h2>
+          </div>
+          <HeadlineWall className="v3-home__builds">
+            {CASE_STUDIES.map((cs, i) => (
+              <Link
+                key={cs.href}
+                href={cs.href}
+                className="v3-case"
+                data-wall-card
+                data-flood
+                data-cursor="View"
+                style={i % 2 === 1 ? { marginTop: "clamp(0rem, 8vw, 7rem)" } : undefined}
               >
-                <span aria-hidden="true" className="pt-0.5 font-typewriter text-[14px] font-bold text-gold-deep">
-                  [{String(i + 1).padStart(2, "0")}]
+                <div className="v3-case__frame" data-tilt>
+                  <Image
+                    src={cs.image}
+                    alt={cs.imageAlt}
+                    fill
+                    sizes="(max-width: 768px) 92vw, (max-width: 1360px) 46vw, 640px"
+                    className="v3-case__img"
+                  />
+                </div>
+                <p className="v3-case__tag">{cs.tag}</p>
+                <h3 className="v3-h3">{cs.claim}</h3>
+                <p className="v3-case__support">{cs.support}</p>
+                <span className="v3-case__go">
+                  Read the build <Arrow className="v3-case__arrow" />
                 </span>
-                <span className="text-base leading-relaxed text-ink md:text-[17px]">{line}</span>
+              </Link>
+            ))}
+          </HeadlineWall>
+        </div>
+      </section>
+
+      {/* ───────── THE PROBLEM: the site's one glitch ───────── */}
+      <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="problem-heading">
+        <div className="v3-wrap v3-home__problem">
+          <h2 id="problem-heading" className="v3-display v3-home__glitch" data-glitch data-text={GLITCH}>
+            {GLITCH}
+          </h2>
+          <div className="v3-home__problem-cols">
+            <p data-fade>
+              Your designer has never spoken to your writer. Your developer has never read the content plan. Everyone
+              delivers exactly what you asked for and the numbers still sit where they were.
+            </p>
+            <p data-fade>
+              That is a systems problem, not a talent problem, and it is why good brands stay invisible for years.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ───────── THE OFFER: a navy panel slides in ───────── */}
+      <section className="v3-section v3-section--navy v3-grain" data-nav="navy" data-panel aria-labelledby="offer-heading">
+        <div className="v3-wrap v3-home__offer">
+          <div>
+            <h2 id="offer-heading" className="v3-h2 v3-display" data-split>
+              The Growth Operating System
+            </h2>
+            <p className="v3-home__offer-line">One system, one invoice, one person you can shout at.</p>
+          </div>
+          <ol className="v3-home__offer-list" data-checklist>
+            {OFFER_LINES.map((line) => (
+              <li key={line} data-check>
+                {line}
               </li>
             ))}
           </ol>
         </div>
-
-        <div className="mt-14 grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-          <p className="max-w-[52ch] text-lg leading-relaxed text-ink">
+        <div className="v3-wrap v3-home__offer-foot">
+          <p data-fade>
             I quote by scope. Tell me what you are trying to move and I will tell you what it takes. If you do not need me
             yet, you will hear that on the call.
           </p>
           <div>
-            <BrutalButton href={calendlyUrl} size="lg">
-              Book a call
-            </BrutalButton>
-            <MonoLabel as="p" caps={false} tone="soft" className="mt-5 max-w-[40ch]">
-              Thirty minutes, and I will not pitch you. You leave with the plan either way.
-            </MonoLabel>
+            <a href={calendlyUrl} className="v3-btn v3-btn--lg">
+              Book a call <Arrow />
+            </a>
+            <p className="v3-home__offer-note">Thirty minutes, and I will not pitch you. You leave with the plan either way.</p>
           </div>
         </div>
-      </PaperSection>
+      </section>
 
-      {/* ───────── 6. HOW THE WORK RUNS ─────────
-          A real sequence, so the numbers are the content: a ruled brutalist
-          table, the sprint cell in gold because that is where the report is. */}
-      <PaperSection ground="grid" pad="lg" aria-labelledby="process-heading">
-        <SectionHead id="process-heading" title="Seven days to your first report." />
-
-        <div aria-hidden="true" className="relative hidden h-24 xl:block">
-          <HandNote
-            arrow="down-right"
-            arrowAt="end"
-            tilt={-3}
-            className="absolute -bottom-7 left-[41%]"
-            arrowClassName="mt-8"
-          >
-            the report lands here
-          </HandNote>
-        </div>
-
-        <ol className="mt-12 grid gap-[3px] border-[3px] border-ink bg-ink shadow-brutal-lg md:grid-cols-2 xl:mt-0 xl:grid-cols-4">
-          {STEPS.map((step, i) => (
-            <li key={step.n} className={cx("flex flex-col p-6 sm:p-8", i === 2 ? "bg-gold" : "bg-paper")}>
-              <span className="font-didone text-[4.5rem] font-semibold leading-[0.85] text-ink tabular-nums sm:text-[5.25rem]">
-                {step.n}
-              </span>
-              <h3 className="mt-6 font-display text-xl font-bold tracking-[-0.01em] text-ink">{step.t}</h3>
-              <p className={cx("mt-3 text-[15px] leading-relaxed", i === 2 ? "text-ink" : "text-ink-soft")}>{step.d}</p>
-            </li>
-          ))}
-        </ol>
-      </PaperSection>
-
-      {/* ───────── TESTIMONIALS ─────────
-          Taped notes. Below the case studies on purpose: real, but
-          role-attributed, so they support the proof rather than carry it. */}
-      {testimonials.length > 0 && (
-        <PaperSection ground="paper" pad="lg" aria-labelledby="testimonials-heading">
-          <SectionHead index="04" id="testimonials-heading" title="What people say" />
-          <ul
-            className={cx(
-              "mt-16 grid items-start gap-x-12 gap-y-14 md:grid-cols-2",
-              testimonials.length >= 3 ? "lg:grid-cols-3" : "lg:max-w-[1080px] lg:gap-x-20"
-            )}
-          >
-            {testimonials.map((t, i) => (
-              <li key={i} className={cx(i % 3 === 1 && "md:mt-12", i % 3 === 2 && "lg:mt-4")}>
-                <figure
-                  className="relative m-0 border-[3px] border-ink bg-gold-tint p-7 pt-9 shadow-brutal"
-                  style={{ rotate: `${NOTE_TILT[i % NOTE_TILT.length]}deg` }}
-                >
-                  <Tape className="-top-3.5 left-1/2 -translate-x-1/2" tilt={i % 2 === 0 ? -4 : 3} />
-                  {/* Pass images explicitly. Spreading the row would send the
-                      raw `images` column (a JSON string or null). */}
-                  {t.allImages.length > 0 && (
-                    <div className="mb-5 border-2 border-ink">
-                      <AutoCarousel images={t.allImages} alt={t.attribution} interval={4000} />
-                    </div>
-                  )}
-                  {t.rating > 0 && <Stars rating={t.rating} />}
-                  <blockquote
-                    className={cx(
-                      "mt-4 whitespace-pre-line font-didone font-medium leading-[1.12] text-ink",
-                      testimonials.length >= 3 ? "text-[1.7rem]" : "text-[1.8rem] sm:text-[2.1rem]"
-                    )}
-                  >
-                    &ldquo;
-                    <MarkedQuote text={t.quote} />
-                    &rdquo;
-                  </blockquote>
-                  <figcaption className="mt-6 flex items-center gap-3 border-t-2 border-dashed border-ink/40 pt-4">
-                    {t.avatar ? (
-                      <Image
-                        src={t.avatar}
-                        alt=""
-                        width={40}
-                        height={40}
-                        className="h-10 w-10 border-2 border-ink object-cover"
-                      />
-                    ) : (
-                      <span
-                        aria-hidden="true"
-                        className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-ink bg-gold font-display text-sm font-bold text-ink"
-                      >
-                        {t.attribution.charAt(0).toUpperCase()}
-                      </span>
-                    )}
-                    <MonoLabel tone="ink" size="xs">
-                      {t.attribution}
-                    </MonoLabel>
-                  </figcaption>
-                </figure>
+      {/* ───────── HOW THE WORK RUNS ───────── */}
+      <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="process-heading">
+        <div className="v3-wrap">
+          <h2 id="process-heading" className="v3-h2 v3-display" data-split>
+            Seven days to your first report.
+          </h2>
+          <ol className="v3-steps">
+            {STEPS.map((step, i) => (
+              <li key={step.n} className={i === 2 ? "is-key" : undefined} data-fade>
+                <span className="v3-steps__n" data-odometer>
+                  {step.n}
+                </span>
+                <h3 className="v3-h3">{step.t}</h3>
+                <p>{step.d}</p>
               </li>
             ))}
-          </ul>
-        </PaperSection>
+          </ol>
+        </div>
+      </section>
+
+      {/* ───────── WHAT PEOPLE SAY ───────── */}
+      {testimonials.length > 0 && (
+        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="testimonials-heading">
+          <div className="v3-wrap">
+            <h2 id="testimonials-heading" className="v3-h2 v3-display" data-split>
+              What people say
+            </h2>
+            <ul className="v3-quotes">
+              {testimonials.map((t, i) => (
+                <li key={i} data-fade>
+                  <figure>
+                    {t.allImages.length > 0 && (
+                      <div className="v3-quotes__img" data-reveal="clip">
+                        <Image src={t.allImages[0]} alt={t.attribution} fill sizes="(max-width: 768px) 92vw, 520px" />
+                      </div>
+                    )}
+                    <blockquote className="v3-quotes__q">&ldquo;{t.quote}&rdquo;</blockquote>
+                    <figcaption className="v3-quotes__by">{t.attribution}</figcaption>
+                  </figure>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       )}
 
-      {/* ───────── 7. FINAL CTA ─────────
-          The big statement, with the portrait pinned beside it. Copy matches
-          the action it sits above (the waitlist); the call keeps its own path
-          underneath as the secondary control. */}
-      <PaperSection ground="grid" pad="lg" aria-labelledby="final-cta-heading">
-        <div className="grid items-center gap-20 lg:grid-cols-[0.78fr_1.22fr]">
-          <div className="relative order-2 mx-auto w-full max-w-[280px] sm:max-w-[330px] lg:order-1">
-            <PhotoPrint tilt={-4} attach="clip" mat="polaroid" caption="Big Quiv" lift="self">
-              <div className="relative aspect-square bg-black">
-                <Image
-                  src="/hero/king-base-1024.webp"
-                  alt="Big Quiv, founder of BigQuiv Digitals."
-                  fill
-                  sizes="330px"
-                  className="object-cover"
-                  style={{ objectPosition: "51% 30%" }}
-                />
-              </div>
-            </PhotoPrint>
-            <Sticker shape="starburst" tone="gold" size={88} tilt={14} className="absolute -right-6 -top-8" delay={150} />
-            <Sticker shape="circle" tone="paper" size={88} tilt={-12} className="absolute -bottom-10 -right-5 sm:-right-10" delay={250}>
-              your turn
-            </Sticker>
-          </div>
-
-          <div className="order-1 lg:order-2">
-            <h2
-              id="final-cta-heading"
-              className="font-didone text-[clamp(3.2rem,8.6vw,6rem)] font-semibold leading-[0.95] tracking-[-0.01em] text-ink text-balance"
-            >
-              You have seen the proof. Now go and <Highlighter>build your own.</Highlighter>
+      {/* ───────── THE CLOSE: spotlight ───────── */}
+      <section className="v3-section v3-section--navy v3-grain v3-home__close" data-nav="navy" data-spotlight aria-labelledby="final-cta-heading">
+        <div className="v3-wrap v3-home__close-grid">
+          <div>
+            <h2 id="final-cta-heading" className="v3-display v3-home__close-h" data-split>
+              You have seen the proof. Now go and <span className="mark">build your own.</span>
             </h2>
-            <p className="mt-7 max-w-[50ch] text-lg leading-relaxed text-ink-soft">
+            <p className="v3-home__close-p">
               The Great Work is the loop this page is built on: learn, build, show, sell, turned into something you can
               repeat. It opens soon, and the list hears first.
             </p>
-            <div className="mt-9">
-              <BrutalButton href="/greatwork-waitlist" size="lg">
-                Join the waitlist
-              </BrutalButton>
-            </div>
-
-            <div className="mt-14 flex flex-col gap-5 border-t-[3px] border-ink pt-7 sm:flex-row sm:items-center sm:justify-between">
-              <MonoLabel as="p" caps={false} tone="soft" className="max-w-[46ch]">
-                Want the Growth Operating System built for you instead? No price on this page because there is no
-                standard job.
-              </MonoLabel>
-              <BrutalButton href={calendlyUrl} variant="paper" className="shrink-0 self-start sm:self-auto">
+            <Link href="/greatwork-waitlist" className="v3-btn v3-btn--lg" data-flood>
+              Join the waitlist <Arrow />
+            </Link>
+            <div className="v3-home__close-alt">
+              <p>Want the Growth Operating System built for you instead? No price on this page because there is no standard job.</p>
+              <a href={calendlyUrl} className="v3-link">
                 Book a call
-              </BrutalButton>
+              </a>
             </div>
           </div>
+          <div className="v3-home__close-photo" data-parallax="0.12" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/hero3d/quiv-color-900.webp" alt="" width={900} height={668} loading="lazy" />
+          </div>
         </div>
-      </PaperSection>
+      </section>
     </div>
   );
 }

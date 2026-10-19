@@ -1,4 +1,9 @@
 @import "tailwindcss";
+/* Research, review captures and build scripts are not UI source: never scan them for classes. */
+@source not "../research";
+@source not "../.impeccable";
+@source not "../scripts";
+@source not "../*.md";
 
 /* ── Palette ────────────────────────────────────────────────────────────────
    Sampled from the two hero plates, not chosen.

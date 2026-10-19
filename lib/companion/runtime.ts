@@ -36,6 +36,8 @@ export interface DeliveryStore extends CompanionStore {
   /** Newest first. Sum of download_count over all of the order's tokens. */
   listOrders(filter: OrderListFilter): Promise<OrderListRow[]>;
   listEvents(orderId: string): Promise<OrderEventRow[]>;
+  /** "My purchases": this (normalised) email's orders in the given statuses, newest first, at most `limit`. */
+  listOrdersByEmail(email: string, statuses: OrderStatus[], limit: number): Promise<Order[]>;
   /** Optional: the same event on many orders in ONE statement (CSV export audit). Callers fall back to addEvent. */
   addEventForOrders?(orderIds: string[], actor: OrderEventActor, kind: string, detail: string, at: Date): Promise<void>;
 }

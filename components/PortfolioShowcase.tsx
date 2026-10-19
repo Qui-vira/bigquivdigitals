@@ -2,14 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { ArrowRight, ArrowUpRight, Check, Clock3 } from "lucide-react";
-import { PaperFilmReel, FILM_COUNT } from "@/components/portfolio/PaperFilmReel";
-import { MonoLabel, PhotoPrint, Sticker, Tape, cx } from "@/components/ui-paper";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { WorkFilms, FILM_COUNT } from "@/components/portfolio/WorkFilms";
+import { Arrow } from "@/components/v3/Arrow";
 
 /**
  * ⚠ "ai-video" HAS NO ENTRY IN PROJECTS AND THAT IS CORRECT. Its six items are
- * films, rendered by FilmReel, not project cards. The tab is still real: it
+ * films, rendered by WorkFilms, not project cards. The tab is still real: it
  * counts the films and selecting it shows the reel.
  *
  * It was briefly deleted from this list, which was wrong twice over. AI video is
@@ -17,6 +17,10 @@ import { MonoLabel, PhotoPrint, Sticker, Tape, cx } from "@/components/ui-paper"
  * visitor he does not do it. His words on seeing that row: "why is the ai video
  * producer not here?". Do not remove it again. If it ever renders the empty
  * state, the bug is in the count or the branch below, not in the tab existing.
+ *
+ * v3 (rebuild 19 Oct 2026): the tabs keep working, with a gold marker that
+ * slides to the active one; internal case studies open with the navy flood
+ * (data-flood); the films run as a horizontal pinned scroll.
  */
 type CategoryId =
   | "all"
@@ -63,30 +67,19 @@ const CATEGORIES: Category[] = [
 ];
 
 /**
- * Four builds. The films are not here, they are the reel in FilmReel.tsx.
+ * Four builds. The films are not here, they are the reel in WorkFilms.tsx.
  *
  * WRITE THESE IN HIS VOICE, FIRST PERSON. They shipped in third-person brochure
- * voice ("Agents handle intake", "The operations layer behind") and his reaction
- * on 2026-09-12 was that the page read like "someone is advising me or someone
- * wrote it for me". A buyer is being shown work by the person who made it, so
- * the person has to be in the sentence. Short sentences, say what he did, and
- * own the unpaid and family parts rather than dressing them up.
- */
-/**
- * ⚠ THE CARD IMAGES MUST BE THE REAL PRODUCT, NOT AN ILLUSTRATION. They shipped
- * as generated line-art clipart and his reaction on 2026-09-12 was "why is just
- * bland cards". A drawing of a mortar and pestle proves nothing; a screenshot of
- * the thing running is the whole point of the page.
+ * voice and his reaction on 2026-09-12 was that the page read like "someone is
+ * advising me or someone wrote it for me". Short sentences, say what he did,
+ * and own the unpaid and family parts rather than dressing them up.
  *
- * medband.webp and pharmaos.webp are real 1440x900 captures of the live sites,
- * taken 2026-09-12. Peaceway uses its own real capture and always has.
+ * ⚠ THE CARD IMAGES MUST BE THE REAL PRODUCT, NOT AN ILLUSTRATION ("why is just
+ * bland cards", 2026-09-12). medband.webp and pharmaos.webp are real 1440x900
+ * captures of the live sites, taken 2026-09-12. Peaceway uses its own capture.
  *
  * ⛔ ALTARA ENERGY NETWORK WAS REMOVED, 2026-09-12, owner's decision. It has no
- * deployment and no images in its repo, so the only image available was clipart,
- * and a drawing standing in for a product is what made this page read as bland.
- * The repo is real and the card can come back the moment the app is deployed and
- * can be captured like the other two. Do not restore it with an illustration.
- *
+ * deployment and no images. Do not restore it with an illustration.
  * ⚠ NOT altaraerial.com. That is the drone business, a different product.
  */
 const PROJECTS: Project[] = [
@@ -153,86 +146,53 @@ function inCategory(project: Project, category: CategoryId): boolean {
   );
 }
 
-/** How each build's print sits on the board. */
-const CARD_LAYOUT = [
-  { tilt: -1.8, attach: "tape" as const, sticker: "gold" as const },
-  { tilt: 1.4, attach: "clip" as const, sticker: "tint" as const },
-  { tilt: 1, attach: "pin" as const, sticker: "tint" as const },
-  { tilt: -1.3, attach: "tape-corners" as const, sticker: "gold" as const },
-];
-
-/**
- * One build: the real capture as a print, then the words beneath it on the
- * paper. The whole card is one link. External builds get the up-right arrow,
- * internal case studies the plain one.
- */
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const l = CARD_LAYOUT[index % CARD_LAYOUT.length];
-  const Arrow = project.external ? ArrowUpRight : ArrowRight;
-  const card = (
-    <article className="flex h-full flex-col">
-      <PhotoPrint tilt={l.tilt} attach={l.attach} lift="group" mat="even" delay={index * 80}>
-        <div className="relative aspect-[16/10]">
-          <Image
-            src={project.image}
-            alt={project.imageAlt}
-            fill
-            sizes="(max-width: 768px) 92vw, (max-width: 1320px) 46vw, 600px"
-            className="object-cover object-top"
-          />
-        </div>
-      </PhotoPrint>
-
-      <div className="mt-8 flex flex-1 flex-col px-1">
-        <div>
-          <Sticker shape="label" tone={l.sticker} tilt={index % 2 === 0 ? -2 : 2} decorative={false}>
-            {project.eyebrow}
-          </Sticker>
-        </div>
-        <div className="mt-5 flex items-start justify-between gap-5">
-          <h2 className="font-didone text-[clamp(2.2rem,3.6vw,3rem)] font-semibold leading-[0.98] tracking-[-0.01em] text-ink">
-            {project.title}
-          </h2>
-          <span
-            aria-hidden="true"
-            className="mt-1 flex h-11 w-11 shrink-0 items-center justify-center border-[3px] border-ink bg-paper shadow-brutal-sm transition-[background-color,translate] duration-200 ease-out group-hover:-translate-y-0.5 group-hover:bg-gold"
-          >
-            <Arrow className="h-5 w-5 text-ink" strokeWidth={2.5} />
-          </span>
-        </div>
-
-        <p className="mt-4 max-w-[60ch] text-base leading-relaxed text-ink-soft">{project.description}</p>
-
-        <div className="mt-6 border-t-[3px] border-ink pt-5">
-          <p className="flex gap-3 text-[15px] leading-relaxed text-ink">
-            <span aria-hidden="true" className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center border-2 border-ink bg-gold">
-              <Check className="h-4 w-4 text-ink" strokeWidth={3} />
-            </span>
-            <span>{project.proof}</span>
-          </p>
-          {project.disclosure && (
-            <MonoLabel as="p" caps={false} size="sm" tone="muted" className="mt-3">
-              {project.disclosure}
-            </MonoLabel>
-          )}
-        </div>
-      </div>
-    </article>
+function UpRight({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M6 14 14 6M7.5 5.5H14.5V12.5" stroke="currentColor" strokeWidth="2" strokeLinecap="square" />
+    </svg>
   );
+}
 
-  const className = "group block h-full";
+/** One build: the real capture, then the words beneath it. The whole card is one link. */
+function ProjectCard({ project }: { project: Project }) {
+  const body = (
+    <>
+      <div className="v3-case__frame" data-tilt>
+        <Image
+          src={project.image}
+          alt={project.imageAlt}
+          fill
+          sizes="(max-width: 768px) 92vw, (max-width: 1360px) 46vw, 640px"
+          className="v3-case__img"
+        />
+      </div>
+      <p className="v3-case__tag">{project.eyebrow}</p>
+      <h2 className="v3-work__title">
+        {project.title}
+        {project.external ? <UpRight className="v3-work__ext" /> : <Arrow className="v3-work__ext" />}
+      </h2>
+      <p className="v3-case__support">{project.description}</p>
+      <p className="v3-work__proof">
+        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <path d="m4.5 10.5 3.5 3.5 7.5-8" stroke="currentColor" strokeWidth="2.25" strokeLinecap="square" />
+        </svg>
+        <span>{project.proof}</span>
+      </p>
+      {project.disclosure && <p className="v3-work__disclosure">{project.disclosure}</p>}
+    </>
+  );
 
   if (project.external) {
     return (
-      <a href={project.href} target="_blank" rel="noopener noreferrer" className={className}>
-        {card}
+      <a href={project.href} target="_blank" rel="noopener noreferrer" className="v3-case v3-work__card" data-cursor="View">
+        {body}
       </a>
     );
   }
-
   return (
-    <Link href={project.href} className={className}>
-      {card}
+    <Link href={project.href} className="v3-case v3-work__card" data-flood data-cursor="View">
+      {body}
     </Link>
   );
 }
@@ -243,107 +203,103 @@ export function PortfolioShowcase() {
   const showFilmsOnly = active === "ai-video";
   const visibleProjects = PROJECTS.filter((project) => inCategory(project, active));
   const activeLabel = CATEGORIES.find((category) => category.id === active)?.label ?? "Work";
+  const filmsShown = active === "all" || showFilmsOnly;
+
+  // the gold marker slides to the active tab
+  const listRef = useRef<HTMLDivElement>(null);
+  const markRef = useRef<HTMLSpanElement>(null);
+  useLayoutEffect(() => {
+    const place = () => {
+      const list = listRef.current;
+      const mark = markRef.current;
+      const tab = list?.querySelector<HTMLElement>('[aria-selected="true"]');
+      if (!list || !mark || !tab) return;
+      mark.style.width = `${tab.offsetWidth}px`;
+      mark.style.height = `${tab.offsetHeight}px`;
+      mark.style.transform = `translate(${tab.offsetLeft}px, ${tab.offsetTop}px)`;
+      mark.style.opacity = "1";
+    };
+    place();
+    window.addEventListener("resize", place);
+    document.fonts?.ready.then(place);
+    return () => window.removeEventListener("resize", place);
+  }, [active]);
+
+  // the page below changes height when a tab changes: re-measure every trigger
+  useEffect(() => {
+    const r = window.requestAnimationFrame(() => ScrollTrigger.refresh());
+    return () => window.cancelAnimationFrame(r);
+  }, [active]);
 
   return (
-    <div>
-      {/* The filter: square tabs. Wraps from sm up; on a phone it scrolls
-          sideways inside itself, never the page. */}
-      <div
-        role="tablist"
-        aria-label="Filter portfolio by discipline"
-        className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-3 pt-1 [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden"
-      >
-        {CATEGORIES.map((category) => {
-          const selected = active === category.id;
-          const count =
-            category.id === "all"
-              ? PROJECTS.length + FILM_COUNT
-              : category.id === "ai-video"
-                ? FILM_COUNT
-                : PROJECTS.filter((project) => inCategory(project, category.id)).length;
-
-          return (
-            <button
-              key={category.id}
-              type="button"
-              role="tab"
-              aria-selected={selected}
-              onClick={() => setActive(category.id)}
-              className={cx(
-                "paper-focus inline-flex min-h-[48px] shrink-0 cursor-pointer items-center gap-2.5 border-[3px] border-ink px-4 font-display text-[15px] font-bold text-ink transition-[background-color,translate,box-shadow] duration-150 ease-out",
-                selected
-                  ? "-translate-x-0.5 -translate-y-0.5 bg-gold shadow-brutal"
-                  : "bg-paper shadow-brutal-sm hover:-translate-x-px hover:-translate-y-px hover:bg-gold-tint active:translate-x-[3px] active:translate-y-[3px] active:shadow-none"
-              )}
-            >
-              {category.label}
-              <span
-                className={cx(
-                  "inline-flex h-6 min-w-6 items-center justify-center border-2 border-ink px-1 font-typewriter text-[12px] font-bold tabular-nums",
-                  selected ? "bg-paper" : "bg-paper-alt"
-                )}
+    <div className="v3-work">
+      <div className="v3-work__filter">
+        <div ref={listRef} role="tablist" aria-label="Filter portfolio by discipline" className="v3-work__tabs">
+          <span ref={markRef} className="v3-work__mark" aria-hidden="true" />
+          {CATEGORIES.map((category) => {
+            const selected = active === category.id;
+            const count =
+              category.id === "all"
+                ? PROJECTS.length + FILM_COUNT
+                : category.id === "ai-video"
+                  ? FILM_COUNT
+                  : PROJECTS.filter((project) => inCategory(project, category.id)).length;
+            return (
+              <button
+                key={category.id}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setActive(category.id)}
+                className="v3-work__tab"
               >
-                {count}
-              </span>
-            </button>
-          );
-        })}
+                {category.label}
+                <span className="v3-work__count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="v3-hand v3-work__hand" aria-hidden="true">
+          pick a tab
+        </p>
       </div>
 
-      <p className="mt-6 font-typewriter text-[15px] leading-snug text-ink-soft" aria-live="polite">
+      <p className="v3-work__status" aria-live="polite">
         {showFilmsOnly
           ? `${FILM_COUNT} films in ${activeLabel}`
-          : visibleProjects.length > 0
+          : active === "all"
+            ? // the All tab shows the builds and the films, so count both (its badge does)
+              `${visibleProjects.length} projects and ${FILM_COUNT} films in ${activeLabel}`
+            : visibleProjects.length > 0
             ? `${visibleProjects.length} ${visibleProjects.length === 1 ? "project" : "projects"} in ${activeLabel}`
             : `${activeLabel}: proof-of-work build in progress`}
       </p>
 
-      {showFilmsOnly ? (
-        <div className="mt-14">
-          <PaperFilmReel headless />
-        </div>
-      ) : visibleProjects.length > 0 ? (
-        <ul className="mt-14 grid gap-x-12 gap-y-20 md:grid-cols-2 lg:gap-x-20">
-          {visibleProjects.map((project, i) => (
-            <li key={project.title} className={cx(i % 2 === 1 && visibleProjects.length > 1 && "md:mt-24")}>
-              <ProjectCard project={project} index={i} />
+      {showFilmsOnly ? null : visibleProjects.length > 0 ? (
+        <ul className="v3-work__grid">
+          {visibleProjects.map((project) => (
+            <li key={project.title}>
+              <ProjectCard project={project} />
             </li>
           ))}
         </ul>
       ) : (
-        <div className="mt-14 flex justify-center py-6 md:py-12">
-          <div
-            className="relative w-full max-w-[620px] border-[3px] border-ink bg-gold-tint p-8 shadow-brutal-lg sm:p-12"
-            style={{ rotate: "-1.2deg" }}
-          >
-            <Tape className="-top-3.5 left-1/2 -translate-x-1/2" tilt={-3} />
-            <div className="flex items-center gap-4">
-              <span aria-hidden="true" className="flex h-12 w-12 items-center justify-center border-[3px] border-ink bg-gold">
-                <Clock3 className="h-6 w-6 text-ink" strokeWidth={2.25} />
-              </span>
-              <Sticker shape="label" tone="paper" tilt={2} decorative={false} reveal={false}>
-                Coming soon
-              </Sticker>
-            </div>
-            <h2 className="mt-7 font-didone text-[clamp(2.2rem,4.6vw,3.4rem)] font-semibold leading-[1] tracking-[-0.01em] text-ink">
-              I have not built one of these yet.
-            </h2>
-            <p className="mt-5 text-base leading-relaxed text-ink-soft md:text-lg">
-              I can do the work. I have not shipped a {activeLabel.toLowerCase()} project I would put in front of you, so
-              there is nothing here. When I have, it goes up with a link you can open.
-            </p>
-          </div>
+        <div className="v3-work__empty">
+          <h2 className="v3-h3">I have not built one of these yet.</h2>
+          <p className="v3-label v3-work__soon">Coming soon</p>
+          <p>
+            I can do the work. I have not shipped a {activeLabel.toLowerCase()} project I would put in front of you, so
+            there is nothing here. When I have, it goes up with a link you can open.
+          </p>
         </div>
       )}
 
-      {/* Under "All work" the films sit below the builds with their own heading.
-          On a discipline tab they are either the whole answer (ai-video, handled
-          above) or irrelevant, so they do not render at all. */}
-      {active === "all" && (
-        <div className="mt-24 border-t-[3px] border-ink pt-20 md:mt-32 md:pt-24">
-          <PaperFilmReel />
-        </div>
-      )}
+      {/* The films stay mounted (their pin must never be torn out by React);
+          they show under "All work" with their heading, alone under AI Video
+          Producer, and are hidden on the other discipline tabs. */}
+      <div className={showFilmsOnly ? "v3-work__films is-alone" : "v3-work__films"} hidden={!filmsShown}>
+        <WorkFilms headless={showFilmsOnly} enabled={filmsShown} />
+      </div>
     </div>
   );
 }

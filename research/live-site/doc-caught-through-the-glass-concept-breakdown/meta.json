@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/caught-through-the-glass-concept-breakdown",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "CAUGHT THROUGH THE GLASS | BigQuiv Digitals",
+  "description": "Creative Concept Breakdown | By Big Quiv A luxury dinner scene shot like someone accidentally caught a private moment from across the street.",
+  "canonical": "https://bigquivdigitals.com/doc/caught-through-the-glass-concept-breakdown",
+  "open_graph": {
+    "og:title": "CAUGHT THROUGH THE GLASS | BigQuiv Digitals",
+    "og:description": "Creative Concept Breakdown | By Big Quiv A luxury dinner scene shot like someone accidentally caught a private moment from across the street.",
+    "og:url": "https://bigquivdigitals.com/doc/caught-through-the-glass-concept-breakdown",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "CAUGHT THROUGH THE GLASS",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "CAUGHT THROUGH THE GLASS | BigQuiv Digitals",
+    "twitter:description": "Creative Concept Breakdown | By Big Quiv A luxury dinner scene shot like someone accidentally caught a private moment from across the street.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}
