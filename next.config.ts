@@ -37,6 +37,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/pricing", destination: "/services", permanent: true },
+      // Common typo of the buyers' purchases page.
+      { source: "/my-purchase", destination: "/my-purchases", permanent: true },
       // /okx is the bio link for the 60-day challenge. It is spoken aloud in
       // the episodes as "my OKX link in bio", so the path can never change —
       // only where it points.
