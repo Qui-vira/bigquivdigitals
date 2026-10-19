@@ -1,101 +1,53 @@
-import Link from "next/link";
 import { CONSENT_FINAL_TEXT, CONSENT_IMMEDIATE_TEXT } from "@/lib/companion/consent";
 import { CheckoutForm } from "@/components/companion/CheckoutForm";
-import { LiveText, PriceProvider, type PriceData } from "@/components/companion/PriceContext";
-import { ContactList } from "@/components/companion/ContactList";
+import { PriceProvider, type PriceData } from "@/components/companion/PriceContext";
 import { CompanionJsonLd } from "@/components/companion/JsonLd";
+import { CHECKOUT, LEGAL_LINKS, PRICE, SUPPORT_LINE } from "@/components/companion/content";
 import {
-  AFTER,
-  CHECKOUT,
-  EXPERTISE,
-  FIT,
-  FLAGS,
-  HERO,
-  HOW,
-  HOW_TO_BUY,
-  INSIDE,
-  LEGAL_LINKS,
-  LIMITS,
-  PRICE,
-  PROBLEMS,
-  ROLES,
-  SUPPORT_LINE,
-  WHAT_IT_IS,
-} from "@/components/companion/content";
-import { FAQ } from "@/components/companion/faq";
+  V2_CLOSE,
+  V2_DIFFERENCE,
+  V2_FAQ,
+  V2_HERO,
+  V2_IDEAS,
+  V2_IMAGINE,
+  V2_KINDS,
+  V2_MEET,
+  V2_PRICE,
+  V2_STEPS,
+} from "@/components/companion/content-v2";
 import { metaDescription, type PriceView } from "@/components/companion/product";
-import { Stage } from "@/components/v3/stage/Stage";
 import { Arrow } from "@/components/v3/Arrow";
 import { ReelBeforeAfter } from "@/components/v3/ReelBeforeAfter";
 import { BEFORE_AFTER } from "@/lib/ugc-challenge";
-import { RunCard } from "@/components/v3/fx/RunCard";
-import { CompanionPrice } from "./CompanionPrice";
+import { BuyLabel, FoundersLine, PriceBlock } from "./CompanionLive";
 import "./companion.css";
 
 /**
- * TheEditCompanion, v3 (rebuild approved 19 Oct 2026; comp: Companion.dc.html;
- * motion: MOTION-PLAN.md section 3).
+ * TheEditCompanion sales page, v2 (owner, 20 Oct 2026: "this is the sales copy i
+ * want"). Every word is his, from components/companion/content-v2.ts, in his order.
+ * Sell the videos, not the machinery: the gates, modules, rescue command, limits
+ * and FAQ of v1 are off the page (their copy stays in content.ts and faq.ts for the
+ * old CompanionPage and its tests).
  *
- * This is a restyle of components/companion/CompanionPage.tsx, which stays in
- * place untouched for the checkout session. Same data flow, same section
- * order, same copy (every string comes from components/companion/content.ts
- * and faq.ts), same anchors (#how, #order), same checkout component with the
- * same props, same live price context, same JSON-LD. Only the layout is new.
- *
- * Effects: the product box stage, #7 Before and After, #29 Run Card on the
- * five steps, #30 Prompt Type-In on the rescue command, #25 Price Anchor
- * Stack on the price, #5 checklist on "Your script stays yours".
+ * Order (owner, 20 Oct 2026): desire, results and visual proof, benefits, how it
+ * works, price, purchase, then a FAQ for requirements, limits and refunds. The Day 12
+ * raw take vs finished reel sits beside the headline; "See the Difference" carries
+ * four more real pairs. Prices and
+ * the founders date are live (CompanionLive.tsx), and every button goes to the
+ * checkout (#order), which is unchanged.
  */
 
-/** The hero line, with its last sentence marked in gold. The words are HERO.h1. */
-function heroLine() {
-  const MARK = "There is a better order.";
-  const i = HERO.h1.lastIndexOf(MARK);
-  return i < 0 ? { lead: HERO.h1, mark: "" } : { lead: HERO.h1.slice(0, i), mark: HERO.h1.slice(i) };
-}
-
-function Lines({ lines, className = "" }: { lines: readonly string[]; className?: string }) {
-  return (
-    <div className={`v3-cpn-lines ${className}`}>
-      {lines.map((l) => (
-        <p key={l}>{l}</p>
-      ))}
-    </div>
-  );
-}
-
-function Bullets({ items, className = "" }: { items: readonly string[]; className?: string }) {
-  return (
-    <ul className={`v3-cpn-bullets ${className}`}>
-      {items.map((i) => (
-        <li key={i}>{i}</li>
-      ))}
-    </ul>
-  );
-}
-
-/** The rescue card's first line carries the real command; it types itself in (#30). */
-function RescueLine({ line }: { line: string }) {
-  const CMD = "/motion-rescue";
-  const at = line.indexOf(CMD);
-  if (at < 0) return <p>{line}</p>;
-  return (
-    <p>
-      {line.slice(0, at)}
-      <code className="v3-cpn-cmd" data-typein>
-        {CMD}
-      </code>
-      {line.slice(at + CMD.length)}
-    </p>
-  );
-}
+const Order = ({ children }: { children: React.ReactNode }) => (
+  <a href="#order" className="v3-btn v3-btn--lg">
+    {children} <Arrow />
+  </a>
+);
 
 export function CompanionV3({ view }: { view: PriceView }) {
   const usdRef =
     view.usdFounders && view.usdRegular
       ? `For international buyers, the reference price is ${view.usdFounders} founders price, then ${view.usdRegular}. You pay in naira.`
       : null;
-
   const priceData: PriceData = {
     ssrTier: view.tier,
     endsAtIso: view.endsAtIso,
@@ -104,124 +56,101 @@ export function CompanionV3({ view }: { view: PriceView }) {
     foundersUntilLine: view.foundersUntilLine,
     usdRef,
   };
-  const { lead, mark } = heroLine();
-  const [refLine, planLine, checkLine] = PROBLEMS.closing[1].split(/(?<=\.)\s+/);
+  const day12 = BEFORE_AFTER.find((p) => p.day === 12);
 
   return (
     <PriceProvider data={priceData}>
-      <CompanionJsonLd view={view} description={metaDescription(view)} />
+      <CompanionJsonLd view={view} description={metaDescription(view)} faqItems={V2_FAQ} />
 
-      <div className="v3 v3-companion">
-        {/* ───────── STAGE: the product box ───────── */}
-        <Stage scene="box" ground="navy" height={560} heightPhone={480} mark="COMPANION" fallback="/v3/stills/box.webp" label="TheEditCompanion">
-          <div className="v3-intro v3-cpn-intro">
-            <h1 id="hero-h" className="v3-intro__line v3-display" data-lift>
-              {lead}
-              {mark && <span className="mark">{mark}</span>}
-            </h1>
-            <div className="v3-cpn-intro__rest" data-intro-rest>
-              <div className="v3-cpn-intro__promise">
-                <p>{HERO.promise1}</p>
-                <p>{HERO.promise2}</p>
-              </div>
-              <div className="v3-intro__actions">
-                <a href="#order" className="v3-btn v3-btn--lg">
-                  <LiveText kind="buyLabel" /> <Arrow />
-                </a>
-                <a href="#how" className="v3-link">
-                  {HERO.seeHow}
-                </a>
-              </div>
-              <div className="v3-cpn-intro__notes">
-                <p>
-                  <LiveText kind="heroLine" />
+      <div className="v3 v3-companion v3-sp">
+        {/* 1. Hero: the promise, the buy button, and the finished result beside it */}
+        <section className="v3-section v3-section--navy v3-grain v3-sp-hero" data-nav="navy" aria-labelledby="hero-h">
+          <div className="v3-wrap v3-sp-hero__grid">
+            <div className="v3-sp-hero__copy">
+              <h1 id="hero-h" className="v3-display v3-sp-hero__h1" data-split>
+                {V2_HERO.h1}
+              </h1>
+              <p className="v3-sp-hero__sub" data-fade>
+                {V2_HERO.sub}
+              </p>
+              <div className="v3-sp-hero__actions" data-fade>
+                <Order>
+                  <BuyLabel />
+                </Order>
+                <p className="v3-sp-hero__price">
+                  <FoundersLine />
                 </p>
-                <p>{SUPPORT_LINE}</p>
               </div>
             </div>
+            {day12 ? (
+              <figure className="v3-sp-hero__proof" data-fade>
+                <ReelBeforeAfter
+                  before={day12.before}
+                  after={day12.after}
+                  label="Day 12: what I filmed and what Claude made"
+                  beforeLabel="What I filmed"
+                  afterLabel="What Claude made"
+                />
+              </figure>
+            ) : null}
           </div>
+        </section>
 
-          {refLine && (
-            <h2 className="v3-ghost" data-ghost="0.12,0.17,0.29,0.33" data-side="right">
-              {refLine}
-            </h2>
-          )}
-          {planLine && (
-            <h2 className="v3-ghost" data-ghost="0.34,0.39,0.51,0.55" data-side="left">
-              {planLine}
-            </h2>
-          )}
-          {checkLine && (
-            <h2 className="v3-ghost" data-ghost="0.56,0.61,0.73,0.77" data-side="high">
-              {checkLine}
-            </h2>
-          )}
-          <div className="v3-endcta v3-cpn-endcta" data-at="0.8,0.85,0.96,1">
-            <p className="v3-cpn-endcta__line">
-              <LiveText kind="heroLine" />
-            </p>
-            <a href="#order" className="v3-btn v3-btn--lg">
-              <LiveText kind="buyLabel" /> <Arrow />
-            </a>
-          </div>
-        </Stage>
-
-        {/* 2. Problems */}
-        <section className="v3-section v3-section--paper" data-nav="cloud" data-panel aria-labelledby="problems-h">
-          <div className="v3-wrap">
-            <h2 id="problems-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-              {PROBLEMS.heading}
-            </h2>
-            <div className="v3-cpn-problems">
-              {PROBLEMS.items.map((p) => (
-                <div key={p.title} className="v3-cpn-problem" data-fade>
-                  <h3 className="v3-h3">{p.title}</h3>
-                  <Lines lines={p.lines} />
-                </div>
-              ))}
-            </div>
-            <div className="v3-cpn-closing">
-              {PROBLEMS.closing.map((l, i) => (
-                <p key={l} className={i === 1 ? "is-strong" : undefined}>
+        {/* 2. Meet TheEditCompanion */}
+        <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="meet-h">
+          <div className="v3-wrap v3-sp-narrow">
+            <div className="v3-sp-lines v3-sp-lines--lede">
+              {V2_MEET.lines.map((l) => (
+                <p key={l} data-fade>
                   {l}
                 </p>
               ))}
             </div>
-          </div>
-        </section>
-
-        {/* 3. What it is, with the Before and After */}
-        <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="what-h">
-          <div className="v3-wrap v3-cpn-what">
-            <div>
-              <h2 id="what-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-                {WHAT_IT_IS.heading}
-              </h2>
-              <Lines lines={WHAT_IT_IS.lines} className="v3-cpn-lines--lede" />
-            </div>
-            {/* Owner, 19 Oct 2026: the real Day 12 pair from his UGC challenge
-                (lib/ugc-challenge.ts), the same seconds on both sides. */}
-            <figure className="v3-cpn-ba">
-              <ReelBeforeAfter
-                before="ugc-d12-before"
-                after="ugc-d12-after"
-                label="Compare the raw take with the finished video"
-                beforeLabel="What I filmed"
-                afterLabel="What Claude made"
-              />
-              <figcaption>Day 12 of my UGC challenge: the raw take, and the finished reel.</figcaption>
-            </figure>
-          </div>
-        </section>
-
-        {/* 3b. What I filmed. What Claude made. Owner, 19 Oct 2026: "Put a lot", the way
-            @tenfoldmarc shows his. More real pairs from the UGC challenge, same seconds on
-            both sides (lib/ugc-challenge.ts). */}
-        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="pairs-h">
-          <div className="v3-wrap">
-            <h2 id="pairs-h" className="v3-h2 v3-display v3-cpn-h2 v3-cpn-h2--wide" data-split>
-              What I filmed. What Claude made.
+            <h2 id="meet-h" className="v3-h2 v3-display v3-sp-meet" data-split>
+              {V2_MEET.meet}
             </h2>
+            <p className="v3-sp-intro" data-fade>
+              {V2_MEET.intro}
+            </p>
+          </div>
+        </section>
+
+        {/* 3. Your Ideas Deserve Better Videos */}
+        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="ideas-h">
+          <div className="v3-wrap v3-sp-narrow">
+            <h2 id="ideas-h" className="v3-h2 v3-display" data-split>
+              {V2_IDEAS.heading}
+            </h2>
+            <div className="v3-sp-lines">
+              {V2_IDEAS.lines.map((l) => (
+                <p key={l}>{l}</p>
+              ))}
+            </div>
+            <ul className="v3-sp-pains">
+              {V2_IDEAS.pains.map((l) => (
+                <li key={l} data-fade>
+                  {l}
+                </li>
+              ))}
+            </ul>
+            <p className="v3-sp-turn" data-fade>
+              {V2_IDEAS.turn}
+            </p>
+            <p className="v3-sp-answer" data-fade>
+              {V2_IDEAS.answer}
+            </p>
+          </div>
+        </section>
+
+        {/* 5. See the Difference for Yourself: four more real pairs */}
+        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="diff-h">
+          <div className="v3-wrap">
+            <h2 id="diff-h" className="v3-h2 v3-display" data-split>
+              {V2_DIFFERENCE.heading}
+            </h2>
+            <p className="v3-sp-sub" data-fade>
+              {V2_DIFFERENCE.sub}
+            </p>
             <div className="v3-cpn-wall">
               {BEFORE_AFTER.filter((p) => p.day !== 12).map((p) => (
                 <figure key={p.day} className="v3-cpn-wall__item" data-fade>
@@ -238,201 +167,108 @@ export function CompanionV3({ view }: { view: PriceView }) {
                 </figure>
               ))}
             </div>
+            <div className="v3-sp-lines v3-sp-after-wall">
+              {V2_DIFFERENCE.lines.map((l) => (
+                <p key={l}>{l}</p>
+              ))}
+            </div>
+            <Order>{V2_DIFFERENCE.cta}</Order>
           </div>
         </section>
 
-        {/* 4. How it works: the Run Card, the stops, your script */}
-        <section className="v3-section v3-section--paper" id="how" data-nav="cloud" aria-labelledby="how-h">
+        {/* 4. Imagine What You Could Create */}
+        <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="imagine-h">
           <div className="v3-wrap">
-            <h2 id="how-h" className="v3-h2 v3-display v3-cpn-h2 v3-cpn-h2--wide" data-split>
-              {HOW.heading}
+            <h2 id="imagine-h" className="v3-h2 v3-display" data-split>
+              {V2_IMAGINE.heading}
             </h2>
-            <RunCard className="v3-cpn-run">
-              <div className="v3-cpn-run__bar" aria-hidden="true">
-                <i data-run-bar />
-              </div>
-              <ol className="v3-cpn-run__steps">
-                {HOW.steps.map(([name, text], i) => (
-                  <li key={name} data-run-step data-state="done">
-                    <span className="v3-cpn-run__n">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="v3-cpn-run__status" aria-hidden="true" />
-                    <h3 className="v3-h3">{name}</h3>
-                    <p>{text}</p>
-                  </li>
-                ))}
-              </ol>
-            </RunCard>
+            <div className="v3-sp-cards">
+              {V2_IMAGINE.items.map(([t, d]) => (
+                <div key={t} className="v3-sp-card" data-fade>
+                  <h3 className="v3-h3">{t}</h3>
+                  <p>{d}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-            <p className="v3-cpn-stops-intro" data-fade>
-              {HOW.stopsIntro}
+        {/* 7. Create More Than Just Talking-Head Videos */}
+        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="kinds-h">
+          <div className="v3-wrap">
+            <h2 id="kinds-h" className="v3-h2 v3-display" data-split>
+              {V2_KINDS.heading}
+            </h2>
+            <p className="v3-sp-sub" data-fade>
+              {V2_KINDS.sub}
             </p>
-            <div className="v3-cpn-stops">
-              {HOW.stops.map(([name, text]) => (
-                <div key={name} className="v3-cpn-stop" data-fade>
-                  <h3 className="v3-h3">{name}</h3>
-                  <p>{text}</p>
-                </div>
+            <ul className="v3-sp-kinds">
+              {V2_KINDS.items.map(([t, d]) => (
+                <li key={t} data-fade>
+                  <strong>{t}:</strong> {d}
+                </li>
               ))}
-            </div>
-
-            <div className="v3-cpn-script">
-              <h3 className="v3-display v3-cpn-script__h" data-split>
-                {HOW.scriptHeading}
-              </h3>
-              <ul className="v3-cpn-checks" data-checklist>
-                {HOW.scriptLines.map((l) => (
-                  <li key={l} data-check>
-                    {l}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            </ul>
+            <p className="v3-sp-answer" data-fade>
+              {V2_KINDS.close}
+            </p>
           </div>
         </section>
 
-        {/* 5. What is inside */}
-        <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="inside-h">
+        {/* 6. From Inspiration to Finished Video */}
+        <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="steps-h">
           <div className="v3-wrap">
-            <h2 id="inside-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-              {INSIDE.heading}
+            <h2 id="steps-h" className="v3-h2 v3-display" data-split>
+              {V2_STEPS.heading}
             </h2>
-            <Bullets items={INSIDE.items} className="v3-cpn-bullets--two" />
-
-            <div className="v3-cpn-cards">
-              {/* the installer and doctor cards are setup detail: off the page (owner, 19 Oct 2026) */}
-              {[INSIDE.rescue, INSIDE.reconstruct].map((b) => (
-                <div key={b.title} className="v3-cpn-card" data-fade>
-                  <h3 className="v3-h3">{b.title}</h3>
-                  <div className="v3-cpn-lines">
-                    {b.lines.map((l, i) =>
-                      b === INSIDE.rescue && i === 0 ? <RescueLine key={l} line={l} /> : <p key={l}>{l}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="v3-cpn-two">
-              <div>
-                <h3 className="v3-display v3-cpn-sub">{INSIDE.ratioHeading}</h3>
-                <Lines lines={INSIDE.ratioLines} />
-                <ul className="v3-cpn-ratios">
-                  {INSIDE.ratios.map((r) => (
-                    <li key={r}>{r}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h3 className="v3-display v3-cpn-sub">{INSIDE.aeHeading}</h3>
-                <Lines lines={INSIDE.aeLines} />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 6. Roles */}
-        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="roles-h">
-          <div className="v3-wrap">
-            <h2 id="roles-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-              {ROLES.heading}
-            </h2>
-            <div className="v3-cpn-split">
-              <div>
-                <h3 className="v3-h3">{ROLES.youTitle}</h3>
-                <Bullets items={ROLES.you} />
-              </div>
-              <div>
-                <h3 className="v3-h3">{ROLES.claudeTitle}</h3>
-                <Bullets items={ROLES.claude} />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 7. Fit */}
-        <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="fit-h">
-          <div className="v3-wrap">
-            <h2 id="fit-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-              {FIT.heading}
-            </h2>
-            <div className="v3-cpn-split">
-              <div>
-                <h3 className="v3-h3">{FIT.forTitle}</h3>
-                <Bullets items={FIT.for} />
-              </div>
-              <div>
-                <h3 className="v3-h3">{FIT.notTitle}</h3>
-                <Bullets items={FIT.not} className="v3-cpn-bullets--not" />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* 8. Honest limits (above the price block, as the SEO file requires) */}
-        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="limits-h">
-          <div className="v3-wrap v3-cpn-narrow">
-            <h2 id="limits-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-              {LIMITS.heading}
-            </h2>
-            <ol className="v3-cpn-limits">
-              {LIMITS.items.map((l) => (
-                <li key={l}>{l}</li>
+            <p className="v3-sp-sub" data-fade>
+              {V2_STEPS.sub}
+            </p>
+            <ol className="v3-sp-steps">
+              {V2_STEPS.steps.map(([t, d], i) => (
+                <li key={t} data-fade>
+                  <span className="v3-sp-steps__n" aria-hidden="true">
+                    {i + 1}
+                  </span>
+                  <h3 className="v3-h3">{t}</h3>
+                  <p>{d}</p>
+                </li>
               ))}
             </ol>
+            <p className="v3-sp-answer" data-fade>
+              {V2_STEPS.close}
+            </p>
           </div>
         </section>
 
-        {/* 9. Requirements: removed from the sales page by the owner, 19 Oct 2026
-            ("they are for the setup only"). REQUIREMENTS and INSTALL_STATUS stay in
-            components/companion/content.ts for the setup guide. */}
-
-        {/* 10. Price: a navy panel, the anchor stack */}
+        {/* 9. Price */}
         <section className="v3-section v3-section--navy v3-grain" data-nav="navy" data-panel aria-labelledby="price-h">
-          <div className="v3-wrap v3-cpn-pricegrid">
+          <div className="v3-wrap v3-sp-pricegrid">
             <div>
-              <h2 id="price-h" className="v3-display v3-cpn-price-h" data-split>
-                {PRICE.heading}
+              <h2 id="price-h" className="v3-h2 v3-display v3-sp-price-h" data-split>
+                {V2_PRICE.heading}
               </h2>
-              <CompanionPrice product={PRICE.product} />
+              <p className="v3-sp-price-intro">{V2_PRICE.intro}</p>
+              <p className="v3-sp-price-lede">{V2_PRICE.lede}</p>
             </div>
-            <div className="v3-cpn-covers">
-              <h3 className="v3-h3">{PRICE.coversTitle}</h3>
-              <ul className="v3-cpn-checks v3-cpn-checks--navy" data-checklist>
-                {PRICE.covers.map((c) => (
-                  <li key={c} data-check>
-                    {c}
-                  </li>
+            <PriceBlock>
+              <p className="v3-sp-price__inc-title">{V2_PRICE.includesTitle}</p>
+              <ul className="v3-sp-price__inc">
+                {V2_PRICE.includes.map((i) => (
+                  <li key={i}>{i}</li>
                 ))}
               </ul>
-              <p className="v3-cpn-covers__note">{PRICE.supportNote}</p>
-              <a href="#order" className="v3-btn v3-btn--lg">
-                <LiveText kind="buyLabel" /> <Arrow />
-              </a>
-              <p className="v3-cpn-covers__support">{SUPPORT_LINE}</p>
-            </div>
+              <p className="v3-sp-price__req">{V2_PRICE.requirement}</p>
+              <Order>
+                <BuyLabel />
+              </Order>
+            </PriceBlock>
           </div>
         </section>
 
-        {/* 11. How to buy + checkout */}
-        <section className="v3-section v3-section--cloud v3-grain" id="order" data-nav="cloud" aria-labelledby="buy-h">
-          <div className="v3-wrap v3-cpn-buy">
-            <div>
-              <h2 id="buy-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-                {HOW_TO_BUY.heading}
-              </h2>
-              <ol className="v3-cpn-buysteps">
-                {HOW_TO_BUY.steps.map(([a, b], i) => (
-                  <li key={a}>
-                    <span className="v3-cpn-buysteps__n" aria-hidden="true">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span>
-                      <strong>{a}</strong> {b}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </div>
+        {/* 10. Checkout (unchanged component, props and anchor) */}
+        <section className="v3-section v3-section--cloud v3-grain" id="order" data-nav="cloud" aria-label="Your order">
+          <div className="v3-wrap v3-sp-order">
             <div className="v3-checkout">
               <CheckoutForm
                 productName={PRICE.product}
@@ -447,36 +283,14 @@ export function CompanionV3({ view }: { view: PriceView }) {
           </div>
         </section>
 
-        {/* 12. After paying */}
-        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="after-h">
-          <div className="v3-wrap v3-cpn-after">
-            <div>
-              <h2 id="after-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
-                {AFTER.heading}
-              </h2>
-              <Bullets items={AFTER.items} />
-            </div>
-            <div className="v3-cpn-support">
-              <h3 className="v3-h3">{AFTER.contactsTitle}</h3>
-              <div className="v3-contacts">
-                <ContactList />
-              </div>
-              <Link href="/contact" className="v3-link">
-                Contact BigQuiv Digitals
-              </Link>
-              <p className="v3-cpn-support__line">{SUPPORT_LINE}</p>
-            </div>
-          </div>
-        </section>
-
-        {/* 13. FAQ. One array feeds this list AND the FAQPage JSON-LD. */}
-        <section className="v3-section v3-section--cloud v3-grain" data-nav="cloud" aria-labelledby="faq-h">
+        {/* 12. FAQ: requirements, limits and refunds, after the purchase (owner, 20 Oct 2026) */}
+        <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="faq-h">
           <div className="v3-wrap v3-cpn-narrow">
             <h2 id="faq-h" className="v3-h2 v3-display v3-cpn-h2" data-split>
               Questions people ask
             </h2>
             <div className="v3-faq" data-faq-list>
-              {FAQ.map((f) => (
+              {V2_FAQ.map((f) => (
                 <details key={f.question}>
                   <summary>
                     <span data-faq-q>{f.question}</span>
@@ -489,24 +303,25 @@ export function CompanionV3({ view }: { view: PriceView }) {
           </div>
         </section>
 
-        {/* 14. Optional expertise block. Hidden by default (owner decision). */}
-        {FLAGS.expertiseBlock ? (
-          <section className="v3-section v3-section--paper" data-nav="cloud" aria-labelledby="expertise-h">
-            <div className="v3-wrap v3-cpn-narrow">
-              <h2 id="expertise-h" className="v3-h2 v3-display v3-cpn-h2">
-                {EXPERTISE.heading}
-              </h2>
-              <Lines lines={EXPERTISE.lines} />
-              <p className="v3-cpn-signed">{EXPERTISE.signed}</p>
+        {/* 11. Close */}
+        <section className="v3-section v3-section--navy v3-grain v3-sp-close" data-nav="navy" aria-labelledby="close-h">
+          <div className="v3-wrap v3-sp-narrow">
+            <h2 id="close-h" className="v3-h2 v3-display" data-split>
+              {V2_CLOSE.heading}
+            </h2>
+            <div className="v3-sp-lines v3-sp-close__lines">
+              {V2_CLOSE.lines.map((l) => (
+                <p key={l} data-fade>
+                  {l}
+                </p>
+              ))}
             </div>
-          </section>
-        ) : null}
-
-        {/* 15. Proof slot. Hidden by default; nothing is written for it yet. */}
-
-        {/* 16. Credits: off the page (owner, 19 Oct 2026: "they are meant to be in the
-            document"). The full credits ship in the download; the not-affiliated line
-            is on /terms, and Terms, Privacy and Licence are in the site footer. */}
+            <p className="v3-sp-close__last" data-fade>
+              {V2_CLOSE.last}
+            </p>
+            <Order>{V2_CLOSE.cta}</Order>
+          </div>
+        </section>
       </div>
     </PriceProvider>
   );

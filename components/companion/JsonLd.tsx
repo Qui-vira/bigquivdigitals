@@ -35,10 +35,19 @@ export function productJsonLd(view: PriceView, description: string) {
   };
 }
 
-export function CompanionJsonLd({ view, description }: { view: PriceView; description: string }) {
+/** faqItems: the FAQ the page actually shows (FAQPage data must match what is visible). */
+export function CompanionJsonLd({
+  view,
+  description,
+  faqItems = FAQ,
+}: {
+  view: PriceView;
+  description: string;
+  faqItems?: readonly { question: string; answer: string }[];
+}) {
   return (
     <>
-      <Ld data={faqJsonLd(FAQ)} />
+      {faqItems.length ? <Ld data={faqJsonLd(faqItems)} /> : null}
       <Ld data={productJsonLd(view, description)} />
     </>
   );

@@ -51,6 +51,8 @@ export type LivePrice = {
   regularAmount: string;
   foundersUntilLine: string | null;
   usdRef: string | null;
+  /** the founders end instant, for pages that format their own date line */
+  endsAtIso: string | null;
 };
 
 export function useLivePrice(): LivePrice {
@@ -85,6 +87,7 @@ export function useLivePrice(): LivePrice {
     regularAmount: d.regularAmount,
     foundersUntilLine: tier === "founders" ? d.foundersUntilLine : null,
     usdRef: d.usdRef,
+    endsAtIso: d.endsAtIso,
   };
 }
 
