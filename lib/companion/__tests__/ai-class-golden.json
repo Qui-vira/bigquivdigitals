@@ -1,0 +1,256 @@
+{
+  "webhook: valid AI class payment": {
+    "status": 200,
+    "body": {
+      "received": true
+    },
+    "calls": [
+      {
+        "sql": "INSERT INTO \"course_purchases\" (\"email\",\"first_name\",\"course_slug\",\"amount\",\"currency\",\"payment_method\",\"transaction_ref\",\"status\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (\"email\",\"course_slug\") DO UPDATE SET \"first_name\"=EXCLUDED.\"first_name\",\"amount\"=EXCLUDED.\"amount\",\"currency\"=EXCLUDED.\"currency\",\"payment_method\"=EXCLUDED.\"payment_method\",\"transaction_ref\"=EXCLUDED.\"transaction_ref\",\"status\"=EXCLUDED.\"status\"",
+        "params": [
+          "fixture.buyer@example.com",
+          "Ada",
+          "ai-content-mastery",
+          "27000",
+          "NGN",
+          "flutterwave",
+          "QV-1700000000001",
+          "confirmed"
+        ]
+      },
+      {
+        "sql": "INSERT INTO \"prospects\" (\"email\",\"first_name\") VALUES ($1,$2) ON CONFLICT (\"email\") DO UPDATE SET \"first_name\"=EXCLUDED.\"first_name\"",
+        "params": [
+          "fixture.buyer@example.com",
+          "Ada"
+        ]
+      },
+      {
+        "sql": "UPDATE \"course_purchases\" SET \"email_sent\"=$1 WHERE \"transaction_ref\" = $2",
+        "params": [
+          "true",
+          "QV-1700000000001"
+        ]
+      }
+    ]
+  },
+  "webhook: AI class underpaid is rejected": {
+    "status": 200,
+    "body": {
+      "received": true,
+      "recorded": false
+    },
+    "calls": []
+  },
+  "webhook: bad signature": {
+    "status": 401,
+    "body": {
+      "error": "Invalid signature"
+    },
+    "calls": []
+  },
+  "webhook: failed charge ignored": {
+    "status": 200,
+    "body": {
+      "received": true
+    },
+    "calls": []
+  },
+  "webhook: other event type": {
+    "status": 200,
+    "body": {
+      "received": true
+    },
+    "calls": []
+  },
+  "webhook: payload with no data": {
+    "status": 200,
+    "body": {
+      "received": true
+    },
+    "calls": []
+  },
+  "webhook: tx_ref that is not a string": {
+    "status": 200,
+    "body": {
+      "received": true
+    },
+    "calls": [
+      {
+        "sql": "INSERT INTO \"course_purchases\" (\"email\",\"first_name\",\"course_slug\",\"amount\",\"currency\",\"payment_method\",\"transaction_ref\",\"status\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (\"email\",\"course_slug\") DO UPDATE SET \"first_name\"=EXCLUDED.\"first_name\",\"amount\"=EXCLUDED.\"amount\",\"currency\"=EXCLUDED.\"currency\",\"payment_method\"=EXCLUDED.\"payment_method\",\"transaction_ref\"=EXCLUDED.\"transaction_ref\",\"status\"=EXCLUDED.\"status\"",
+        "params": [
+          "fixture.buyer@example.com",
+          "Ada",
+          "ai-content-mastery",
+          "27000",
+          "NGN",
+          "flutterwave",
+          "12345",
+          "confirmed"
+        ]
+      },
+      {
+        "sql": "INSERT INTO \"prospects\" (\"email\",\"first_name\") VALUES ($1,$2) ON CONFLICT (\"email\") DO UPDATE SET \"first_name\"=EXCLUDED.\"first_name\"",
+        "params": [
+          "fixture.buyer@example.com",
+          "Ada"
+        ]
+      },
+      {
+        "sql": "UPDATE \"course_purchases\" SET \"email_sent\"=$1 WHERE \"transaction_ref\" = $2",
+        "params": [
+          "true",
+          "12345"
+        ]
+      }
+    ]
+  },
+  "verify: valid AI class payment": {
+    "status": 200,
+    "body": {
+      "success": true
+    },
+    "calls": [
+      {
+        "host": "api.flutterwave.com",
+        "url": "https://api.flutterwave.com/v3/transactions/N/verify"
+      },
+      {
+        "sql": "INSERT INTO \"course_purchases\" (\"email\",\"first_name\",\"course_slug\",\"amount\",\"currency\",\"payment_method\",\"transaction_ref\",\"status\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (\"email\",\"course_slug\") DO UPDATE SET \"first_name\"=EXCLUDED.\"first_name\",\"amount\"=EXCLUDED.\"amount\",\"currency\"=EXCLUDED.\"currency\",\"payment_method\"=EXCLUDED.\"payment_method\",\"transaction_ref\"=EXCLUDED.\"transaction_ref\",\"status\"=EXCLUDED.\"status\"",
+        "params": [
+          "fixture.buyer@example.com",
+          "Ada",
+          "ai-content-mastery",
+          "27000",
+          "NGN",
+          "flutterwave",
+          "QV-1700000000010",
+          "confirmed"
+        ]
+      },
+      {
+        "sql": "INSERT INTO \"prospects\" (\"email\",\"first_name\") VALUES ($1,$2) ON CONFLICT (\"email\") DO UPDATE SET \"first_name\"=EXCLUDED.\"first_name\"",
+        "params": [
+          "fixture.buyer@example.com",
+          "Ada"
+        ]
+      },
+      {
+        "sql": "UPDATE \"course_purchases\" SET \"email_sent\"=$1 WHERE \"transaction_ref\" = $2",
+        "params": [
+          "true",
+          "QV-1700000000010"
+        ]
+      }
+    ]
+  },
+  "verify: underpaid": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "error": "Payment amount does not match the course price"
+    },
+    "calls": [
+      {
+        "host": "api.flutterwave.com",
+        "url": "https://api.flutterwave.com/v3/transactions/N/verify"
+      }
+    ]
+  },
+  "verify: payment not successful": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "error": "Payment not verified"
+    },
+    "calls": [
+      {
+        "host": "api.flutterwave.com",
+        "url": "https://api.flutterwave.com/v3/transactions/N/verify"
+      }
+    ]
+  },
+  "verify: flutterwave api error": {
+    "status": 502,
+    "body": {
+      "success": false,
+      "error": "Flutterwave API error"
+    },
+    "calls": [
+      {
+        "host": "api.flutterwave.com",
+        "url": "https://api.flutterwave.com/v3/transactions/N/verify"
+      }
+    ]
+  },
+  "verify: forbidden origin": {
+    "status": 403,
+    "body": {
+      "success": false,
+      "error": "Forbidden"
+    },
+    "calls": []
+  },
+  "verify: missing transaction id": {
+    "status": 400,
+    "body": {
+      "success": false,
+      "error": "Missing transaction_id"
+    },
+    "calls": []
+  },
+  "blockradar: confirmed deposit with email": {
+    "status": 200,
+    "body": {
+      "received": true
+    },
+    "calls": [
+      {
+        "sql": "INSERT INTO \"course_purchases\" (\"email\",\"course_slug\",\"amount\",\"currency\",\"payment_method\",\"transaction_ref\",\"status\") VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT (\"email\",\"course_slug\") DO UPDATE SET \"amount\"=EXCLUDED.\"amount\",\"currency\"=EXCLUDED.\"currency\",\"payment_method\"=EXCLUDED.\"payment_method\",\"transaction_ref\"=EXCLUDED.\"transaction_ref\",\"status\"=EXCLUDED.\"status\"",
+        "params": [
+          "fixture.buyer@example.com",
+          "ai-content-mastery",
+          "10.2",
+          "USDC",
+          "blockradar",
+          "0xfixturehash",
+          "confirmed"
+        ]
+      },
+      {
+        "sql": "INSERT INTO \"prospects\" (\"email\") VALUES ($1) ON CONFLICT (\"email\") DO NOTHING",
+        "params": [
+          "fixture.buyer@example.com"
+        ]
+      },
+      {
+        "sql": "UPDATE \"course_purchases\" SET \"email_sent\"=$1 WHERE \"transaction_ref\" = $2",
+        "params": [
+          "true",
+          "0xfixturehash"
+        ]
+      }
+    ]
+  },
+  "blockradar: bad signature": {
+    "status": 401,
+    "body": {
+      "error": "Invalid signature"
+    },
+    "calls": []
+  },
+  "blockradar: deposit with no email": {
+    "status": 200,
+    "body": {
+      "received": true
+    },
+    "calls": []
+  },
+  "blockradar: unrelated event": {
+    "status": 200,
+    "body": {
+      "received": true
+    },
+    "calls": []
+  }
+}

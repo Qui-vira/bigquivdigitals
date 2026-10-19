@@ -56,6 +56,12 @@ const STATIC_ROUTES: Array<{ path: string; priority: number; changeFrequency: Me
   { path: "/aimastery-waitlist", priority: 0.8, changeFrequency: "weekly" },
   // /ugc: LISTED, but kept out of the nav. Linked from bios and pitches (owner, 2026-10-04).
   { path: "/ugc", priority: 0.7, changeFrequency: "monthly" },
+  // /theeditcompanion: LISTED and indexable (owner, 15 Oct 2026). The thanks page is private
+  // and not listed. Legal pages are drafts, listed at low priority.
+  { path: "/theeditcompanion", priority: 0.9, changeFrequency: "weekly" },
+  { path: "/terms", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/privacy", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/licence", priority: 0.3, changeFrequency: "yearly" },
 ];
 
 async function articleSlugs(): Promise<Array<{ slug: string; updated: Date }>> {

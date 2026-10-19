@@ -13,6 +13,7 @@ const links = [
   { href: "/about", label: "About" },
   { href: "/portfolio", label: "Work" },
   { href: "/ugc", label: "UGC" },
+  { href: "/theeditcompanion", label: "Companion" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -72,7 +73,7 @@ export function Navbar() {
     <header className="paper-scope fixed inset-x-0 top-0 z-50 border-b-[3px] border-ink bg-paper text-ink">
       <nav
         aria-label="Main"
-        className="mx-auto flex h-16 max-w-[1320px] items-center justify-between gap-6 px-4 sm:px-6 md:h-[72px] lg:px-10"
+        className="mx-auto flex h-16 max-w-[1320px] items-center justify-between gap-6 px-4 sm:px-6 lg:h-[72px] lg:px-10"
       >
         <Link
           href="/"
@@ -84,7 +85,7 @@ export function Navbar() {
 
         {/* Desktop links. Typewriter caps; an ink bar under the current page,
             a gold bar that draws in on hover. */}
-        <ul className="hidden items-center gap-1 md:flex lg:gap-2">
+        <ul className="hidden items-center gap-1 lg:flex xl:gap-2">
           {links.map((link) => {
             const active = isActive(pathname, link.href);
             return (
@@ -92,12 +93,12 @@ export function Navbar() {
                 <Link
                   href={link.href}
                   aria-current={active ? "page" : undefined}
-                  className="group/nl relative inline-flex min-h-[44px] items-center px-2.5 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink lg:px-3"
+                  className="group/nl relative inline-flex min-h-[44px] items-center px-2.5 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink xl:px-3"
                 >
                   {link.label}
                   <span
                     aria-hidden="true"
-                    className={`absolute inset-x-2.5 bottom-2 h-[3px] origin-left transition-transform duration-200 ease-out lg:inset-x-3 ${
+                    className={`absolute inset-x-2.5 bottom-2 h-[3px] origin-left transition-transform duration-200 ease-out xl:inset-x-3 ${
                       active ? "scale-x-100 bg-ink" : "scale-x-0 bg-gold group-hover/nl:scale-x-100"
                     }`}
                   />
@@ -107,7 +108,7 @@ export function Navbar() {
           })}
         </ul>
 
-        <div className="hidden md:block">
+        <div className="hidden lg:block">
           <BrutalButton href={CALENDLY} size="sm" arrow={false}>
             Book a Call
           </BrutalButton>
@@ -121,7 +122,7 @@ export function Navbar() {
           aria-label={isOpen ? "Close menu" : "Open menu"}
           aria-expanded={isOpen}
           aria-controls="mobile-menu"
-          className="relative inline-flex h-11 w-11 cursor-pointer items-center justify-center border-[3px] border-ink bg-paper shadow-brutal-sm transition-[translate,box-shadow] duration-150 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none md:hidden"
+          className="relative inline-flex h-11 w-11 cursor-pointer items-center justify-center border-[3px] border-ink bg-paper shadow-brutal-sm transition-[translate,box-shadow] duration-150 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none lg:hidden"
         >
           <span
             aria-hidden="true"
@@ -142,7 +143,7 @@ export function Navbar() {
       {isOpen && (
         <div
           id="mobile-menu"
-          className="mobile-sheet fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col overflow-y-auto bg-grid-paper md:hidden"
+          className="mobile-sheet fixed inset-x-0 bottom-0 top-16 z-40 flex flex-col overflow-y-auto bg-grid-paper lg:hidden"
         >
           <ul className="px-4 pt-4 sm:px-6">
             {links.map((link, i) => {

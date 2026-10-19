@@ -20,6 +20,7 @@ import {
   Target,
   Receipt,
   GitBranch,
+  Package,
   Menu,
   X,
 } from "lucide-react";
@@ -35,6 +36,7 @@ const navItems = [
   { href: "/admin/graph/leads", label: "Graph Leads", icon: Target },
   { href: "/admin/graph/network", label: "Network Signals", icon: GitBranch },
   { href: "/admin/graph/budget", label: "Graph Budget", icon: Receipt },
+  { href: "/admin/companion-orders", label: "Companion orders", icon: Package },
   { href: "/admin/settings", label: "Settings", icon: Settings },
   { href: "/admin/homepage", label: "Homepage", icon: Home },
   { href: "/admin/services", label: "Services", icon: Briefcase },

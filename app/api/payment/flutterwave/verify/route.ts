@@ -61,6 +61,12 @@ export async function POST(req: NextRequest) {
 
     const data = await res.json();
 
+    // TheEditCompanion guard: tx_ref "TEC-..." is another product. Never record it as an
+    // AI class seat or send a course invite. Companion payments settle in /api/companion/*.
+    if (String(data?.data?.tx_ref ?? "").startsWith("TEC-")) {
+      return NextResponse.json({ success: false, error: "Payment not verified" }, { status: 400 });
+    }
+
     if (data.status === "success" && data.data?.status === "successful") {
       const email = (data.data.customer?.email || "").toLowerCase().trim();
       const customerName = data.data.customer?.name || "";

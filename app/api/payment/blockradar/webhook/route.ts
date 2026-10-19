@@ -31,6 +31,12 @@ export async function POST(req: NextRequest) {
       const token = (txData.token as string) || "USDC";
       const txHash = (txData.hash as string) || "";
       const metadata = (txData.metadata || {}) as Record<string, unknown>;
+
+      // TheEditCompanion guard: an order_ref "TEC-..." is another product. Never record it as
+      // an AI class seat or send a course invite.
+      if (String(metadata.order_ref ?? "").startsWith("TEC-")) {
+        return NextResponse.json({ received: true, ignored: "companion" });
+      }
       const email = ((metadata.email as string) || "").toLowerCase().trim();
 
       console.log("[Blockradar] Payment confirmed:", {

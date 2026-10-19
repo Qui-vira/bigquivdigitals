@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getNeonAdmin } from "@/lib/neon";
 import { sendPurchaseConfirmation } from "@/lib/send-purchase-email";
 import { assertPaidEnough } from "@/lib/course-prices";
+import { dispatchCompanionFlutterwave } from "@/lib/companion/webhook-dispatch";
 
 const COURSE_SLUG = "ai-content-mastery";
 
@@ -21,6 +22,12 @@ export async function POST(req: NextRequest) {
     const event = await req.json() as Record<string, unknown>;
     const eventType = event.event as string;
     const data = (event.data || {}) as Record<string, unknown>;
+
+    // TheEditCompanion guard: tx_ref "TEC-..." is another product. Hand it to the
+    // companion handler and stop, so it can never become an AI class seat.
+    if (typeof data.tx_ref === "string" && data.tx_ref.startsWith("TEC-")) {
+      return dispatchCompanionFlutterwave(signature, event);
+    }
 
     if (eventType === "charge.completed" && data.status === "successful") {
       const customer = (data.customer || {}) as Record<string, unknown>;
