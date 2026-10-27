@@ -28,7 +28,7 @@ export function PublicNavbar() {
     <>
       <a
         href="#main"
-        className="fixed left-3 top-3 z-[60] -translate-y-[200%] rounded-[6px] bg-gold px-4 py-2.5 font-display text-[14px] font-bold text-ink transition-transform duration-150 focus:translate-y-0"
+        className="fixed left-3 top-3 z-[60] -translate-y-[200%] rounded-[6px] bg-[var(--v3-gold)] px-4 py-2.5 font-display text-[14px] font-bold text-[var(--v3-ink)] transition-transform duration-150 focus:translate-y-0"
       >
         Skip to content
       </a>

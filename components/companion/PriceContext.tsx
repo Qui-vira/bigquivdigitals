@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useSyncExternalStore } from "react";
-import { BrutalFrame } from "@/components/ui-paper/BrutalFrame";
 import type { ShownTier } from "./checkout-client";
 
 /**
@@ -91,6 +90,11 @@ export function useLivePrice(): LivePrice {
   };
 }
 
+/**
+ * The two pieces below are used only by components/companion/CompanionPage.tsx, the
+ * pre-v2 page that the tests in tests/companion render. The live page uses CompanionLive.
+ */
+
 /** Text that follows the live tier. */
 export function LiveText({ kind }: { kind: "buyLabel" | "heroLine" }) {
   const p = useLivePrice();
@@ -103,26 +107,22 @@ export function LiveText({ kind }: { kind: "buyLabel" | "heroLine" }) {
   );
 }
 
-/** The gold price panel in the price section. */
+/** The price panel in the price section. */
 export function LivePriceBlock({ product }: { product: string }) {
   const p = useLivePrice();
   return (
-    <BrutalFrame tone="gold" shadow="lg" className="mt-8 p-6 sm:p-8">
-      <p className="font-display text-[20px] font-bold text-ink">{product}</p>
+    <div>
+      <p>{product}</p>
       {p.tier === "founders" ? (
         <>
-          <p className="mt-3 font-didone text-[clamp(2.4rem,7vw,3.6rem)] font-semibold leading-none text-ink">
-            {p.foundersAmount} founders price
-          </p>
-          <p className="mt-2 text-[18px] font-semibold text-ink">Then {p.regularAmount}</p>
+          <p>{p.foundersAmount} founders price</p>
+          <p>Then {p.regularAmount}</p>
         </>
       ) : (
-        <p className="mt-3 font-didone text-[clamp(2.4rem,7vw,3.6rem)] font-semibold leading-none text-ink">
-          {p.regularAmount}
-        </p>
+        <p>{p.regularAmount}</p>
       )}
-      {p.foundersUntilLine ? <p className="mt-2 text-[16px] font-semibold text-ink">{p.foundersUntilLine}</p> : null}
-      {p.usdRef ? <p className="mt-3 text-[15px] text-ink-soft">{p.usdRef}</p> : null}
-    </BrutalFrame>
+      {p.foundersUntilLine ? <p>{p.foundersUntilLine}</p> : null}
+      {p.usdRef ? <p>{p.usdRef}</p> : null}
+    </div>
   );
 }

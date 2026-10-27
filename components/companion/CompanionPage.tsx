@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { BrutalButton, BrutalFrame, PaperSection, SectionHead } from "@/components/ui-paper";
 import { CONSENT_FINAL_TEXT, CONSENT_IMMEDIATE_TEXT } from "@/lib/companion/consent";
 import { CheckoutForm } from "./CheckoutForm";
 import { LiveText, LivePriceBlock, PriceProvider, type PriceData } from "./PriceContext";
@@ -29,13 +28,21 @@ import {
 import { FAQ } from "./faq";
 import { metaDescription, type PriceView } from "./product";
 
+/*
+ * NOT SERVED. /theeditcompanion renders components/v3/pages/CompanionV3.tsx (owner's v2 copy,
+ * 20 Oct 2026). This is the earlier page, kept only because tests/companion/page.test.tsx and
+ * tests/companion-e2e/07-consent-text.test.tsx assert its copy, FAQ and consent wiring. It had
+ * the paper styling; that was removed on 27 Oct 2026 with the paper system, so it is bare
+ * markup now. Do not route to it and do not style it; port the tests to CompanionV3 instead.
+ */
+
 /* Small, server-only building blocks. No client JS on this page except the checkout form. */
 
-function Lines({ lines, className = "" }: { lines: readonly string[]; className?: string }) {
+function Lines({ lines }: { lines: readonly string[] }) {
   return (
-    <div className={`space-y-3 ${className}`}>
+    <div>
       {lines.map((l) => (
-        <p key={l} className="max-w-[68ch] text-[17px] leading-relaxed text-ink-soft">
+        <p key={l}>
           {l}
         </p>
       ))}
@@ -43,13 +50,12 @@ function Lines({ lines, className = "" }: { lines: readonly string[]; className?
   );
 }
 
-function Bullets({ items, className = "" }: { items: readonly string[]; className?: string }) {
+function Bullets({ items }: { items: readonly string[] }) {
   return (
-    <ul className={`space-y-2.5 ${className}`}>
+    <ul>
       {items.map((i) => (
-        <li key={i} className="flex gap-3 text-[17px] leading-relaxed text-ink-soft">
-          <span aria-hidden="true" className="mt-[0.55em] h-2.5 w-2.5 shrink-0 border-2 border-ink bg-gold" />
-          <span className="min-w-0 max-w-[68ch]">{i}</span>
+        <li key={i}>
+          <span>{i}</span>
         </li>
       ))}
     </ul>
@@ -57,7 +63,7 @@ function Bullets({ items, className = "" }: { items: readonly string[]; classNam
 }
 
 function H3({ children }: { children: React.ReactNode }) {
-  return <h3 className="font-display text-[22px] font-bold leading-tight text-ink">{children}</h3>;
+  return <h3>{children}</h3>;
 }
 
 export type CompanionPageProps = { view: PriceView };
@@ -82,214 +88,213 @@ export function CompanionPage({ view }: CompanionPageProps) {
       <CompanionJsonLd view={view} description={metaDescription(view)} />
 
       {/* 1. Hero */}
-      <PaperSection ground="grid" pad="lg" aria-labelledby="hero-h">
-        <div className="max-w-[900px]">
-          <p className="mb-4 inline-block border-[3px] border-ink bg-gold px-2 py-0.5 font-typewriter text-[12px] font-bold uppercase tracking-[0.1em] text-ink">
+      <section aria-labelledby="hero-h">
+        <div>
+          <p>
             TheEditCompanion by BigQuiv Digitals
           </p>
           <h1
             id="hero-h"
-            className="font-didone text-[clamp(2.4rem,6vw,4.5rem)] font-semibold leading-[1] tracking-[-0.005em] text-ink text-balance"
           >
             {HERO.h1}
           </h1>
-          <div className="mt-6 space-y-2">
-            <p className="max-w-[60ch] text-[19px] leading-relaxed text-ink">{HERO.promise1}</p>
-            <p className="max-w-[60ch] text-[19px] leading-relaxed text-ink">{HERO.promise2}</p>
+          <div>
+            <p>{HERO.promise1}</p>
+            <p>{HERO.promise2}</p>
           </div>
-          <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
-            <BrutalButton href="#order" size="lg" className="whitespace-normal! text-center">
+          <div>
+            <a href="#order">
               <LiveText kind="buyLabel" />
-            </BrutalButton>
-            <a href="#how" className="paper-link text-[16px] font-semibold text-ink">
+            </a>
+            <a href="#how">
               {HERO.seeHow}
             </a>
           </div>
-          <p className="mt-4 text-[15px] text-ink-soft">
+          <p>
             <LiveText kind="heroLine" />
           </p>
-          <p className="mt-1 text-[15px] text-ink-soft">{SUPPORT_LINE}</p>
+          <p>{SUPPORT_LINE}</p>
         </div>
-      </PaperSection>
+      </section>
 
       {/* 2. Problems */}
-      <PaperSection ground="paper" aria-labelledby="problems-h">
-        <SectionHead id="problems-h" title={PROBLEMS.heading} size="md" />
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+      <section aria-labelledby="problems-h">
+        <h2 id="problems-h">{PROBLEMS.heading}</h2>
+        <div>
           {PROBLEMS.items.map((p) => (
-            <BrutalFrame key={p.title} shadow="sm" className="p-6">
-              <h3 className="font-display text-[19px] font-bold leading-snug text-ink">{p.title}</h3>
-              <Lines lines={p.lines} className="mt-3" />
-            </BrutalFrame>
+            <div key={p.title}>
+              <h3>{p.title}</h3>
+              <Lines lines={p.lines} />
+            </div>
           ))}
         </div>
-        <div className="mt-8 space-y-1">
+        <div>
           {PROBLEMS.closing.map((l) => (
-            <p key={l} className="font-display text-[20px] font-bold text-ink">
+            <p key={l}>
               {l}
             </p>
           ))}
         </div>
-      </PaperSection>
+      </section>
 
       {/* 3. What it is */}
-      <PaperSection ground="alt" width="mid" aria-labelledby="what-h">
-        <SectionHead id="what-h" title={WHAT_IT_IS.heading} size="md" />
-        <Lines lines={WHAT_IT_IS.lines} className="mt-8" />
-      </PaperSection>
+      <section aria-labelledby="what-h">
+        <h2 id="what-h">{WHAT_IT_IS.heading}</h2>
+        <Lines lines={WHAT_IT_IS.lines} />
+      </section>
 
       {/* 4. How it works */}
-      <PaperSection ground="paper" id="how" aria-labelledby="how-h">
-        <SectionHead id="how-h" title={HOW.heading} size="md" />
-        <ol className="mt-10 grid gap-4 md:grid-cols-5">
+      <section id="how" aria-labelledby="how-h">
+        <h2 id="how-h">{HOW.heading}</h2>
+        <ol>
           {HOW.steps.map(([name, text], i) => (
-            <li key={name} className="border-[3px] border-ink bg-paper p-4 shadow-brutal-sm">
-              <span className="font-typewriter text-[13px] font-bold text-ink-soft">{String(i + 1).padStart(2, "0")}</span>
-              <p className="mt-1 font-display text-[19px] font-bold text-ink">{name}</p>
-              <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">{text}</p>
+            <li key={name}>
+              <span>{String(i + 1).padStart(2, "0")}</span>
+              <p>{name}</p>
+              <p>{text}</p>
             </li>
           ))}
         </ol>
 
-        <div className="mt-14">
+        <div>
           <Lines lines={[HOW.stopsIntro]} />
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
+          <div>
             {HOW.stops.map(([name, text]) => (
-              <BrutalFrame key={name} tone="tint" shadow="sm" className="p-5">
+              <div key={name}>
                 <H3>{name}</H3>
-                <p className="mt-2 text-[16px] leading-relaxed text-ink">{text}</p>
-              </BrutalFrame>
+                <p>{text}</p>
+              </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-14">
-          <h2 className="font-didone text-[clamp(1.9rem,4vw,2.75rem)] font-semibold leading-tight text-ink">
+        <div>
+          <h2>
             {HOW.scriptHeading}
           </h2>
-          <Bullets items={HOW.scriptLines} className="mt-6" />
+          <Bullets items={HOW.scriptLines} />
         </div>
-      </PaperSection>
+      </section>
 
       {/* 5. What is inside */}
-      <PaperSection ground="grid" aria-labelledby="inside-h">
-        <SectionHead id="inside-h" title={INSIDE.heading} size="md" />
-        <Bullets items={INSIDE.items} className="mt-8" />
+      <section aria-labelledby="inside-h">
+        <h2 id="inside-h">{INSIDE.heading}</h2>
+        <Bullets items={INSIDE.items} />
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
+        <div>
           {[INSIDE.installer, INSIDE.doctor, INSIDE.rescue, INSIDE.reconstruct].map((b) => (
-            <BrutalFrame key={b.title} shadow="sm" className="p-6">
+            <div key={b.title}>
               <H3>{b.title}</H3>
-              <Lines lines={b.lines} className="mt-3" />
-            </BrutalFrame>
+              <Lines lines={b.lines} />
+            </div>
           ))}
         </div>
 
-        <div className="mt-12 grid gap-8 md:grid-cols-2">
+        <div>
           <div>
-            <h2 className="font-didone text-[clamp(1.9rem,4vw,2.75rem)] font-semibold leading-tight text-ink">
+            <h2>
               {INSIDE.ratioHeading}
             </h2>
-            <Lines lines={INSIDE.ratioLines} className="mt-4" />
-            <Bullets items={INSIDE.ratios} className="mt-4" />
+            <Lines lines={INSIDE.ratioLines} />
+            <Bullets items={INSIDE.ratios} />
           </div>
           <div>
-            <h2 className="font-didone text-[clamp(1.9rem,4vw,2.75rem)] font-semibold leading-tight text-ink">
+            <h2>
               {INSIDE.aeHeading}
             </h2>
-            <Lines lines={INSIDE.aeLines} className="mt-4" />
+            <Lines lines={INSIDE.aeLines} />
           </div>
         </div>
-        <Lines lines={[INSIDE.extras]} className="mt-10" />
-      </PaperSection>
+        <Lines lines={[INSIDE.extras]} />
+      </section>
 
       {/* 6. Roles */}
-      <PaperSection ground="paper" aria-labelledby="roles-h">
-        <SectionHead id="roles-h" title={ROLES.heading} size="md" />
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          <BrutalFrame shadow="sm" className="p-6">
+      <section aria-labelledby="roles-h">
+        <h2 id="roles-h">{ROLES.heading}</h2>
+        <div>
+          <div>
             <H3>{ROLES.youTitle}</H3>
-            <Bullets items={ROLES.you} className="mt-4" />
-          </BrutalFrame>
-          <BrutalFrame shadow="sm" className="p-6">
+            <Bullets items={ROLES.you} />
+          </div>
+          <div>
             <H3>{ROLES.claudeTitle}</H3>
-            <Bullets items={ROLES.claude} className="mt-4" />
-          </BrutalFrame>
+            <Bullets items={ROLES.claude} />
+          </div>
         </div>
-      </PaperSection>
+      </section>
 
       {/* 7. Fit */}
-      <PaperSection ground="alt" aria-labelledby="fit-h">
-        <SectionHead id="fit-h" title={FIT.heading} size="md" />
-        <div className="mt-10 grid gap-6 md:grid-cols-2">
-          <BrutalFrame shadow="sm" className="p-6">
+      <section aria-labelledby="fit-h">
+        <h2 id="fit-h">{FIT.heading}</h2>
+        <div>
+          <div>
             <H3>{FIT.forTitle}</H3>
-            <Bullets items={FIT.for} className="mt-4" />
-          </BrutalFrame>
-          <BrutalFrame shadow="sm" className="p-6">
+            <Bullets items={FIT.for} />
+          </div>
+          <div>
             <H3>{FIT.notTitle}</H3>
-            <Bullets items={FIT.not} className="mt-4" />
-          </BrutalFrame>
+            <Bullets items={FIT.not} />
+          </div>
         </div>
-      </PaperSection>
+      </section>
 
       {/* 8. Honest limits (above the price block, as the SEO file requires) */}
-      <PaperSection ground="paper" width="mid" aria-labelledby="limits-h">
-        <SectionHead id="limits-h" title={LIMITS.heading} size="md" />
-        <Bullets items={LIMITS.items} className="mt-8" />
-      </PaperSection>
+      <section aria-labelledby="limits-h">
+        <h2 id="limits-h">{LIMITS.heading}</h2>
+        <Bullets items={LIMITS.items} />
+      </section>
 
       {/* 9. Requirements */}
-      <PaperSection ground="grid" aria-labelledby="req-h">
-        <SectionHead id="req-h" title={REQUIREMENTS.heading} size="md" />
-        <BrutalFrame tone="tint" shadow="sm" className="mt-8 p-6">
+      <section aria-labelledby="req-h">
+        <h2 id="req-h">{REQUIREMENTS.heading}</h2>
+        <div>
           <H3>{REQUIREMENTS.statusTitle}</H3>
-          <p className="mt-2 text-[17px] font-semibold leading-relaxed text-ink">{INSTALL_STATUS}</p>
-          <p className="mt-3 max-w-[68ch] text-[16px] leading-relaxed text-ink">{REQUIREMENTS.help}</p>
-        </BrutalFrame>
-        <div className="mt-10 grid gap-8 md:grid-cols-2">
+          <p>{INSTALL_STATUS}</p>
+          <p>{REQUIREMENTS.help}</p>
+        </div>
+        <div>
           <div>
             <H3>{REQUIREMENTS.onYourComputer}</H3>
-            <Bullets items={REQUIREMENTS.list} className="mt-4" />
+            <Bullets items={REQUIREMENTS.list} />
           </div>
           <div>
             <H3>{REQUIREMENTS.optionalTitle}</H3>
-            <Bullets items={REQUIREMENTS.optional} className="mt-4" />
+            <Bullets items={REQUIREMENTS.optional} />
           </div>
         </div>
-        <Lines lines={[REQUIREMENTS.notIncluded]} className="mt-8" />
-      </PaperSection>
+        <Lines lines={[REQUIREMENTS.notIncluded]} />
+      </section>
 
       {/* 10. Price */}
-      <PaperSection ground="paper" width="mid" aria-labelledby="price-h">
-        <SectionHead id="price-h" title={PRICE.heading} size="md" />
+      <section aria-labelledby="price-h">
+        <h2 id="price-h">{PRICE.heading}</h2>
         <LivePriceBlock product={PRICE.product} />
 
-        <div className="mt-8">
+        <div>
           <H3>{PRICE.coversTitle}</H3>
-          <Bullets items={PRICE.covers} className="mt-4" />
-          <Lines lines={[PRICE.supportNote]} className="mt-4" />
+          <Bullets items={PRICE.covers} />
+          <Lines lines={[PRICE.supportNote]} />
         </div>
-        <div className="mt-8">
-          <BrutalButton href="#order" size="lg" className="whitespace-normal! text-center">
+        <div>
+          <a href="#order">
             <LiveText kind="buyLabel" />
-          </BrutalButton>
-          <p className="mt-4 text-[17px] font-semibold text-ink">{SUPPORT_LINE}</p>
+          </a>
+          <p>{SUPPORT_LINE}</p>
         </div>
-      </PaperSection>
+      </section>
 
       {/* 11. How to buy + checkout */}
-      <PaperSection ground="alt" width="mid" id="order" aria-labelledby="buy-h">
-        <SectionHead id="buy-h" title={HOW_TO_BUY.heading} size="md" />
-        <ol className="mt-8 space-y-3">
+      <section id="order" aria-labelledby="buy-h">
+        <h2 id="buy-h">{HOW_TO_BUY.heading}</h2>
+        <ol>
           {HOW_TO_BUY.steps.map(([a, b]) => (
-            <li key={a} className="text-[17px] leading-relaxed text-ink-soft">
-              <span className="font-bold text-ink">{a}</span> {b}
+            <li key={a}>
+              <span>{a}</span> {b}
             </li>
           ))}
         </ol>
 
-        <div className="mt-10">
+        <div>
           <CheckoutForm
             productName={PRICE.product}
             active={view.active}
@@ -300,72 +305,72 @@ export function CompanionPage({ view }: CompanionPageProps) {
             supportLine={SUPPORT_LINE}
           />
         </div>
-      </PaperSection>
+      </section>
 
       {/* 12. After paying */}
-      <PaperSection ground="paper" width="mid" aria-labelledby="after-h">
-        <SectionHead id="after-h" title={AFTER.heading} size="md" />
-        <Bullets items={AFTER.items} className="mt-8" />
-        <div className="mt-10">
+      <section aria-labelledby="after-h">
+        <h2 id="after-h">{AFTER.heading}</h2>
+        <Bullets items={AFTER.items} />
+        <div>
           <H3>{AFTER.contactsTitle}</H3>
-          <ContactList className="mt-4" />
-          <p className="mt-4 text-[16px]">
-            <Link href="/contact" className="paper-link font-semibold text-ink">
+          <ContactList />
+          <p>
+            <Link href="/contact">
               Contact BigQuiv Digitals
             </Link>
           </p>
-          <p className="mt-6 text-[17px] font-semibold text-ink">{SUPPORT_LINE}</p>
+          <p>{SUPPORT_LINE}</p>
         </div>
-      </PaperSection>
+      </section>
 
       {/* 13. FAQ. One array feeds this list AND the FAQPage JSON-LD. */}
-      <PaperSection ground="grid" width="mid" aria-labelledby="faq-h">
-        <SectionHead id="faq-h" title="Questions people ask" size="md" />
-        <div className="mt-8 space-y-3" data-faq-list>
+      <section aria-labelledby="faq-h">
+        <h2 id="faq-h">Questions people ask</h2>
+        <div data-faq-list>
           {FAQ.map((f) => (
-            <details key={f.question} className="group border-[3px] border-ink bg-paper shadow-brutal-sm">
-              <summary className="paper-focus flex min-h-[56px] cursor-pointer list-none items-center justify-between gap-4 px-5 py-3 font-display text-[18px] font-bold text-ink [&::-webkit-details-marker]:hidden">
+            <details key={f.question}>
+              <summary>
                 <span data-faq-q>{f.question}</span>
-                <span aria-hidden="true" className="shrink-0 font-typewriter text-xl group-open:rotate-45">
+                <span aria-hidden="true">
                   +
                 </span>
               </summary>
-              <div className="border-t-[3px] border-ink px-5 py-4">
-                <p data-faq-a className="max-w-[68ch] text-[17px] leading-relaxed text-ink-soft">
+              <div>
+                <p data-faq-a>
                   {f.answer}
                 </p>
               </div>
             </details>
           ))}
         </div>
-      </PaperSection>
+      </section>
 
       {/* 14. Optional expertise block. Hidden by default (owner decision). */}
       {FLAGS.expertiseBlock ? (
-        <PaperSection ground="paper" width="mid" aria-labelledby="expertise-h">
-          <SectionHead id="expertise-h" title={EXPERTISE.heading} size="md" />
-          <Lines lines={EXPERTISE.lines} className="mt-8" />
-          <p className="mt-4 font-semibold text-ink">{EXPERTISE.signed}</p>
-        </PaperSection>
+        <section aria-labelledby="expertise-h">
+          <h2 id="expertise-h">{EXPERTISE.heading}</h2>
+          <Lines lines={EXPERTISE.lines} />
+          <p>{EXPERTISE.signed}</p>
+        </section>
       ) : null}
 
       {/* 15. Proof slot. Hidden by default. Nothing is written for it yet, so even with the flag
           on it renders nothing until the owner files the video, the plan and the colour note. */}
 
       {/* 16. Credits */}
-      <PaperSection ground="alt" width="mid" aria-labelledby="credits-h">
-        <SectionHead id="credits-h" title={CREDITS.heading} size="md" />
-        <Lines lines={[CREDITS.intro]} className="mt-8" />
-        <Bullets items={CREDITS.items} className="mt-4" />
-        <Lines lines={[CREDITS.thirdParty, CREDITS.notAffiliated]} className="mt-6" />
-        <nav aria-label="Legal" className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
+      <section aria-labelledby="credits-h">
+        <h2 id="credits-h">{CREDITS.heading}</h2>
+        <Lines lines={[CREDITS.intro]} />
+        <Bullets items={CREDITS.items} />
+        <Lines lines={[CREDITS.thirdParty, CREDITS.notAffiliated]} />
+        <nav aria-label="Legal">
           {LEGAL_LINKS.map((l) => (
-            <Link key={l.href} href={l.href} className="paper-link font-semibold text-ink">
+            <Link key={l.href} href={l.href}>
               {l.label}
             </Link>
           ))}
         </nav>
-      </PaperSection>
+      </section>
     </PriceProvider>
   );
 }

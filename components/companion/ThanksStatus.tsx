@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
  * emailSent (added by D): the "we also sent it to your email" line shows only when it is true.
  * The download button is only what the response provides (a separate 24 h, 2 download link
  * that the server also keeps in the httpOnly cookie tec_dl).
+ *
+ * Styled by the v3-thanks__* rules in components/v3/pages/companion.css (navy stage).
  */
 
 type Status = "pending" | "paid" | "failed";
@@ -95,28 +97,23 @@ export function ThanksStatus({ copy, orderRef }: { copy: Copy; orderRef: string 
   }, [orderRef]);
 
   return (
-    <div className="border-[3px] border-ink bg-paper p-6 shadow-brutal sm:p-8" aria-live="polite">
+    <div className="v3-thanks__status" aria-live="polite">
       {status === "pending" ? (
-        <p role="status" className="font-display text-[22px] font-bold text-ink">
+        <p role="status" className="v3-thanks__working">
           {copy.working}
         </p>
       ) : null}
 
       {status === "paid" ? (
         <div role="status">
-          <h2 className="font-didone text-[clamp(1.9rem,4vw,2.75rem)] font-semibold leading-tight text-ink">
-            Payment received
-          </h2>
-          <p className="mt-3 max-w-[60ch] text-[17px] leading-relaxed text-ink-soft">
+          <h2 className="v3-thanks__paid">Payment received</h2>
+          <p className="v3-thanks__line">
             {emailSent
               ? "Your download is ready. We also sent it to your email. Open START-HERE first."
               : "Your download is ready. Use the download button below. We are sending the email too; if it does not arrive, message us and we will send it again. Open START-HERE first."}
           </p>
           {downloadUrl ? (
-            <a
-              href={downloadUrl}
-              className="paper-focus mt-5 inline-flex min-h-[52px] items-center justify-center border-[3px] border-ink bg-gold px-6 font-display text-base font-bold text-ink shadow-brutal-gold hover:bg-gold-hover"
-            >
+            <a href={downloadUrl} className="v3-btn v3-btn--lg v3-thanks__download">
               Download now
             </a>
           ) : null}
@@ -124,13 +121,13 @@ export function ThanksStatus({ copy, orderRef }: { copy: Copy; orderRef: string 
       ) : null}
 
       {status === "failed" ? (
-        <p role="alert" className="max-w-[60ch] text-[17px] font-semibold leading-relaxed text-ink">
+        <p role="alert" className="v3-thanks__line v3-thanks__alert">
           {copy.errPayment}
         </p>
       ) : null}
 
       {status === "timeout" ? (
-        <p role="alert" className="max-w-[60ch] text-[17px] font-semibold leading-relaxed text-ink">
+        <p role="alert" className="v3-thanks__line v3-thanks__alert">
           {copy.errNotConfirmed}
         </p>
       ) : null}

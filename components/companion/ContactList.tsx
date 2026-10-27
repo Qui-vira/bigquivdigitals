@@ -3,18 +3,17 @@ import { CONTACTS } from "./content";
 /**
  * Support contacts as selectable text AND as links (owner decision 15 Oct).
  * The visible text is real text nodes, so it can be selected and copied.
+ * Styled by .v3-contacts (app/v3-shared.css); callers wrap it in that class.
  */
-export function ContactList({ className = "" }: { className?: string }) {
+export function ContactList() {
   return (
-    <ul className={`space-y-2 ${className}`}>
+    <ul className="v3-contacts__list">
       {Object.values(CONTACTS).map((c) => (
-        <li key={c.label} className="flex flex-wrap items-baseline gap-x-2 text-[16px] leading-relaxed text-ink">
-          <span className="font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink-soft">
-            {c.label}:
-          </span>
+        <li key={c.label} className="v3-contacts__row">
+          <span className="v3-contacts__label">{c.label}:</span>
           <a
             href={c.href}
-            className="paper-link select-text break-all font-semibold text-ink"
+            className="v3-contacts__link"
             {...(c.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
           >
             {c.display}

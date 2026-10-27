@@ -64,24 +64,16 @@ const body = localFont({
 });
 
 /**
- * Paper system faces (redesign 2026-10). Same self-hosting rule as above: the
- * woff2 files live in app/fonts, latin only.
+ * The two smaller faces of the v3 system (app/v3.css), self-hosted by the same rule as above,
+ * latin only. Neither is critical, so neither is preloaded.
  *
- *   Imbue          condensed Didone, variable (wght + opsz). Display sizes only.
- *                  The hero headline is set in it, so it is the one new face
- *                  that is preloaded.
- *   Courier Prime  the typewriter. Labels, metadata, small print.
- *   Caveat 700     the marker pen for margin notes. Subset to printable ASCII
- *                  plus curly quotes, arrows and the naira sign. Never critical,
- *                  so not preloaded.
+ *   Courier Prime  --v3-mono: code and commands.
+ *   Caveat 700     --v3-hand: the handwritten margin notes (.v3-hand). Subset to printable
+ *                  ASCII plus curly quotes, arrows and the naira sign.
+ *
+ * Imbue, the condensed Didone of the October paper system, was removed with that system on
+ * 27 Oct 2026.
  */
-const didone = localFont({
-  src: [{ path: "./fonts/Imbue-var.woff2", weight: "100 900", style: "normal" }],
-  variable: "--font-serif-face",
-  display: "swap",
-  adjustFontFallback: "Times New Roman",
-});
-
 const typewriter = localFont({
   src: [
     { path: "./fonts/CourierPrime-400.woff2", weight: "400", style: "normal" },
@@ -142,7 +134,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${display.variable} ${displayVar.variable} ${body.variable} ${didone.variable} ${typewriter.variable} ${hand.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${display.variable} ${displayVar.variable} ${body.variable} ${typewriter.variable} ${hand.variable}`}>
       <body id="top" className="min-h-screen bg-bg-primary font-sans text-text-primary antialiased">
         <OpenerMarkup />
         {/* JSON-LD. In the root layout so it is present on every route, and in
