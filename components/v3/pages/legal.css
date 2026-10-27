@@ -12,7 +12,7 @@
 .v3-legal__intro { margin: 1.5rem 0 0; padding-bottom: 2rem; border-bottom: 2px solid var(--v3-navy); max-width: 64ch; font-size: 1.1875rem; line-height: 1.7; color: var(--v3-ink); }
 .v3-legal__sections { margin-top: 2.5rem; }
 .v3-legal__section { padding-top: 2rem; scroll-margin-top: 96px; }
-.v3-legal__section + .v3-legal__section { border-top: 1px solid var(--v3-rule); }
+.v3-legal__section + .v3-legal__section { margin-top: 2.5rem; border-top: 1px solid var(--v3-rule); }
 .v3-legal__h2 { margin: 0; font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: clamp(1.4rem, 2.2vw, 1.75rem); line-height: 1.15; letter-spacing: -0.015em; color: var(--v3-navy); }
 .v3-legal__body { margin-top: 0.75rem; }
 .v3-legal__body p { margin: 0; }
