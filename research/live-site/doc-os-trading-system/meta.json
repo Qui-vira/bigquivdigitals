@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/os-trading-system",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "The OS: How The Trading Machine Works | BigQuiv Digitals",
+  "description": "You commented \"OS.\" Here is the breakdown. My AI scans 50 crypto pairs every 4 hours . It checks RSI, MACD, volume, support, resistance, and EMA…",
+  "canonical": "https://bigquivdigitals.com/doc/os-trading-system",
+  "open_graph": {
+    "og:title": "The OS: How The Trading Machine Works | BigQuiv Digitals",
+    "og:description": "You commented \"OS.\" Here is the breakdown. My AI scans 50 crypto pairs every 4 hours . It checks RSI, MACD, volume, support, resistance, and EMA…",
+    "og:url": "https://bigquivdigitals.com/doc/os-trading-system",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "The OS: How The Trading Machine Works",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "The OS: How The Trading Machine Works | BigQuiv Digitals",
+    "twitter:description": "You commented \"OS.\" Here is the breakdown. My AI scans 50 crypto pairs every 4 hours . It checks RSI, MACD, volume, support, resistance, and EMA…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

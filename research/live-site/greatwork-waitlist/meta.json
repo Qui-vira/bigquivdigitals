@@ -1,0 +1,21 @@
+{
+  "url": "https://bigquivdigitals.com/greatwork-waitlist",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "The Great Work waitlist | BigQuiv Digitals",
+  "description": "A small private list. First access, the founding price, launch bonuses, and the Opportunity Map the moment you join.",
+  "canonical": "https://bigquivdigitals.com/greatwork-waitlist",
+  "open_graph": {
+    "og:title": "The Great Work waitlist",
+    "og:description": "You already have the skill. Nobody showed you where the money is.",
+    "og:url": "https://bigquivdigitals.com/greatwork-waitlist",
+    "og:type": "website"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "The Great Work waitlist",
+    "twitter:description": "You already have the skill. Nobody showed you where the money is.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

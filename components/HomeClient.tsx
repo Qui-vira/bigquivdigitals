@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { type ProofStatData } from "@/components/ProofStat";
-import { HeroReveal } from "@/components/HeroReveal";
+import { ProductHero } from "@/components/v3/ProductHero";
 import { AutoCarousel } from "@/components/AutoCarousel";
 import {
   BrutalButton,
@@ -181,43 +181,7 @@ export function HomeClient({ calendlyUrl, proofStats, testimonials }: HomeClient
 
   return (
     <div className="paper-scope overflow-x-clip bg-paper text-ink">
-      {/* ───────── 1. HERO ─────────
-          Copy written by the owner, unchanged. The portrait and the liquid
-          glass effect are unchanged too; HeroReveal now frames them as a
-          print on grid paper instead of a full-bleed black screen. */}
-      <HeroReveal
-        headline={
-          <>
-            Your next skill is going to end{" "}
-            <Highlighter load delay={650}>
-              exactly like the last one did.
-            </Highlighter>
-          </>
-        }
-        supporting="Mine stopped ending that way in 2022, when I got my first seven-figure naira dev job."
-        mechanism="Now I have built the thing that fixes yours."
-        proof="Same skills. One move."
-      >
-        {/* The course name sits ABOVE the button, where it can inform the
-            decision. One filled control for the waitlist; hiring is a quiet
-            link beside it so a buyer who is not a learner still has a door. */}
-        <div className="w-full">
-          <MonoLabel as="p" caps={false} size="md" tone="soft" className="mb-4">
-            The Great Work opens soon. The list goes first.
-          </MonoLabel>
-          <div className="flex flex-wrap items-center gap-x-7 gap-y-5">
-            <BrutalButton href="/greatwork-waitlist" size="lg">
-              Join the waitlist
-            </BrutalButton>
-            <a
-              href={calendlyUrl}
-              className="paper-link inline-flex min-h-[44px] items-center font-display text-[1.05rem] font-bold text-ink underline decoration-ink decoration-[3px] underline-offset-[7px]"
-            >
-              Hire me
-            </a>
-          </div>
-        </div>
-      </HeroReveal>
+      <ProductHero calendlyUrl={calendlyUrl} />
 
       {/* ───────── 2. RECEIPTS ─────────
           Stamped tickets. Values are static text: no count-up, on purpose

@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/ai-client-work-guide",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "How I Use AI for Client Work: Full Process | BigQuiv Digitals",
+  "description": "You saw the video. 4 hours. $2,500. Production-ready app. Here is exactly how I use AI to ship client projects at 10x speed without sacrificing quality.",
+  "canonical": "https://bigquivdigitals.com/doc/ai-client-work-guide",
+  "open_graph": {
+    "og:title": "How I Use AI for Client Work: Full Process | BigQuiv Digitals",
+    "og:description": "You saw the video. 4 hours. $2,500. Production-ready app. Here is exactly how I use AI to ship client projects at 10x speed without sacrificing quality.",
+    "og:url": "https://bigquivdigitals.com/doc/ai-client-work-guide",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "How I Use AI for Client Work: Full Process",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "How I Use AI for Client Work: Full Process | BigQuiv Digitals",
+    "twitter:description": "You saw the video. 4 hours. $2,500. Production-ready app. Here is exactly how I use AI to ship client projects at 10x speed without sacrificing quality.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

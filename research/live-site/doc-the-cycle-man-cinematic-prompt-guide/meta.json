@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/the-cycle-man-cinematic-prompt-guide",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "The Cycle Man | BigQuiv Digitals",
+  "description": "A cinematic AI video prompt guide for generating a 25 to 30 second stylized animated short. Authored by Big Quiv Ayaan is a young delivery rider in his…",
+  "canonical": "https://bigquivdigitals.com/doc/the-cycle-man-cinematic-prompt-guide",
+  "open_graph": {
+    "og:title": "The Cycle Man | BigQuiv Digitals",
+    "og:description": "A cinematic AI video prompt guide for generating a 25 to 30 second stylized animated short. Authored by Big Quiv Ayaan is a young delivery rider in his…",
+    "og:url": "https://bigquivdigitals.com/doc/the-cycle-man-cinematic-prompt-guide",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "The Cycle Man",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "The Cycle Man | BigQuiv Digitals",
+    "twitter:description": "A cinematic AI video prompt guide for generating a 25 to 30 second stylized animated short. Authored by Big Quiv Ayaan is a young delivery rider in his…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

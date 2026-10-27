@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/affiliate-guide",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Affiliate Guide | BigQuiv Digitals",
+  "description": "You share a unique link. When someone buys the AI Content Mastery course through your link, you earn a commission. The money hits your bank account…",
+  "canonical": "https://bigquivdigitals.com/doc/affiliate-guide",
+  "open_graph": {
+    "og:title": "Affiliate Guide | BigQuiv Digitals",
+    "og:description": "You share a unique link. When someone buys the AI Content Mastery course through your link, you earn a commission. The money hits your bank account…",
+    "og:url": "https://bigquivdigitals.com/doc/affiliate-guide",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "Affiliate Guide",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Affiliate Guide | BigQuiv Digitals",
+    "twitter:description": "You share a unique link. When someone buys the AI Content Mastery course through your link, you earn a commission. The money hits your bank account…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

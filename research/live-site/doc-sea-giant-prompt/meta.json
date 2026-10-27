@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/sea-giant-prompt",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Sea Giant Prompt | BigQuiv Digitals",
+  "description": "Authored by Big Quiv | bigquivdigitals A 15-second photorealistic CGI cinematic clip of a single character flying over a dark, violent ocean toward a…",
+  "canonical": "https://bigquivdigitals.com/doc/sea-giant-prompt",
+  "open_graph": {
+    "og:title": "Sea Giant Prompt | BigQuiv Digitals",
+    "og:description": "Authored by Big Quiv | bigquivdigitals A 15-second photorealistic CGI cinematic clip of a single character flying over a dark, violent ocean toward a…",
+    "og:url": "https://bigquivdigitals.com/doc/sea-giant-prompt",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "Sea Giant Prompt",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Sea Giant Prompt | BigQuiv Digitals",
+    "twitter:description": "Authored by Big Quiv | bigquivdigitals A 15-second photorealistic CGI cinematic clip of a single character flying over a dark, violent ocean toward a…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

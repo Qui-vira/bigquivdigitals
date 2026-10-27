@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/class-to-plan-prompts",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Class to Plan: The 3 Prompts | BigQuiv Digitals",
+  "description": "Thank you for commenting. These are the exact 3 prompts I used in my Day 2 video. I gave Claude a 5-hour class. It gave me back simple notes, a brand for…",
+  "canonical": "https://bigquivdigitals.com/doc/class-to-plan-prompts",
+  "open_graph": {
+    "og:title": "Class to Plan: The 3 Prompts | BigQuiv Digitals",
+    "og:description": "Thank you for commenting. These are the exact 3 prompts I used in my Day 2 video. I gave Claude a 5-hour class. It gave me back simple notes, a brand for…",
+    "og:url": "https://bigquivdigitals.com/doc/class-to-plan-prompts",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "Class to Plan: The 3 Prompts",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Class to Plan: The 3 Prompts | BigQuiv Digitals",
+    "twitter:description": "Thank you for commenting. These are the exact 3 prompts I used in my Day 2 video. I gave Claude a 5-hour class. It gave me back simple notes, a brand for…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

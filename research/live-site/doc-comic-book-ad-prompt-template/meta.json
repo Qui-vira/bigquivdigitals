@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/comic-book-ad-prompt-template",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "How to Create a Cinematic Comic Book Ad for Your Brand Using ChatGPT | BigQuiv Digitals",
+  "description": "You have seen those cinematic comic book ads on Instagram and TikTok. The ones that tell a story in 6 panels, look like they cost thousands to produce…",
+  "canonical": "https://bigquivdigitals.com/doc/comic-book-ad-prompt-template",
+  "open_graph": {
+    "og:title": "How to Create a Cinematic Comic Book Ad for Your Brand Using ChatGPT | BigQuiv Digitals",
+    "og:description": "You have seen those cinematic comic book ads on Instagram and TikTok. The ones that tell a story in 6 panels, look like they cost thousands to produce…",
+    "og:url": "https://bigquivdigitals.com/doc/comic-book-ad-prompt-template",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "How to Create a Cinematic Comic Book Ad for Your Brand Using ChatGPT",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "How to Create a Cinematic Comic Book Ad for Your Brand Using ChatGPT | BigQuiv Digitals",
+    "twitter:description": "You have seen those cinematic comic book ads on Instagram and TikTok. The ones that tell a story in 6 panels, look like they cost thousands to produce…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

@@ -1,0 +1,136 @@
+{
+ "opener": [
+  {
+   "i": 0,
+   "t_ms": 935,
+   "file": "o00_00935ms.jpg"
+  },
+  {
+   "i": 1,
+   "t_ms": 1887,
+   "file": "o01_01887ms.jpg"
+  },
+  {
+   "i": 2,
+   "t_ms": 11304,
+   "file": "o02_11304ms.jpg"
+  },
+  {
+   "i": 3,
+   "t_ms": 11424,
+   "file": "o03_11424ms.jpg"
+  },
+  {
+   "i": 4,
+   "t_ms": 11530,
+   "file": "o04_11530ms.jpg"
+  },
+  {
+   "i": 5,
+   "t_ms": 11617,
+   "file": "o05_11617ms.jpg"
+  },
+  {
+   "i": 6,
+   "t_ms": 11703,
+   "file": "o06_11703ms.jpg"
+  },
+  {
+   "i": 7,
+   "t_ms": 11791,
+   "file": "o07_11791ms.jpg"
+  },
+  {
+   "i": 8,
+   "t_ms": 11896,
+   "file": "o08_11896ms.jpg"
+  },
+  {
+   "i": 9,
+   "t_ms": 11994,
+   "file": "o09_11994ms.jpg"
+  },
+  {
+   "i": 10,
+   "t_ms": 12095,
+   "file": "o10_12095ms.jpg"
+  },
+  {
+   "i": 11,
+   "t_ms": 12202,
+   "file": "o11_12202ms.jpg"
+  }
+ ],
+ "scroll": [
+  {
+   "pct": 10,
+   "scrollY": 1033,
+   "file": "s010_y1033.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 20,
+   "scrollY": 2073,
+   "file": "s020_y2073.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 30,
+   "scrollY": 3111,
+   "file": "s030_y3111.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 40,
+   "scrollY": 4151,
+   "file": "s040_y4151.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 50,
+   "scrollY": 5190,
+   "file": "s050_y5190.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 60,
+   "scrollY": 6228,
+   "file": "s060_y6228.jpg",
+   "nav": "nav | color rgb(255, 248, 232) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 70,
+   "scrollY": 7267,
+   "file": "s070_y7267.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 80,
+   "scrollY": 8306,
+   "file": "s080_y8306.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 90,
+   "scrollY": 9345,
+   "file": "s090_y9345.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 100,
+   "scrollY": 9490,
+   "file": "s100_y9490.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  }
+ ],
+ "console": [
+  "warning: THREE.WebGLProgram: Program Info Log: (210,81-129): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,82-106): warning X4122: "
+ ],
+ "clicked": ".welcome__quiet",
+ "clicked_at_ms": 17100,
+ "trace": [],
+ "scrollHeight": 10391,
+ "innerHeight": 900,
+ "returning_has_overlay": false,
+ "phone_menu": "details.menu found"
+}

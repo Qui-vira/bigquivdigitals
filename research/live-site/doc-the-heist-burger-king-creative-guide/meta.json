@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/the-heist-burger-king-creative-guide",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Day 3 Creative Guide: The Heist | BigQuiv Digitals",
+  "description": "A Burger King spec concept by Big Quiv A Whopper gets treated like a $10M diamond. This guide breaks down the concept, structure, visual direction…",
+  "canonical": "https://bigquivdigitals.com/doc/the-heist-burger-king-creative-guide",
+  "open_graph": {
+    "og:title": "Day 3 Creative Guide: The Heist | BigQuiv Digitals",
+    "og:description": "A Burger King spec concept by Big Quiv A Whopper gets treated like a $10M diamond. This guide breaks down the concept, structure, visual direction…",
+    "og:url": "https://bigquivdigitals.com/doc/the-heist-burger-king-creative-guide",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "Day 3 Creative Guide: The Heist",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Day 3 Creative Guide: The Heist | BigQuiv Digitals",
+    "twitter:description": "A Burger King spec concept by Big Quiv A Whopper gets treated like a $10M diamond. This guide breaks down the concept, structure, visual direction…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

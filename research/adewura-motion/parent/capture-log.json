@@ -1,0 +1,296 @@
+{
+ "opener": [
+  {
+   "i": 0,
+   "t_ms": 828,
+   "file": "o00_00828ms.jpg"
+  },
+  {
+   "i": 1,
+   "t_ms": 2261,
+   "file": "o01_02261ms.jpg"
+  },
+  {
+   "i": 2,
+   "t_ms": 2921,
+   "file": "o02_02921ms.jpg"
+  },
+  {
+   "i": 3,
+   "t_ms": 3074,
+   "file": "o03_03074ms.jpg"
+  },
+  {
+   "i": 4,
+   "t_ms": 3257,
+   "file": "o04_03257ms.jpg"
+  },
+  {
+   "i": 5,
+   "t_ms": 3441,
+   "file": "o05_03441ms.jpg"
+  },
+  {
+   "i": 6,
+   "t_ms": 3582,
+   "file": "o06_03582ms.jpg"
+  },
+  {
+   "i": 7,
+   "t_ms": 3707,
+   "file": "o07_03707ms.jpg"
+  },
+  {
+   "i": 8,
+   "t_ms": 3846,
+   "file": "o08_03846ms.jpg"
+  },
+  {
+   "i": 9,
+   "t_ms": 3964,
+   "file": "o09_03964ms.jpg"
+  },
+  {
+   "i": 10,
+   "t_ms": 4092,
+   "file": "o10_04092ms.jpg"
+  },
+  {
+   "i": 11,
+   "t_ms": 4197,
+   "file": "o11_04197ms.jpg"
+  },
+  {
+   "i": 12,
+   "t_ms": 4311,
+   "file": "o12_04311ms.jpg"
+  },
+  {
+   "i": 13,
+   "t_ms": 4434,
+   "file": "o13_04434ms.jpg"
+  },
+  {
+   "i": 14,
+   "t_ms": 4598,
+   "file": "o14_04598ms.jpg"
+  },
+  {
+   "i": 15,
+   "t_ms": 4715,
+   "file": "o15_04715ms.jpg"
+  },
+  {
+   "i": 16,
+   "t_ms": 4852,
+   "file": "o16_04852ms.jpg"
+  },
+  {
+   "i": 17,
+   "t_ms": 4965,
+   "file": "o17_04965ms.jpg"
+  },
+  {
+   "i": 18,
+   "t_ms": 5116,
+   "file": "o18_05116ms.jpg"
+  },
+  {
+   "i": 19,
+   "t_ms": 5323,
+   "file": "o19_05323ms.jpg"
+  },
+  {
+   "i": 20,
+   "t_ms": 5476,
+   "file": "o20_05476ms.jpg"
+  },
+  {
+   "i": 21,
+   "t_ms": 5629,
+   "file": "o21_05629ms.jpg"
+  },
+  {
+   "i": 22,
+   "t_ms": 5783,
+   "file": "o22_05783ms.jpg"
+  },
+  {
+   "i": 23,
+   "t_ms": 5921,
+   "file": "o23_05921ms.jpg"
+  },
+  {
+   "i": 24,
+   "t_ms": 6047,
+   "file": "o24_06047ms.jpg"
+  },
+  {
+   "i": 25,
+   "t_ms": 6250,
+   "file": "o25_06250ms.jpg"
+  },
+  {
+   "i": 26,
+   "t_ms": 6500,
+   "file": "o26_06500ms.jpg"
+  },
+  {
+   "i": 27,
+   "t_ms": 6750,
+   "file": "o27_06750ms.jpg"
+  },
+  {
+   "i": 28,
+   "t_ms": 7000,
+   "file": "o28_07000ms.jpg"
+  },
+  {
+   "i": 29,
+   "t_ms": 7250,
+   "file": "o29_07250ms.jpg"
+  },
+  {
+   "i": 30,
+   "t_ms": 7500,
+   "file": "o30_07500ms.jpg"
+  },
+  {
+   "i": 31,
+   "t_ms": 7750,
+   "file": "o31_07750ms.jpg"
+  }
+ ],
+ "scroll": [
+  {
+   "pct": 5,
+   "scrollY": 429,
+   "file": "s005_y429.jpg",
+   "nav": "nav | color rgb(43, 36, 32) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 10,
+   "scrollY": 858,
+   "file": "s010_y858.jpg",
+   "nav": "nav | color rgb(43, 36, 32) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 15,
+   "scrollY": 1286,
+   "file": "s015_y1286.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 20,
+   "scrollY": 1715,
+   "file": "s020_y1715.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 25,
+   "scrollY": 2144,
+   "file": "s025_y2144.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 30,
+   "scrollY": 2574,
+   "file": "s030_y2574.jpg",
+   "nav": "nav | color rgb(48, 31, 147) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 35,
+   "scrollY": 3002,
+   "file": "s035_y3002.jpg",
+   "nav": "nav | color rgb(43, 36, 32) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 40,
+   "scrollY": 3431,
+   "file": "s040_y3431.jpg",
+   "nav": "nav | color rgb(64, 63, 43) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 45,
+   "scrollY": 3860,
+   "file": "s045_y3860.jpg",
+   "nav": "nav | color rgb(64, 63, 43) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 50,
+   "scrollY": 4289,
+   "file": "s050_y4289.jpg",
+   "nav": "nav | color rgb(64, 63, 43) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 55,
+   "scrollY": 4719,
+   "file": "s055_y4719.jpg",
+   "nav": "nav | color rgb(43, 36, 32) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 60,
+   "scrollY": 5147,
+   "file": "s060_y5147.jpg",
+   "nav": "nav | color rgb(70, 112, 65) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 65,
+   "scrollY": 5576,
+   "file": "s065_y5576.jpg",
+   "nav": "nav | color rgb(70, 112, 65) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 70,
+   "scrollY": 6005,
+   "file": "s070_y6005.jpg",
+   "nav": "nav | color rgb(70, 112, 65) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 75,
+   "scrollY": 6434,
+   "file": "s075_y6434.jpg",
+   "nav": "nav | color rgb(70, 112, 65) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 80,
+   "scrollY": 6863,
+   "file": "s080_y6863.jpg",
+   "nav": "nav | color rgb(70, 112, 65) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 85,
+   "scrollY": 7292,
+   "file": "s085_y7292.jpg",
+   "nav": "nav | color rgb(70, 112, 65) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 90,
+   "scrollY": 7675,
+   "file": "s090_y7675.jpg",
+   "nav": "nav | color rgb(70, 112, 65) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 95,
+   "scrollY": 7675,
+   "file": "s095_y7675.jpg",
+   "nav": "nav | color rgb(70, 112, 65) | bg rgba(0, 0, 0, 0)"
+  },
+  {
+   "pct": 100,
+   "scrollY": 7675,
+   "file": "s100_y7675.jpg",
+   "nav": "nav | color rgb(70, 112, 65) | bg rgba(0, 0, 0, 0)"
+  }
+ ],
+ "console": [
+  "warning: THREE.WebGLProgram: Program Info Log: (210,81-129): warning X4122: sum of 0.996094 and -2.98545e-017 cannot be represented accurately in double precision\n(209,37-61): warning X4122: sum of 1 and -1.49272e-017 cannot be represented accurately in double precision\n(210,82-106): warning X4122: "
+ ],
+ "clicked": ".welcome__quiet",
+ "clicked_at_ms": 9337,
+ "trace": [],
+ "scrollHeight": 8575,
+ "innerHeight": 900,
+ "returning_has_overlay": false,
+ "phone_menu": "no details.menu on this page"
+}

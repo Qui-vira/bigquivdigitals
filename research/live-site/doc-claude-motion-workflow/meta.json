@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/claude-motion-workflow",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "My Claude motion graphics workflow | BigQuiv Digitals",
+  "description": "Enter the code word from the video to open the full workflow.",
+  "canonical": "https://bigquivdigitals.com/doc/claude-motion-workflow",
+  "open_graph": {
+    "og:title": "My Claude motion graphics workflow | BigQuiv Digitals",
+    "og:description": "Enter the code word from the video to open the full workflow.",
+    "og:url": "https://bigquivdigitals.com/doc/claude-motion-workflow",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "My Claude motion graphics workflow",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "My Claude motion graphics workflow | BigQuiv Digitals",
+    "twitter:description": "Enter the code word from the video to open the full workflow.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

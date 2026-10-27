@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/portfolio-ai-audit",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "AI Portfolio Audit: 3 Things You Are Missing | BigQuiv Digitals",
+  "description": "You wanted the audit guide. Here it is. 1. 40% correlation risk. Nearly half my holdings moved in lockstep. One crash would hit everything at once.",
+  "canonical": "https://bigquivdigitals.com/doc/portfolio-ai-audit",
+  "open_graph": {
+    "og:title": "AI Portfolio Audit: 3 Things You Are Missing | BigQuiv Digitals",
+    "og:description": "You wanted the audit guide. Here it is. 1. 40% correlation risk. Nearly half my holdings moved in lockstep. One crash would hit everything at once.",
+    "og:url": "https://bigquivdigitals.com/doc/portfolio-ai-audit",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "AI Portfolio Audit: 3 Things You Are Missing",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "AI Portfolio Audit: 3 Things You Are Missing | BigQuiv Digitals",
+    "twitter:description": "You wanted the audit guide. Here it is. 1. 40% correlation risk. Nearly half my holdings moved in lockstep. One crash would hit everything at once.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

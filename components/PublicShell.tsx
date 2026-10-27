@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Navbar } from "./Navbar";
+import { SmoothScroll } from "./v3/SmoothScroll";
 
 /**
  * Public chrome. The admin area keeps its own shell and never renders these.
@@ -17,11 +18,12 @@ export function PublicNavbar() {
     <>
       <a
         href="#main"
-        className="paper-focus fixed left-3 top-3 z-[60] -translate-y-[200%] border-[3px] border-ink bg-gold px-3 py-2 font-typewriter text-[13px] font-bold uppercase tracking-[0.08em] text-ink shadow-brutal-sm transition-transform duration-150 focus:translate-y-0"
+        className="fixed left-3 top-3 z-[60] -translate-y-[200%] rounded-[6px] bg-gold px-4 py-2.5 font-display text-[14px] font-bold text-ink transition-transform duration-150 focus:translate-y-0"
       >
         Skip to content
       </a>
       <Navbar />
+      <SmoothScroll />
     </>
   );
 }

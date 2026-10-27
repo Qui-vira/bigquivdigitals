@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/lexus-2m-ad-workflow",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Day 6 of 30 Free Ads: How I Made a $2M Lexus Movie at Home | BigQuiv Digitals",
+  "description": "Enter the code word from the video to open the full workflow.",
+  "canonical": "https://bigquivdigitals.com/doc/lexus-2m-ad-workflow",
+  "open_graph": {
+    "og:title": "Day 6 of 30 Free Ads: How I Made a $2M Lexus Movie at Home | BigQuiv Digitals",
+    "og:description": "Enter the code word from the video to open the full workflow.",
+    "og:url": "https://bigquivdigitals.com/doc/lexus-2m-ad-workflow",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "Day 6 of 30 Free Ads: How I Made a $2M Lexus Movie at Home",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Day 6 of 30 Free Ads: How I Made a $2M Lexus Movie at Home | BigQuiv Digitals",
+    "twitter:description": "Enter the code word from the video to open the full workflow.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

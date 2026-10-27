@@ -1,0 +1,61 @@
+{
+  "url": "https://bigquivdigitals.com/work/nigeria-business-costs",
+  "images": [
+    {
+      "alt": "The first sheet of the Excel workbook. Headline reads What is changing in the costs businesses pay, with five figures across the top: diesel trough to latest +158.2%, petrol +65.3%, 37 jurisdictions covered, 13 costs tracked, 110 validation checks. Below it a block headed READ THIS FIRST explains what the workbook does and does not measure.",
+      "src": "/_next/image?url=%2Fproof%2Fnbci%2F05-excel-what-is-changing.webp&w=3840&q=75",
+      "original_path": "/proof/nbci/05-excel-what-is-changing.webp",
+      "absolute_url": "https://bigquivdigitals.com/proof/nbci/05-excel-what-is-changing.webp",
+      "srcset": "/_next/image?url=%2Fproof%2Fnbci%2F05-excel-what-is-changing.webp&w=640&q=75 640w, /_next/image?url=%2Fproof%2Fnbci%2F05-excel-what-is-changing.webp&w=750&q=75 750w, /_next/image?url=%2Fproof%2Fnbci%2F05-excel-what-is-changing.webp&w=828&q=75 828w, /_next/image?url=%2Fproof%2Fnbci%2F05-excel-what-is-changing.webp&w=1080&q=75 1080w, /_next/image?url=%2Fproof%2Fnbci%2F05-excel-what-is-changing.webp&w=1200&q=75 1200w, /_next/image?url=%2Fproof%2Fnbci%2F05-excel-what-is-changing.webp&w=1920&q=75 1920w, /_next/image?url=%2Fproof%2Fnbci%2F05-excel-what-is-changing.webp&w=2048&q=75 2048w, /_next/image?url=%2Fproof%2Fnbci%2F05-excel-what-is-changing.webp&w=3840&q=75 3840w",
+      "width": "1082",
+      "height": "588"
+    },
+    {
+      "alt": "The Can I trust this sheet, showing a table titled WHAT THIS CAN AND CANNOT TELL YOU TODAY. Seven rows marked CAN do today, including tracking cost pressures and identifying which types of business a cost is likely to matter more for. Six rows marked CANNOT do today, including determining whether a specific company is profitable and identifying the universally best jurisdiction to operate in.",
+      "src": "/_next/image?url=%2Fproof%2Fnbci%2F06-excel-can-and-cannot.webp&w=3840&q=75",
+      "original_path": "/proof/nbci/06-excel-can-and-cannot.webp",
+      "absolute_url": "https://bigquivdigitals.com/proof/nbci/06-excel-can-and-cannot.webp",
+      "srcset": "/_next/image?url=%2Fproof%2Fnbci%2F06-excel-can-and-cannot.webp&w=640&q=75 640w, /_next/image?url=%2Fproof%2Fnbci%2F06-excel-can-and-cannot.webp&w=750&q=75 750w, /_next/image?url=%2Fproof%2Fnbci%2F06-excel-can-and-cannot.webp&w=828&q=75 828w, /_next/image?url=%2Fproof%2Fnbci%2F06-excel-can-and-cannot.webp&w=1080&q=75 1080w, /_next/image?url=%2Fproof%2Fnbci%2F06-excel-can-and-cannot.webp&w=1200&q=75 1200w, /_next/image?url=%2Fproof%2Fnbci%2F06-excel-can-and-cannot.webp&w=1920&q=75 1920w, /_next/image?url=%2Fproof%2Fnbci%2F06-excel-can-and-cannot.webp&w=2048&q=75 2048w, /_next/image?url=%2Fproof%2Fnbci%2F06-excel-can-and-cannot.webp&w=3840&q=75 3840w",
+      "width": "1082",
+      "height": "588"
+    },
+    {
+      "alt": "The opening page of the Power BI report. Two columns headed WHAT THIS MEASURES and WHAT IT DOES NOT MEASURE, then WHAT THIS CAN TELL YOU TODAY listing seven capabilities against WHAT IT CANNOT TELL YOU TODAY listing six limits, then a table of the four things that decide whether a location suits a business and whether each one is in the dataset.",
+      "src": "/_next/image?url=%2Fproof%2Fnbci%2F01-powerbi-what-is-changing.webp&w=3840&q=75",
+      "original_path": "/proof/nbci/01-powerbi-what-is-changing.webp",
+      "absolute_url": "https://bigquivdigitals.com/proof/nbci/01-powerbi-what-is-changing.webp",
+      "srcset": "/_next/image?url=%2Fproof%2Fnbci%2F01-powerbi-what-is-changing.webp&w=640&q=75 640w, /_next/image?url=%2Fproof%2Fnbci%2F01-powerbi-what-is-changing.webp&w=750&q=75 750w, /_next/image?url=%2Fproof%2Fnbci%2F01-powerbi-what-is-changing.webp&w=828&q=75 828w, /_next/image?url=%2Fproof%2Fnbci%2F01-powerbi-what-is-changing.webp&w=1080&q=75 1080w, /_next/image?url=%2Fproof%2Fnbci%2F01-powerbi-what-is-changing.webp&w=1200&q=75 1200w, /_next/image?url=%2Fproof%2Fnbci%2F01-powerbi-what-is-changing.webp&w=1920&q=75 1920w, /_next/image?url=%2Fproof%2Fnbci%2F01-powerbi-what-is-changing.webp&w=2048&q=75 2048w, /_next/image?url=%2Fproof%2Fnbci%2F01-powerbi-what-is-changing.webp&w=3840&q=75 3840w",
+      "width": "733",
+      "height": "530"
+    },
+    {
+      "alt": "The fuel and power page. Cards show the latest median across 37 jurisdictions at 3,249.96, a gap between cheapest and dearest place of 638.66, a ratio of 1.29x, and an EXTREME threshold of 52.04%. A line chart tracks diesel from January 2025 to May 2026, and a second chart shows diesel self-generation as a multiple of the grid tariff, never dropping below 1.",
+      "src": "/_next/image?url=%2Fproof%2Fnbci%2F02-powerbi-fuel-and-power.webp&w=3840&q=75",
+      "original_path": "/proof/nbci/02-powerbi-fuel-and-power.webp",
+      "absolute_url": "https://bigquivdigitals.com/proof/nbci/02-powerbi-fuel-and-power.webp",
+      "srcset": "/_next/image?url=%2Fproof%2Fnbci%2F02-powerbi-fuel-and-power.webp&w=640&q=75 640w, /_next/image?url=%2Fproof%2Fnbci%2F02-powerbi-fuel-and-power.webp&w=750&q=75 750w, /_next/image?url=%2Fproof%2Fnbci%2F02-powerbi-fuel-and-power.webp&w=828&q=75 828w, /_next/image?url=%2Fproof%2Fnbci%2F02-powerbi-fuel-and-power.webp&w=1080&q=75 1080w, /_next/image?url=%2Fproof%2Fnbci%2F02-powerbi-fuel-and-power.webp&w=1200&q=75 1200w, /_next/image?url=%2Fproof%2Fnbci%2F02-powerbi-fuel-and-power.webp&w=1920&q=75 1920w, /_next/image?url=%2Fproof%2Fnbci%2F02-powerbi-fuel-and-power.webp&w=2048&q=75 2048w, /_next/image?url=%2Fproof%2Fnbci%2F02-powerbi-fuel-and-power.webp&w=3840&q=75 3840w",
+      "width": "733",
+      "height": "530"
+    },
+    {
+      "alt": "The page headed How does the external cost environment differ between locations. A note explains that location is one of the things the project looks at and not the point of it, that a cheaper jurisdiction is not a better one and a dearer one does not mean a business loses money there. Cards below show water fares at 6.91 times and petrol at 1.14 times between dearest and cheapest.",
+      "src": "/_next/image?url=%2Fproof%2Fnbci%2F03-powerbi-where-costs-differ.webp&w=3840&q=75",
+      "original_path": "/proof/nbci/03-powerbi-where-costs-differ.webp",
+      "absolute_url": "https://bigquivdigitals.com/proof/nbci/03-powerbi-where-costs-differ.webp",
+      "srcset": "/_next/image?url=%2Fproof%2Fnbci%2F03-powerbi-where-costs-differ.webp&w=640&q=75 640w, /_next/image?url=%2Fproof%2Fnbci%2F03-powerbi-where-costs-differ.webp&w=750&q=75 750w, /_next/image?url=%2Fproof%2Fnbci%2F03-powerbi-where-costs-differ.webp&w=828&q=75 828w, /_next/image?url=%2Fproof%2Fnbci%2F03-powerbi-where-costs-differ.webp&w=1080&q=75 1080w, /_next/image?url=%2Fproof%2Fnbci%2F03-powerbi-where-costs-differ.webp&w=1200&q=75 1200w, /_next/image?url=%2Fproof%2Fnbci%2F03-powerbi-where-costs-differ.webp&w=1920&q=75 1920w, /_next/image?url=%2Fproof%2Fnbci%2F03-powerbi-where-costs-differ.webp&w=2048&q=75 2048w, /_next/image?url=%2Fproof%2Fnbci%2F03-powerbi-where-costs-differ.webp&w=3840&q=75 3840w",
+      "width": "733",
+      "height": "530"
+    },
+    {
+      "alt": "The validation page of the report. Four figures across the top: 110 validation checks passed, 342 raw source files SHA-256 verified, 29,032 fact rows in the database, 0 panel grain duplicates. Below, a table of the fifteen rules every page must obey, a list of months genuinely missing from the government sources, and the coverage of each dataset.",
+      "src": "/_next/image?url=%2Fproof%2Fnbci%2F04-powerbi-validation.webp&w=3840&q=75",
+      "original_path": "/proof/nbci/04-powerbi-validation.webp",
+      "absolute_url": "https://bigquivdigitals.com/proof/nbci/04-powerbi-validation.webp",
+      "srcset": "/_next/image?url=%2Fproof%2Fnbci%2F04-powerbi-validation.webp&w=640&q=75 640w, /_next/image?url=%2Fproof%2Fnbci%2F04-powerbi-validation.webp&w=750&q=75 750w, /_next/image?url=%2Fproof%2Fnbci%2F04-powerbi-validation.webp&w=828&q=75 828w, /_next/image?url=%2Fproof%2Fnbci%2F04-powerbi-validation.webp&w=1080&q=75 1080w, /_next/image?url=%2Fproof%2Fnbci%2F04-powerbi-validation.webp&w=1200&q=75 1200w, /_next/image?url=%2Fproof%2Fnbci%2F04-powerbi-validation.webp&w=1920&q=75 1920w, /_next/image?url=%2Fproof%2Fnbci%2F04-powerbi-validation.webp&w=2048&q=75 2048w, /_next/image?url=%2Fproof%2Fnbci%2F04-powerbi-validation.webp&w=3840&q=75 3840w",
+      "width": "733",
+      "height": "530"
+    }
+  ],
+  "picture_sources": [],
+  "videos": []
+}

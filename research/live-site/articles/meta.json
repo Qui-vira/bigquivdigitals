@@ -1,0 +1,25 @@
+{
+  "url": "https://bigquivdigitals.com/articles",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Articles & Breakdowns | BigQuiv Digitals",
+  "description": "Published breakdowns on growth systems, Web3, AI content and market structure. The working notes behind the builds, not recycled advice.",
+  "canonical": "https://bigquivdigitals.com/articles",
+  "open_graph": {
+    "og:title": "BigQuiv Digitals | Growth systems that turn attention into revenue",
+    "og:description": "Website, AI content, community infrastructure, strategy and reporting, built as one system. Three live builds you can go and check.",
+    "og:url": "https://bigquivdigitals.com",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "BigQuiv Digitals - Growth systems that turn attention into revenue",
+    "og:type": "website"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "BigQuiv Digitals | Growth systems that turn attention into revenue",
+    "twitter:description": "Website, AI content, community infrastructure, strategy and reporting, built as one system. Three live builds you can go and check.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

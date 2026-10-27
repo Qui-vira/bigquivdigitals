@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/ai-video-workflow-guide",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "The $0 AI Video Workflow: Full Blueprint | BigQuiv Digitals",
+  "description": "You saw the video. Blank screen to finished video in 30 minutes. $0 spent. Here is the exact workflow, every tool, every setting, every prompt.",
+  "canonical": "https://bigquivdigitals.com/doc/ai-video-workflow-guide",
+  "open_graph": {
+    "og:title": "The $0 AI Video Workflow: Full Blueprint | BigQuiv Digitals",
+    "og:description": "You saw the video. Blank screen to finished video in 30 minutes. $0 spent. Here is the exact workflow, every tool, every setting, every prompt.",
+    "og:url": "https://bigquivdigitals.com/doc/ai-video-workflow-guide",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "The $0 AI Video Workflow: Full Blueprint",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "The $0 AI Video Workflow: Full Blueprint | BigQuiv Digitals",
+    "twitter:description": "You saw the video. Blank screen to finished video in 30 minutes. $0 spent. Here is the exact workflow, every tool, every setting, every prompt.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

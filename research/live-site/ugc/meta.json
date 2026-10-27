@@ -1,0 +1,24 @@
+{
+  "url": "https://bigquivdigitals.com/ugc",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "UGC Portfolio | BigQuiv Digitals",
+  "description": "Web3 and AI UGC creator. I turn crypto apps and AI tools into short videos people understand in under a minute.",
+  "canonical": "https://bigquivdigitals.com/ugc",
+  "open_graph": {
+    "og:title": "UGC Portfolio | BigQuiv Digitals",
+    "og:description": "Web3 and AI UGC creator. I turn crypto apps and AI tools into short videos people understand in under a minute.",
+    "og:url": "https://bigquivdigitals.com/ugc",
+    "og:image": "https://bigquivdigitals.com/quivira-hero.webp",
+    "og:image:width": "1376",
+    "og:image:height": "768",
+    "og:image:alt": "Big Quiv"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "UGC Portfolio | BigQuiv Digitals",
+    "twitter:description": "Web3 and AI UGC creator. I turn crypto apps and AI tools into short videos people understand in under a minute.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/reel-cover-workflow",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "Reel Cover: Workflow | BigQuiv Digitals",
+  "description": "Thank you for commenting. This is the exact workflow behind the cover of my Day 1 video. One frame from the video. One prompt.",
+  "canonical": "https://bigquivdigitals.com/doc/reel-cover-workflow",
+  "open_graph": {
+    "og:title": "Reel Cover: Workflow | BigQuiv Digitals",
+    "og:description": "Thank you for commenting. This is the exact workflow behind the cover of my Day 1 video. One frame from the video. One prompt.",
+    "og:url": "https://bigquivdigitals.com/doc/reel-cover-workflow",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "Reel Cover: Workflow",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "Reel Cover: Workflow | BigQuiv Digitals",
+    "twitter:description": "Thank you for commenting. This is the exact workflow behind the cover of my Day 1 video. One frame from the video. One prompt.",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

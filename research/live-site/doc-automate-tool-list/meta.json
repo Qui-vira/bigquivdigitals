@@ -1,0 +1,26 @@
+{
+  "url": "https://bigquivdigitals.com/doc/automate-tool-list",
+  "status": 200,
+  "fetched": "2026-10-19",
+  "fetched_with": "Scrapling MCP bulk_fetch (Playwright, JS rendered, network_idle)",
+  "title": "The Automate Tool List | BigQuiv Digitals",
+  "description": "You wanted the tools. No fluff. Here they are. Signal Scanning: Content Pipeline: Distribution: Automation Layer: Total cost: Under $50/month for…",
+  "canonical": "https://bigquivdigitals.com/doc/automate-tool-list",
+  "open_graph": {
+    "og:title": "The Automate Tool List | BigQuiv Digitals",
+    "og:description": "You wanted the tools. No fluff. Here they are. Signal Scanning: Content Pipeline: Distribution: Automation Layer: Total cost: Under $50/month for…",
+    "og:url": "https://bigquivdigitals.com/doc/automate-tool-list",
+    "og:site_name": "BigQuiv Digitals",
+    "og:image": "https://bigquivdigitals.com/og-image.webp",
+    "og:image:width": "1456",
+    "og:image:height": "816",
+    "og:image:alt": "The Automate Tool List",
+    "og:type": "article"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "The Automate Tool List | BigQuiv Digitals",
+    "twitter:description": "You wanted the tools. No fluff. Here they are. Signal Scanning: Content Pipeline: Distribution: Automation Layer: Total cost: Under $50/month for…",
+    "twitter:image": "https://bigquivdigitals.com/og-image.webp"
+  }
+}

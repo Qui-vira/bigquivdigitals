@@ -10,6 +10,9 @@ const pageLinks = [
   { href: "/contact", label: "Contact" },
   { href: "/greatwork-waitlist", label: "The Great Work Waitlist" },
   { href: "/aimastery-waitlist", label: "AI Mastery Waitlist" },
+  { href: "/terms", label: "Terms" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/licence", label: "Licence" },
 ];
 
 interface FooterClientProps {
