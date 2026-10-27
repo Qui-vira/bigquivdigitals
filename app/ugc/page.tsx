@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import type { PhoneVideo } from "@/components/PhoneTile";
 import { FILMS } from "@/lib/films";
 import { Stage } from "@/components/v3/stage/Stage";
 import { Arrow } from "@/components/v3/Arrow";
-import { PhoneMockup } from "@/components/v3/fx/PhoneMockup";
+import { PhoneMockup, type PhoneVideo } from "@/components/v3/fx/PhoneMockup";
 import { Viewfinder } from "@/components/v3/fx/Viewfinder";
 import { UgcChallenge } from "@/components/v3/UgcChallenge";
 import "@/components/v3/pages/ugc.css";

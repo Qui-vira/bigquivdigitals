@@ -6,7 +6,7 @@ import { useSyncExternalStore } from "react";
  * Does this visitor want less motion?
  *
  * NOT framer-motion's `useReducedMotion`. This is the same pattern
- * `components/HeroReveal.tsx` already implements privately, lifted here so the
+ * the paper `HeroReveal` (removed 27 Oct 2026) implemented privately, lifted here so the
  * two cannot drift and so nothing else has to rediscover it.
  *
  * The part that matters is the THIRD argument to useSyncExternalStore, the

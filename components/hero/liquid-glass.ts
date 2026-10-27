@@ -1,7 +1,8 @@
 /**
  * WebGL1 liquid-glass reveal engine for the hero.
  *
- * Framework-free on purpose: HeroReveal owns the markup, this owns the pixels.
+ * Framework-free on purpose: the caller owns the markup, this owns the pixels
+ * (the v3 portrait scene; the paper HeroReveal that first used it was removed 27 Oct 2026).
  *
  * Replaces the Canvas2D stamp-and-heal pipeline. The old one accumulated
  * erasure into an offscreen alpha mask and healed by redrawing the top plate at

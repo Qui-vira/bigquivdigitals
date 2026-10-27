@@ -67,11 +67,6 @@ function readSrc(): string | null {
   }
 }
 
-const inputCls =
-  "min-h-[48px] w-full border-[3px] border-ink bg-paper px-3.5 py-2.5 text-base text-ink placeholder:text-ink-muted";
-const labelCls = "mb-2 block font-typewriter text-[12px] font-bold uppercase tracking-[0.08em] text-ink";
-const errCls = "mt-2 inline-block border-2 border-ink bg-gold-tint px-2 py-0.5 text-sm font-semibold text-ink";
-
 export function CheckoutForm({
   productName,
   active,
@@ -146,23 +141,21 @@ export function CheckoutForm({
   }
 
   return (
-    <div className="border-[3px] border-ink bg-paper p-5 shadow-brutal sm:p-8">
-      <h3 className="font-didone text-[clamp(1.9rem,4vw,2.5rem)] font-semibold leading-tight text-ink">
-        {copy.heading}
-      </h3>
-      <p className="mt-2 text-[16px] text-ink-soft">
+    <div className="v3-checkout__card">
+      <h3 className="v3-checkout__title">{copy.heading}</h3>
+      <p className="v3-checkout__product">
         {productName}, {amountLabel} {tierLabel}
       </p>
 
       {!active ? (
-        <p role="status" className="mt-4 text-[16px] font-semibold text-ink">
+        <p role="status" className="v3-checkout__closed">
           Orders are not open yet. {copy.helpLine}
         </p>
       ) : null}
 
-      <form onSubmit={onSubmit} noValidate className="mt-6 space-y-5" aria-busy={busy}>
+      <form onSubmit={onSubmit} noValidate className="v3-checkout__form" aria-busy={busy}>
         <div>
-          <label htmlFor="tec-name" className={labelCls}>
+          <label htmlFor="tec-name" className="v3-checkout__label">
             {copy.nameLabel}
           </label>
           <input
@@ -173,13 +166,13 @@ export function CheckoutForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={120}
-            className={inputCls}
+            className="v3-checkout__input"
             disabled={busy || !active}
           />
         </div>
 
         <div>
-          <label htmlFor="tec-email" className={labelCls}>
+          <label htmlFor="tec-email" className="v3-checkout__label">
             {copy.emailLabel}
           </label>
           <input
@@ -192,58 +185,51 @@ export function CheckoutForm({
             onChange={(e) => setEmail(e.target.value)}
             maxLength={254}
             aria-describedby="tec-email-help"
-            className={inputCls}
+            className="v3-checkout__input"
             disabled={busy || !active}
           />
-          <p id="tec-email-help" className="mt-2 text-[14px] text-ink-soft">
+          <p id="tec-email-help" className="v3-checkout__help">
             {copy.emailHelp}
           </p>
         </div>
 
-        <fieldset className="space-y-2">
-          <legend className={labelCls}>{copy.payChoice}</legend>
-          <label className="flex min-h-[48px] items-center gap-3 border-[3px] border-ink bg-gold-tint px-3.5 py-2 text-[16px] font-semibold text-ink">
-            <input type="radio" name="method" value="flutterwave" checked readOnly className="h-5 w-5 accent-[#111111]" />
+        <fieldset className="v3-checkout__methods">
+          <legend className="v3-checkout__label">{copy.payChoice}</legend>
+          <label className="v3-checkout__method">
+            <input type="radio" name="method" value="flutterwave" checked readOnly />
             <span>{copy.optionFlutterwave}</span>
           </label>
-          <p className="text-[15px] text-ink-soft">
-            <a
-              href={CONTACTS.telegram.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="paper-link font-semibold text-ink"
-            >
+          <p className="v3-checkout__crypto">
+            <a href={CONTACTS.telegram.href} target="_blank" rel="noopener noreferrer" className="v3-checkout__link">
               {CRYPTO_LINE}
             </a>
           </p>
         </fieldset>
 
-        <div className="space-y-3">
-          <label className="flex min-h-[48px] cursor-pointer items-start gap-3 text-[15px] leading-relaxed text-ink">
+        <div className="v3-checkout__consents">
+          <label className="v3-checkout__consent">
             <input
               type="checkbox"
               checked={consentFinal}
               onChange={(e) => setConsentFinal(e.target.checked)}
               disabled={busy || !active}
-              className="mt-1 h-5 w-5 shrink-0 accent-[#111111]"
             />
             <span>{finalText}</span>
           </label>
-          <label className="flex min-h-[48px] cursor-pointer items-start gap-3 text-[15px] leading-relaxed text-ink">
+          <label className="v3-checkout__consent">
             <input
               type="checkbox"
               checked={consentImmediate}
               onChange={(e) => setConsentImmediate(e.target.checked)}
               disabled={busy || !active}
-              className="mt-1 h-5 w-5 shrink-0 accent-[#111111]"
             />
             <span>{immediateText}</span>
           </label>
-          <p className="text-[14px] text-ink-soft">
+          <p className="v3-checkout__legal">
             {legalLinks.map((l, i) => (
               <span key={l.href}>
                 {i > 0 ? ", " : "Read the "}
-                <a href={l.href} target="_blank" rel="noopener noreferrer" className="paper-link font-semibold text-ink">
+                <a href={l.href} target="_blank" rel="noopener noreferrer" className="v3-checkout__link">
                   {l.label}
                 </a>
               </span>
@@ -253,29 +239,25 @@ export function CheckoutForm({
         </div>
 
         {error ? (
-          <p role="alert" className={errCls}>
+          <p role="alert" className="v3-checkout__error">
             {error}
           </p>
         ) : null}
 
         <div>
-          <p className="mb-3 text-[16px] font-semibold text-ink">{supportLine}</p>
-          <button
-            type="submit"
-            disabled={busy || !active}
-            className="paper-focus relative inline-flex min-h-[60px] w-full cursor-pointer select-none items-center justify-center border-[3px] border-ink bg-gold px-7 font-display text-lg font-bold text-ink shadow-brutal-gold transition-[translate,box-shadow,background-color] duration-150 hover:bg-gold-hover active:translate-x-[5px] active:translate-y-[5px] active:shadow-[1px_1px_0_0_#E8A33D] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-          >
+          <p className="v3-checkout__support">{supportLine}</p>
+          <button type="submit" disabled={busy || !active} className="v3-btn v3-btn--lg v3-checkout__pay">
             {busy ? "Processing..." : `Pay ${amountLabel}`}
           </button>
           {busy ? (
-            <p role="status" className="mt-3 text-[15px] font-semibold text-ink">
+            <p role="status" className="v3-checkout__working">
               {copy.working}
             </p>
           ) : null}
         </div>
       </form>
 
-      <p className="mt-6 text-[14px] leading-relaxed text-ink-soft">{copy.helpLine}</p>
+      <p className="v3-checkout__foot">{copy.helpLine}</p>
     </div>
   );
 }

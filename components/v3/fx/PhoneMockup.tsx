@@ -3,11 +3,18 @@
 import Image from "next/image";
 import { useState } from "react";
 import { VIDEO_BASE } from "@/components/ProofFilm";
-import type { PhoneVideo } from "@/components/PhoneTile";
+
+export type PhoneVideo = {
+  file: string;
+  poster: string;
+  title: string;
+  runtime: string;
+  vertical: boolean;
+};
 
 /**
  * Phone Mockup (#8 in research/EFFECTS-CATALOGUE.md): a real video in a navy
- * phone frame. The play rules are PhoneTile's, unchanged:
+ * phone frame. The play rules are the old paper PhoneTile's, unchanged:
  *
  *   autoPlay  muted, looping, inline, with controls. ONE per page: it is the
  *             only video that downloads before a tap.
