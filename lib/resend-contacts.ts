@@ -99,3 +99,42 @@ export async function addToWaitlistSegment(
     return false;
   }
 }
+
+/**
+ * The Build Log, the weekly newsletter (added 2026-11-20).
+ *
+ * A separate list from both course waitlists, on the owner's ruling: "It's not
+ * the same thing." A newsletter reader never lands on a waitlist, and a
+ * waitlist signup never lands here. The segment is the account's old empty
+ * "General" segment, renamed, because the plan allows 3 segments.
+ *
+ * Never throws; returns true only when Resend confirmed the write.
+ */
+export async function addToNewsletterSegment(email: string): Promise<boolean> {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  const segmentId = (process.env.RESEND_NEWSLETTER_SEGMENT_ID || "").trim();
+  if (!apiKey || !segmentId) {
+    console.warn("[resend] RESEND_API_KEY or RESEND_NEWSLETTER_SEGMENT_ID is not set: newsletter contact not synced");
+    return false;
+  }
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.contacts.create({
+      email: email.toLowerCase(),
+      unsubscribed: false,
+      segments: [{ id: segmentId }],
+    });
+    if (error) {
+      // An address that already exists as a contact (say, on a waitlist) is
+      // added to the newsletter segment on its own.
+      const add = await resend.contacts.segments.add({ email: email.toLowerCase(), segmentId }).catch(() => null);
+      if (add && !add.error) return true;
+      console.error(`[resend] newsletter sync failed for ${email}:`, error.message);
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.error(`[resend] newsletter sync threw for ${email}:`, e);
+    return false;
+  }
+}

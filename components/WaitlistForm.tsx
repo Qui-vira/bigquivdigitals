@@ -60,11 +60,17 @@ export function WaitlistForm({
   className = "",
   compact = false,
   onSuccess,
+  endpoint = "/api/waitlist",
+  buttonLabel = "Join the waitlist",
 }: {
   source?: string;
   className?: string;
   compact?: boolean;
   onSuccess?: () => void;
+  /** Where the email is posted. The newsletter posts to /api/newsletter, so a
+   *  newsletter reader is never put on a course waitlist (owner, 20 Nov 2026). */
+  endpoint?: string;
+  buttonLabel?: string;
 }) {
   const id = useId();
   const [state, setState] = useState<State>("idle");
@@ -77,7 +83,7 @@ export function WaitlistForm({
     setState("sending");
     setMessage("");
     try {
-      const r = await fetch("/api/waitlist", {
+      const r = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, source: source + channelTag() }),
@@ -141,7 +147,7 @@ export function WaitlistForm({
           data-variant="primary"
           className="v3-btn v3-wl__btn"
         >
-          {state === "sending" ? "Adding you…" : "Join the waitlist"}
+          {state === "sending" ? "Adding you…" : buttonLabel}
         </button>
       </div>
       {message ? (

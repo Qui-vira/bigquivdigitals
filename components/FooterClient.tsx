@@ -10,6 +10,7 @@ const pageLinks = [
   { href: "/my-purchases", label: "My purchases" },
   { href: "/greatwork-waitlist", label: "The Great Work Waitlist" },
   { href: "/aimastery-waitlist", label: "AI Mastery Waitlist" },
+  { href: "/newsletter", label: "Newsletter" },
 ];
 
 const legalLinks = [

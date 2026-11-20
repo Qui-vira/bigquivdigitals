@@ -1,0 +1,5 @@
+/* /newsletter only. On a phone the stack of sheets sat on top of the headline, so the 3D layer is lifted and made
+   a little smaller there. The scene itself (scenes/docStack.ts) is shared with /articles and is not touched. */
+@media (max-width: 760px) {
+  .v3-nl-page .v3-stage__gl { transform: translateY(-15svh) scale(0.8); transform-origin: 50% 35%; }
+}
