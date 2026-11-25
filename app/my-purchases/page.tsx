@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 };
 
 const PURCHASES_INTRO =
-  "Bought TheEditCompanion? Enter the email you used. We will email you a link to see your orders, download again and print a receipt. The link works for 30 minutes.";
+  "Bought TheEditCompanion or an AI class? Enter the email you used. We will email you a link to see your purchases, download TheEditCompanion again and print a receipt. The link works for 30 minutes.";
 
 export default function MyPurchasesPage() {
   return (

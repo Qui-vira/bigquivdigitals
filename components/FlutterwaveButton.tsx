@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { formatPrice } from "@/lib/format-price";
+import { newClassTxRef } from "@/lib/course-prices";
 
 declare global {
   interface Window {
@@ -16,6 +17,13 @@ interface FlutterwaveButtonProps {
   serviceName: string;
   onValidate: () => boolean;
   onSuccess: () => void;
+  /**
+   * The /classes products pass their prefix (CLS-EDIT-, CO2-AGENT-, ...) so the
+   * webhook and the verify route can tell which product was bought. Omitted, the
+   * ref stays "QV-<time>", which is what AI Mastery and The Great Work have
+   * always sent and what the routes treat as an AI class payment.
+   */
+  txRefPrefix?: string;
 }
 
 export function FlutterwaveButton({
@@ -25,6 +33,7 @@ export function FlutterwaveButton({
   serviceName,
   onValidate,
   onSuccess,
+  txRefPrefix,
 }: FlutterwaveButtonProps) {
   const [scriptLoaded, setScriptLoaded] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -68,7 +77,7 @@ export function FlutterwaveButton({
     try {
       window.FlutterwaveCheckout({
         public_key: publicKey,
-        tx_ref: `QV-${Date.now()}`,
+        tx_ref: txRefPrefix ? newClassTxRef(txRefPrefix) : `QV-${Date.now()}`,
         amount,
         currency,
         payment_options: "card,banktransfer,ussd",

@@ -19,6 +19,7 @@ import { normaliseEmail, PURCHASES_LINK_TTL_MS, PURCHASES_VIEW_PATH, purchasesVi
 import type { Runtime } from "./runtime";
 import type { OrderStatus } from "./types";
 import { getClientIp, rateLimit } from "../rate-limit";
+import { classProduct, CLASS_COHORT } from "../course-prices";
 
 export const NO_STORE = "no-store, max-age=0";
 export const PURCHASES_NEUTRAL = "If that email has a purchase, a sign-in link is on its way. Check spam too.";
@@ -55,7 +56,9 @@ const emailKey = (email: string) => createHash("sha256").update(email).digest("h
 export async function sendPurchasesLinkIfAny(rt: Runtime, email: string, secret: string): Promise<void> {
   try {
     const orders = await rt.store.listOrdersByEmail(email, VISIBLE_STATUSES, 1);
-    if (orders.length === 0) return;
+    // A course seat (AI class, a /classes niche, the combo, coaching) counts as a purchase too.
+    const seats = orders.length === 0 && rt.courses ? await rt.courses.listByEmail(email, 1) : [];
+    if (orders.length === 0 && seats.length === 0) return;
     const token = signPurchasesToken(email, rt.now(), secret);
     const m = renderPurchasesLink(purchasesViewUrl(rt.baseUrl, token), PURCHASES_LINK_TTL_MS / 60_000);
     const r = await rt.sender.send({ to: email, ...m });
@@ -101,7 +104,40 @@ export type PurchaseRow = {
   buyerEmail: string;
 };
 
-export type PurchasesView = { ok: true; email: string; expiresAt: Date; orders: PurchaseRow[] } | { ok: false };
+/** A confirmed course_purchases row: no download, no receipt, just what was bought and what happens next. */
+export type ClassSeatRow = {
+  /** Flutterwave tx_ref (or the manual reference). Null for the oldest rows. */
+  ref: string | null;
+  slug: string;
+  productName: string;
+  kind: "niche" | "combo" | "coaching" | "ai-mastery" | "other";
+  purchasedAt: Date;
+  amount: number;
+  currency: string;
+  /** What the buyer should expect next, in plain words. Null when there is nothing to add. */
+  next: string | null;
+};
+
+export type PurchasesView =
+  | { ok: true; email: string; expiresAt: Date; orders: PurchaseRow[]; classes: ClassSeatRow[] }
+  | { ok: false };
+
+/** The original AI class, sold on /aimastery before the /classes niches existed. */
+const AI_MASTERY_SLUG = "ai-content-mastery";
+
+export function classSeatRow(r: { slug: string; amount: number; currency: string; txRef: string | null; createdAt: Date }): ClassSeatRow {
+  const p = classProduct(r.slug);
+  const base = { ref: r.txRef, slug: r.slug, purchasedAt: r.createdAt, amount: r.amount, currency: r.currency };
+  if (p) {
+    const next =
+      p.kind === "coaching"
+        ? "We contact you within 24 hours of payment to book your sessions."
+        : `Your seat in the cohort starting ${CLASS_COHORT.startsLabel} is confirmed. You will be added to the class group before it starts.`;
+    return { ...base, productName: p.name, kind: p.kind, next };
+  }
+  if (r.slug === AI_MASTERY_SLUG) return { ...base, productName: "AI Mastery", kind: "ai-mastery", next: null };
+  return { ...base, productName: r.slug, kind: "other", next: null };
+}
 
 /** The view page's data: only this token's email, only paid and refunded orders. */
 export async function loadPurchases(rt: Runtime, token: unknown, secret: string | null): Promise<PurchasesView> {
@@ -124,7 +160,8 @@ export async function loadPurchases(rt: Runtime, token: unknown, secret: string 
       buyerEmail: o.email,
     });
   }
-  return { ok: true, email: session.email, expiresAt: session.expiresAt, orders: rows };
+  const seats = rt.courses ? await rt.courses.listByEmail(session.email, MAX_ORDERS_SHOWN) : [];
+  return { ok: true, email: session.email, expiresAt: session.expiresAt, orders: rows, classes: seats.map(classSeatRow) };
 }
 
 function redirect(location: string): Response {

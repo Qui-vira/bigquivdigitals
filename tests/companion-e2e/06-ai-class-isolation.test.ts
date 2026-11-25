@@ -163,10 +163,13 @@ test("S6 QV- payloads still follow the old path: results equal the frozen golden
   assert.deepEqual(nonString, GOLDEN["webhook: tx_ref that is not a string"]);
 }));
 
-test("S6 near-miss refs are NOT treated as companion: lower case 'tec-' and a QV- ref carrying TEC- in the email still follow the old path", quiet(async () => {
+test("S6 near-miss refs are NOT treated as companion: lower case 'tec-' grants nothing, a QV- ref carrying TEC- in the email still follows the AI class path", quiet(async () => {
   // The guard is an exact, case-sensitive prefix. Refs we mint are always upper-case TEC-, so these are not ours.
+  // Since 25 Nov 2026 (tx_ref routing, /classes) only QV- refs are AI class payments, so "tec-" is an
+  // unknown prefix: acknowledged, never the companion handler and never a course seat.
   const lower = await run("webhook", post({ event: "charge.completed", data: tx("tec-abcdefghijklmnopqrstuv") }, { "verif-hash": "test-hash" }));
-  assert.ok(hitsCourse(lower.calls as never).length >= 1, "unchanged old behaviour for a non TEC- prefix");
+  assert.equal(hitsCourse(lower.calls as never).length, 0, "an unknown prefix grants nothing");
+  assert.ok(!(lower.calls as { sql?: string }[]).some((c) => /companion_orders/.test(c.sql ?? "")), "not the companion handler");
   const qv = await run("webhook", post({ event: "charge.completed", data: tx("QV-1700000000077", { customer: { email: "TEC-x@example.com", name: "TEC-" } }) }, { "verif-hash": "test-hash" }));
   assert.ok(hitsCourse(qv.calls as never).length >= 1);
 }));

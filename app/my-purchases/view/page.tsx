@@ -4,7 +4,13 @@ import { formatNairaMinor } from "@/components/companion/format";
 import { PurchasesRequestForm } from "@/components/companion/PurchasesRequestForm";
 import { ReceiptButton } from "@/components/companion/ReceiptButton";
 import { fmtDate } from "@/lib/companion/emails/templates";
-import { loadPurchases, PURCHASES_NOTICES, type PurchaseRow, type PurchasesNotice } from "@/lib/companion/purchases-handler";
+import {
+  loadPurchases,
+  PURCHASES_NOTICES,
+  type ClassSeatRow,
+  type PurchaseRow,
+  type PurchasesNotice,
+} from "@/lib/companion/purchases-handler";
 import { purchasesSecret } from "@/lib/companion/purchases-link";
 import { getRuntime } from "@/lib/companion/runtime";
 import "@/components/v3/pages/companion.css";
@@ -84,6 +90,38 @@ function OrderCard({ row, token }: { row: PurchaseRow; token: string }) {
   );
 }
 
+/** A class seat, the combo or coaching (course_purchases). Nothing to download, so no buttons. */
+function SeatCard({ row }: { row: ClassSeatRow }) {
+  const amount =
+    row.currency.toUpperCase() === "NGN" ? formatNairaMinor(Math.round(row.amount * 100)) : `${row.amount} ${row.currency.toUpperCase()}`;
+  return (
+    <li className="v3-pur__card" data-slug={row.slug}>
+      <h2>{row.productName}</h2>
+      <dl className="v3-pur__dl">
+        <div>
+          <dt>Date</dt>
+          <dd>{fmtDate(row.purchasedAt)}</dd>
+        </div>
+        <div>
+          <dt>Amount paid</dt>
+          <dd>{amount}</dd>
+        </div>
+        {row.ref ? (
+          <div>
+            <dt>Payment reference</dt>
+            <dd className="v3-pur__ref">{row.ref}</dd>
+          </div>
+        ) : null}
+        <div>
+          <dt>Status</dt>
+          <dd>{row.kind === "coaching" ? "Paid" : "Seat confirmed"}</dd>
+        </div>
+      </dl>
+      {row.next ? <p className="v3-pur__small">{row.next}</p> : null}
+    </li>
+  );
+}
+
 export default async function MyPurchasesViewPage({
   searchParams,
 }: {
@@ -122,16 +160,21 @@ export default async function MyPurchasesViewPage({
             {notice}
           </p>
         ) : null}
-        {view.orders.length === 0 ? (
+        {view.orders.length === 0 && view.classes.length === 0 ? (
           <p className="v3-pur__empty">We found no orders for this email.</p>
         ) : (
           <ul className="v3-pur__orders">
             {view.orders.map((row) => (
               <OrderCard key={row.orderRef} row={row} token={token} />
             ))}
+            {view.classes.map((row) => (
+              <SeatCard key={`${row.slug}:${row.ref ?? ""}`} row={row} />
+            ))}
           </ul>
         )}
-        <p className="v3-pur__small">Download gives you a new download link. Your older emailed link stops working.</p>
+        {view.orders.length > 0 ? (
+          <p className="v3-pur__small">Download gives you a new download link. Your older emailed link stops working.</p>
+        ) : null}
         <Support />
       </div>
     </section>

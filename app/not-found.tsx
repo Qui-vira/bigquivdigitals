@@ -20,6 +20,7 @@ const LINKS = [
   { href: "/work/content-engine", label: "The Content Engine, technical" },
   { href: "/work/nigeria-business-costs", label: "Nigeria Business Cost Intelligence, the data build" },
   { href: "/services", label: "The Growth Operating System" },
+  { href: "/classes", label: "AI classes" },
   { href: "/articles", label: "Articles" },
   { href: "/contact", label: "Contact" },
 ];

@@ -1,0 +1,60 @@
+/* /classes (ClassesClient.tsx). Light sections only: paper and cloud. v3 tokens from app/v3.css. */
+.v3-cls-hero { padding-top: clamp(8rem, 14vw, 11rem); }
+.v3-cls-nowrap { white-space: nowrap; }
+.v3-cls-kicker { margin: 0 0 1rem; color: var(--v3-gold-deep); }
+.v3-cls-hero__h { margin: 0; max-width: 16ch; font-size: clamp(2.9rem, 7vw, 6rem); color: var(--v3-navy); }
+.v3-cls-jump { margin-top: 2.25rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.v3-cls-jump .v3-chip { color: var(--v3-navy); background: var(--v3-paper); text-decoration: none; }
+@media (hover: hover) { .v3-cls-jump .v3-chip:hover { border-color: var(--v3-gold-deep); } }
+
+.v3-cls-grid { list-style: none; margin: 3rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.v3-cls-card {
+  display: flex; flex-direction: column; gap: 1.5rem;
+  padding: clamp(1.4rem, 3vw, 2rem);
+  border-radius: var(--v3-radius);
+  background: var(--v3-paper);
+  box-shadow: 0 0 0 1px var(--v3-rule);
+  scroll-margin-top: 6rem;
+}
+.v3-cls-card__for { margin: 0.6rem 0 0; font-size: 1.0625rem; line-height: 1.6; color: var(--v3-ink-2); }
+.v3-cls-card__weeks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; }
+.v3-cls-card__wk { margin: 0 0 0.75rem; color: var(--v3-navy); }
+.v3-cls-card__lessons { gap: 0.6rem; }
+.v3-cls-card__lessons li { font-size: 0.9688rem; line-height: 1.5; color: var(--v3-ink-2); }
+.v3-cls-card__dl { margin: 0; display: grid; gap: 0.85rem; padding-top: 1.25rem; border-top: 1px solid var(--v3-rule); }
+.v3-cls-card__dl dt { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--v3-ink-2); }
+.v3-cls-card__dl dd { margin: 0.2rem 0 0; font-size: 1rem; line-height: 1.55; color: var(--v3-ink); }
+.v3-cls-card__rule { margin: 0; padding: 0.7rem 0.9rem; border-radius: var(--v3-radius); background: var(--v3-cloud); font-size: 0.9375rem; font-weight: 600; color: var(--v3-navy); }
+.v3-cls-card__buy { margin-top: auto; padding-top: 1.25rem; border-top: 2px solid var(--v3-navy); display: grid; gap: 0.6rem; justify-items: start; }
+.v3-cls-card__start { margin: 0; font-size: 0.9375rem; color: var(--v3-ink-2); }
+
+.v3-cls-price__now { margin: 0; display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.6rem; font-family: var(--v3-display); font-weight: 800; font-stretch: 88%; font-size: clamp(2rem, 3.4vw, 2.6rem); line-height: 1; letter-spacing: -0.02em; color: var(--v3-navy); font-variant-numeric: tabular-nums; }
+.v3-cls-price__tag { font-family: var(--v3-body); font-weight: 600; font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--v3-gold-deep); }
+.v3-cls-seats { margin: 0.45rem 0 0; font-size: 0.9688rem; line-height: 1.5; color: var(--v3-ink-2); }
+.v3-cls-seats__n { font-weight: 800; color: var(--v3-navy); }
+
+.v3-cls-combo { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: clamp(2rem, 6vw, 5rem); align-items: start; scroll-margin-top: 6rem; }
+.v3-cls-combo__list { margin-top: 2rem; }
+.v3-cls-combo__buy { padding: clamp(1.4rem, 3vw, 2rem); border-radius: var(--v3-radius); background: var(--v3-paper); box-shadow: var(--v3-shadow); display: grid; gap: 0.75rem; justify-items: start; }
+.v3-cls-combo__sum { margin: 0; font-size: 0.9688rem; line-height: 1.5; color: var(--v3-ink-2); }
+
+.v3-cls-coach { list-style: none; margin: 2.5rem 0 0; padding: 0; border-top: 1px solid var(--v3-rule); }
+.v3-cls-coach__row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.9rem 2rem; padding: 1.1rem 0; border-bottom: 1px solid var(--v3-rule); }
+.v3-cls-coach__name { margin: 0; font-family: var(--v3-display); font-weight: 700; font-stretch: 92%; font-size: 1.35rem; color: var(--v3-navy); }
+.v3-cls-coach__opts { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.v3-cls-coach__btn { min-height: 46px; font-variant-numeric: tabular-nums; }
+
+.v3-cls-steps { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
+.v3-cls-steps li { padding-top: 1.25rem; border-top: 2px solid var(--v3-navy); }
+.v3-cls-steps__n { display: block; font-family: var(--v3-display); font-weight: 800; font-stretch: 85%; font-size: 2.4rem; line-height: 1; color: var(--v3-gold-deep); margin-bottom: 0.75rem; }
+.v3-cls-steps p { margin: 0; font-size: 1.0625rem; line-height: 1.6; color: var(--v3-ink-2); }
+.v3-cls-steps a { color: var(--v3-navy); text-decoration: underline; text-underline-offset: 3px; }
+
+@media (max-width: 980px) {
+  .v3-cls-grid, .v3-cls-combo, .v3-cls-steps { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .v3-cls-card__weeks { grid-template-columns: minmax(0, 1fr); }
+  .v3-cls-coach__opts, .v3-cls-coach__btn { width: 100%; }
+  .v3-cls-coach__btn { justify-content: center; }
+}

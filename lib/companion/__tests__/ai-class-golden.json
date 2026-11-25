@@ -73,37 +73,10 @@
   "webhook: tx_ref that is not a string": {
     "status": 200,
     "body": {
-      "received": true
+      "received": true,
+      "recorded": false
     },
-    "calls": [
-      {
-        "sql": "INSERT INTO \"course_purchases\" (\"email\",\"first_name\",\"course_slug\",\"amount\",\"currency\",\"payment_method\",\"transaction_ref\",\"status\") VALUES ($1,$2,$3,$4,$5,$6,$7,$8) ON CONFLICT (\"email\",\"course_slug\") DO UPDATE SET \"first_name\"=EXCLUDED.\"first_name\",\"amount\"=EXCLUDED.\"amount\",\"currency\"=EXCLUDED.\"currency\",\"payment_method\"=EXCLUDED.\"payment_method\",\"transaction_ref\"=EXCLUDED.\"transaction_ref\",\"status\"=EXCLUDED.\"status\"",
-        "params": [
-          "fixture.buyer@example.com",
-          "Ada",
-          "ai-content-mastery",
-          "27000",
-          "NGN",
-          "flutterwave",
-          "12345",
-          "confirmed"
-        ]
-      },
-      {
-        "sql": "INSERT INTO \"prospects\" (\"email\",\"first_name\") VALUES ($1,$2) ON CONFLICT (\"email\") DO UPDATE SET \"first_name\"=EXCLUDED.\"first_name\"",
-        "params": [
-          "fixture.buyer@example.com",
-          "Ada"
-        ]
-      },
-      {
-        "sql": "UPDATE \"course_purchases\" SET \"email_sent\"=$1 WHERE \"transaction_ref\" = $2",
-        "params": [
-          "true",
-          "12345"
-        ]
-      }
-    ]
+    "calls": []
   },
   "verify: valid AI class payment": {
     "status": 200,

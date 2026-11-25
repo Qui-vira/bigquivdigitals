@@ -31,6 +31,8 @@ interface PaymentModalProps {
    * set the number, revisit when it drifts.
    */
   cryptoAmountUsd?: number;
+  /** Passed to FlutterwaveButton. Set by /classes only; see FlutterwaveButton. */
+  txRefPrefix?: string;
 }
 
 export function PaymentModal({
@@ -41,6 +43,7 @@ export function PaymentModal({
   currency = "USD",
   calPaidUrl,
   cryptoAmountUsd,
+  txRefPrefix,
 }: PaymentModalProps) {
   const [tab, setTab] = useState<"fiat" | "crypto">("fiat");
   const [email, setEmail] = useState("");
@@ -181,6 +184,7 @@ export function PaymentModal({
                 serviceName={serviceName}
                 onValidate={validateEmail}
                 onSuccess={handleSuccess}
+                txRefPrefix={txRefPrefix}
               />
             ) : (
               /* cryptoUsd, never `amount`. Blockradar prices in USD only. */

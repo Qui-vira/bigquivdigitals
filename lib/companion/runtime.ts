@@ -12,6 +12,7 @@ import type { Order, OrderEventActor, OrderStatus } from "./types";
 import type { FileStore } from "./file-store";
 import type { EmailSender } from "./emails/sender";
 import type { Notifier } from "./emails/notify";
+import type { CourseSeatReader } from "../class-payments";
 
 export type EmailState = { sentAt: Date | null; attempts: number; lastError: string | null };
 
@@ -52,6 +53,12 @@ export type Runtime = {
   now: () => Date;
   /** Backoff between email attempts. Tests inject an instant one; default is a real timer. */
   sleep?: (ms: number) => Promise<void>;
+  /**
+   * Course seats (course_purchases: the AI class, the /classes niches, the combo
+   * and coaching) for "My purchases". Optional so the TheEditCompanion tests that
+   * build their own runtime need not supply it; without it no seats are shown.
+   */
+  courses?: CourseSeatReader;
 };
 
 let override: Runtime | null = null;
@@ -68,6 +75,7 @@ export async function getRuntime(): Promise<Runtime> {
   const { createDefaultNotifier } = await import("./emails/notify");
   const { createNeonStore } = await import("./neon-store");
   const { env } = await import("./env");
+  const { classSql, createCourseSeatReader } = await import("../class-payments");
   return {
     store: createNeonStore(),
     files: createDefaultFileStore(),
@@ -76,5 +84,7 @@ export async function getRuntime(): Promise<Runtime> {
     baseUrl: env("NEXT_PUBLIC_SITE_URL") || "https://bigquivdigitals.com",
     ipSalt: env("ORDER_IP_SALT"),
     now: () => new Date(),
+    // Lazy: the Neon client is only created when My purchases actually reads seats.
+    courses: createCourseSeatReader({ query: (text, params) => classSql().query(text, params) }),
   };
 }

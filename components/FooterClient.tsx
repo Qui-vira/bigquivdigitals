@@ -5,6 +5,7 @@ const pageLinks = [
   { href: "/about", label: "About" },
   { href: "/portfolio", label: "Work" },
   { href: "/ugc", label: "UGC" },
+  { href: "/classes", label: "AI Classes" },
   { href: "/theeditcompanion", label: "TheEditCompanion" },
   { href: "/contact", label: "Contact" },
   { href: "/my-purchases", label: "My purchases" },
