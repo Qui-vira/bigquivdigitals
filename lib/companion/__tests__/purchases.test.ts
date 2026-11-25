@@ -269,7 +269,7 @@ test("view: lists only this email's paid and refunded orders, newest first", asy
   assert.equal(v.orders[0].amountMinor, 8_900_000);
 
   assert.deepEqual(await loadPurchases(w.rt, signPurchasesToken("nobody@example.com", T0, SECRET), SECRET), {
-    ok: true, email: "nobody@example.com", expiresAt: new Date(T0.getTime() + PURCHASES_LINK_TTL_MS), orders: [],
+    ok: true, email: "nobody@example.com", expiresAt: new Date(T0.getTime() + PURCHASES_LINK_TTL_MS), orders: [], classes: [],
   });
   w.clock.t = new Date(T0.getTime() + 31 * MIN);
   assert.deepEqual(await loadPurchases(w.rt, signPurchasesToken("ada@example.com", T0, SECRET), SECRET), { ok: false });

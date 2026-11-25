@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { getNeonAdmin } from "@/lib/neon";
 import { sendPurchaseConfirmation } from "@/lib/send-purchase-email";
-import { assertPaidEnough } from "@/lib/course-prices";
+import { assertPaidEnough, routeTxRef } from "@/lib/course-prices";
+import { confirmClassPayment, getClassDeps } from "@/lib/class-payments";
 
 const COURSE_SLUG = "ai-content-mastery";
 
@@ -61,10 +62,39 @@ export async function POST(req: NextRequest) {
 
     const data = await res.json();
 
+    // Routing by tx_ref prefix, the same table as the webhook (lib/course-prices.ts routeTxRef).
+    const route = routeTxRef(data?.data?.tx_ref);
+
     // TheEditCompanion guard: tx_ref "TEC-..." is another product. Never record it as an
     // AI class seat or send a course invite. Companion payments settle in /api/companion/*.
-    if (String(data?.data?.tx_ref ?? "").startsWith("TEC-")) {
+    // Trading bot guard: QBOT- payments are confirmed by opportunity-agent, never here.
+    // Unknown prefixes grant nothing.
+    if (route.kind === "companion" || route.kind === "bot" || route.kind === "unknown") {
       return NextResponse.json({ success: false, error: "Payment not verified" }, { status: 400 });
+    }
+
+    if (route.kind === "class") {
+      if (data.status !== "success" || data.data?.status !== "successful") {
+        return NextResponse.json({ success: false, error: "Payment not verified" }, { status: 400 });
+      }
+      const result = await confirmClassPayment(await getClassDeps(), {
+        product: route.product,
+        txRef: String(data.data.tx_ref),
+        amount: data.data.amount,
+        currency: data.data.currency || "NGN",
+        email: String(data.data.customer?.email ?? ""),
+        name: String(data.data.customer?.name ?? ""),
+        chargedAt: data.data.created_at,
+        source: "verify",
+      });
+      if (!result.ok) {
+        return NextResponse.json(
+          { success: false, error: "Payment amount does not match the course price" },
+          { status: 400 }
+        );
+      }
+      // Nothing about the buyer, same as below.
+      return NextResponse.json({ success: true });
     }
 
     if (data.status === "success" && data.data?.status === "successful") {

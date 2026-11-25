@@ -40,6 +40,9 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/pricing", destination: "/services", permanent: true },
+      // Owner, 25 Nov 2026: the AI classes are sold per niche at /classes; the old single-class page sends people
+      // there. 307, not 308, so the old page can come back without browsers holding a cached redirect.
+      { source: "/aimastery", destination: "/classes", permanent: false },
       // Common typo of the buyers' purchases page.
       { source: "/my-purchase", destination: "/my-purchases", permanent: true },
       // /okx is the bio link for the 60-day challenge. It is spoken aloud in

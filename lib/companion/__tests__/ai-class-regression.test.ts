@@ -11,6 +11,12 @@
  * ./_orig/ folder, then GOLDEN_WRITE=1; the folder was deleted afterwards). The test asserts the edited routes produce byte-identical
  * decisions, and that TEC- payloads never reach course_purchases or Telegram.
  *
+ * ONE DELIBERATE CHANGE, 25 Nov 2026 (tx_ref prefix routing, /classes): the
+ * golden entry "webhook: tx_ref that is not a string" used to record an AI class
+ * seat for tx_ref 12345. Only "QV-" refs are AI class payments now, so it is
+ * acknowledged and nothing is written ({ received: true, recorded: false }, no
+ * calls). That entry was edited by hand; every other entry is untouched.
+ *
  * Run: npx tsx --test lib/companion/__tests__/ai-class-regression.test.ts
  */
 import assert from "node:assert/strict";

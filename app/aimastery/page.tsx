@@ -1,3 +1,4 @@
+import { permanentRedirect } from "next/navigation";
 import { AiMasteryClient } from "@/components/AiMasteryClient";
 
 export const revalidate = 60;
@@ -60,6 +61,12 @@ export const metadata = {
 };
 
 export default function AiMasteryPage() {
+  // Owner, 25 Nov 2026: one price list everywhere. The AI classes are now sold per niche at /classes, so this page
+  // sends visitors there. Past buyers keep their access (course_purchases rows and QV- payments are unchanged).
+  if (process.env.AIMASTERY_REDIRECT?.trim().toLowerCase() !== "false") {
+    permanentRedirect("/classes");
+  }
+
   /**
    * Open unless explicitly closed. Read server-side rather than as
    * NEXT_PUBLIC_*, so closing the class is a dashboard toggle plus a redeploy

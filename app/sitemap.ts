@@ -60,6 +60,9 @@ const STATIC_ROUTES: Array<{ path: string; priority: number; changeFrequency: Me
   // /theeditcompanion: LISTED and indexable (owner, 15 Oct 2026). The thanks page is private
   // and not listed. Legal pages are drafts, listed at low priority.
   { path: "/theeditcompanion", priority: 0.9, changeFrequency: "weekly" },
+  // /classes: LISTED and indexable (owner, 25 Nov 2026). The seven AI niches, the combo
+  // and coaching. Seat counts change daily while the first cohort sells.
+  { path: "/classes", priority: 0.9, changeFrequency: "daily" },
   { path: "/terms", priority: 0.3, changeFrequency: "yearly" },
   { path: "/privacy", priority: 0.3, changeFrequency: "yearly" },
   { path: "/licence", priority: 0.3, changeFrequency: "yearly" },
